@@ -1,0 +1,277 @@
+{% extends "base.html" %}
+
+{% block content %}
+<!-- Header Personalizado -->
+<div class="convite-header">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8 text-center">
+                <h1 class="convite-nome">Olá, {{ convidado.nome }}!</h1>
+                <p class="lead mb-0">Você está convidado(a) para o casamento de</p>
+                <h2 class="display-4 romantic-title mt-3">
+                    {{ config.nome_noiva }} <span class="text-warning">&</span> {{ config.nome_noivo }}
+                </h2>
+                {% if config.data_casamento %}
+                <p class="elegant-date mt-3">{{ config.data_casamento.strftime('%d de %B de %Y') }}</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Seção de Confirmação -->
+<section class="confirmacao-section">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                {% if not convidado.confirmou_presenca %}
+                <div class="confirmacao-card">
+                    <h3 class="text-center mb-4">
+                        <i class="fas fa-heart text-danger me-2"></i>
+                        Confirme sua Presença
+                    </h3>
+                    
+                    <form method="POST" action="{{ url_for('convite.confirmar_presenca', token=convidado.token) }}">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="acompanhantes" class="form-label">Número de Acompanhantes</label>
+                                <select class="form-select" id="acompanhantes" name="acompanhantes">
+                                    <option value="0" selected>Apenas eu</option>
+                                    <option value="1">Eu + 1 acompanhante</option>
+                                    <option value="2">Eu + 2 acompanhantes</option>
+                                    <option value="3">Eu + 3 acompanhantes</option>
+                                    <option value="4">Eu + 4 acompanhantes</option>
+                                </select>
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                <label for="observacoes" class="form-label">Observações (Opcional)</label>
+                                <textarea class="form-control" id="observacoes" name="observacoes" rows="3" 
+                                         placeholder="Restrições alimentares, necessidades especiais, etc."></textarea>
+                            </div>
+                        </div>
+                        
+                        <div class="text-center">
+                            <button type="submit" class="btn btn-romantic btn-lg">
+                                <i class="fas fa-check me-2"></i>
+                                Confirmar Presença
+                            </button>
+                        </div>
+                    </form>
+                </div>
+                {% else %}
+                <div class="confirmacao-card text-center">
+                    <i class="fas fa-check-circle text-success fa-4x mb-3"></i>
+                    <h3 class="text-success mb-3">Presença Confirmada!</h3>
+                    <p class="lead">Obrigado por confirmar sua presença!</p>
+                    <div class="row mt-4">
+                        <div class="col-md-6">
+                            <p><strong>Confirmado em:</strong><br>{{ convidado.data_confirmacao.strftime('%d/%m/%Y às %H:%M') }}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <p><strong>Acompanhantes:</strong><br>{{ convidado.acompanhantes }}</p>
+                        </div>
+                    </div>
+                    {% if convidado.observacoes %}
+                    <div class="mt-3">
+                        <p><strong>Suas observações:</strong><br>{{ convidado.observacoes }}</p>
+                    </div>
+                    {% endif %}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Lista de Presentes -->
+<section class="presentes-section py-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-12 text-center mb-5">
+                <h2 class="section-title">Lista de Presentes</h2>
+                <div class="section-divider"></div>
+                <p class="lead">Escolha um presente especial para nós!</p>
+            </div>
+        </div>
+        
+        <!-- Presentes Escolhidos -->
+        {% if presentes_escolhidos %}
+        <div class="row mb-5">
+            <div class="col-12">
+                <h4 class="mb-3">
+                    <i class="fas fa-gift text-warning me-2"></i>
+                    Seus Presentes Escolhidos
+                </h4>
+                <div class="row">
+                    {% for escolha in presentes_escolhidos %}
+                    <div class="col-md-4 mb-3">
+                        <div class="card presente-card border-success">
+                            <div class="presente-img">
+                                {% if escolha.presente.imagem_url %}
+                                <img src="{{ escolha.presente.imagem_url }}" alt="{{ escolha.presente.nome }}" class="img-fluid">
+                                {% else %}
+                                <i class="fas fa-gift"></i>
+                                {% endif %}
+                            </div>
+                            <div class="presente-info">
+                                <h5 class="presente-nome">{{ escolha.presente.nome }}</h5>
+                                {% if escolha.presente.categoria %}
+                                <span class="presente-categoria">{{ escolha.presente.categoria }}</span>
+                                {% endif %}
+                                {% if escolha.presente.preco_sugerido %}
+                                <p class="presente-preco">R$ {{ "%.2f"|format(escolha.presente.preco_sugerido) }}</p>
+                                {% endif %}
+                                <p class="text-muted small">Escolhido em {{ escolha.data_escolha.strftime('%d/%m/%Y') }}</p>
+                                <form method="POST" action="{{ url_for('convite.remover_presente', token=convidado.token, escolha_id=escolha.id) }}">
+                                    <button type="submit" class="btn btn-sm btn-outline-danger">
+                                        <i class="fas fa-times me-1"></i>
+                                        Remover
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        {% endif %}
+        
+        <!-- Presentes Disponíveis -->
+        <div class="row">
+            <div class="col-12 mb-3">
+                <h4>
+                    <i class="fas fa-shopping-bag text-info me-2"></i>
+                    Presentes Disponíveis
+                </h4>
+            </div>
+        </div>
+        
+        <div class="row">
+            {% for presente in presentes_disponiveis %}
+            <div class="col-lg-4 col-md-6 mb-4">
+                <div class="card presente-card h-100">
+                    <div class="presente-img">
+                        {% if presente.imagem_url %}
+                        <img src="{{ presente.imagem_url }}" alt="{{ presente.nome }}" class="img-fluid" style="height: 100%; object-fit: cover;">
+                        {% else %}
+                        <i class="fas fa-gift"></i>
+                        {% endif %}
+                    </div>
+                    <div class="presente-info">
+                        <h5 class="presente-nome">{{ presente.nome }}</h5>
+                        {% if presente.categoria %}
+                        <span class="presente-categoria">{{ presente.categoria }}</span>
+                        {% endif %}
+                        {% if presente.descricao %}
+                        <p class="text-muted small">{{ presente.descricao[:100] }}{% if presente.descricao|length > 100 %}...{% endif %}</p>
+                        {% endif %}
+                        {% if presente.preco_sugerido %}
+                        <p class="presente-preco">R$ {{ "%.2f"|format(presente.preco_sugerido) }}</p>
+                        {% endif %}
+                        
+                        <div class="d-flex gap-2">
+                            <form method="POST" action="{{ url_for('convite.escolher_presente', token=convidado.token, presente_id=presente.id) }}" class="flex-grow-1">
+                                <button type="submit" class="btn btn-romantic w-100">
+                                    <i class="fas fa-heart me-1"></i>
+                                    Escolher
+                                </button>
+                            </form>
+                            {% if presente.link_loja %}
+                            <a href="{{ presente.link_loja }}" target="_blank" class="btn btn-outline-info">
+                                <i class="fas fa-external-link-alt"></i>
+                            </a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% else %}
+            <div class="col-12 text-center py-5">
+                <i class="fas fa-gift fa-4x text-muted mb-3"></i>
+                <p class="text-muted">Nenhum presente disponível no momento.</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- Detalhes do Evento -->
+<section class="detalhes-evento py-5 bg-light">
+    <div class="container">
+        <div class="row">
+            <div class="col-12 text-center mb-5">
+                <h2 class="section-title">Detalhes do Evento</h2>
+                <div class="section-divider"></div>
+            </div>
+        </div>
+        
+        <div class="row">
+            {% if config.local_cerimonia %}
+            <div class="col-md-6 mb-4">
+                <div class="detail-card">
+                    <div class="detail-icon">
+                        <i class="fas fa-church"></i>
+                    </div>
+                    <h4>Cerimônia</h4>
+                    <p class="mb-2"><strong>Local:</strong> {{ config.local_cerimonia }}</p>
+                    {% if config.endereco_cerimonia %}
+                    <p class="mb-2"><strong>Endereço:</strong> {{ config.endereco_cerimonia }}</p>
+                    {% endif %}
+                    {% if config.horario_cerimonia %}
+                    <p><strong>Horário:</strong> {{ config.horario_cerimonia.strftime('%H:%M') }}</p>
+                    {% endif %}
+                </div>
+            </div>
+            {% endif %}
+            
+            {% if config.local_festa %}
+            <div class="col-md-6 mb-4">
+                <div class="detail-card">
+                    <div class="detail-icon">
+                        <i class="fas fa-glass-cheers"></i>
+                    </div>
+                    <h4>Festa</h4>
+                    <p class="mb-2"><strong>Local:</strong> {{ config.local_festa }}</p>
+                    {% if config.endereco_festa %}
+                    <p class="mb-2"><strong>Endereço:</strong> {{ config.endereco_festa }}</p>
+                    {% endif %}
+                    {% if config.horario_festa %}
+                    <p><strong>Horário:</strong> {{ config.horario_festa.strftime('%H:%M') }}</p>
+                    {% endif %}
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</section>
+
+<!-- Mensagem Final -->
+<section class="mensagem-final py-5">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8 text-center">
+                <div class="romantic-quote">
+                    <p class="mb-3">{{ config.mensagem_principal or 'Esperamos você em nosso grande dia! Sua presença é o presente mais importante para nós.' }}</p>
+                    <div class="mt-4">
+                        <i class="fas fa-heart text-danger fa-2x"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .presentes-section {
+        background: #f8f9fa;
+    }
+    
+    .border-success {
+        border-color: #28a745 !important;
+    }
+</style>
+{% endblock %}

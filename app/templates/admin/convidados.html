@@ -1,0 +1,129 @@
+{% extends "admin/base.html" %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h1 class="h3 mb-0">
+                    <i class="fas fa-users me-2"></i>
+                    Gerenciar Convidados
+                </h1>
+                <a href="{{ url_for('admin.add_convidado') }}" class="btn btn-romantic">
+                    <i class="fas fa-plus me-2"></i>
+                    Adicionar Convidado
+                </a>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Busca -->
+    <div class="row mb-3">
+        <div class="col-md-6">
+            <div class="input-group">
+                <span class="input-group-text">
+                    <i class="fas fa-search"></i>
+                </span>
+                <input type="text" class="form-control" id="searchInput" placeholder="Buscar convidados...">
+            </div>
+        </div>
+        <div class="col-md-6 text-end">
+            <span class="badge bg-info fs-6">Total: {{ convidados|length }} convidados</span>
+        </div>
+    </div>
+    
+    <!-- Tabela de Convidados -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card admin-card">
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-romantic mb-0" id="convidadosTable">
+                            <thead>
+                                <tr>
+                                    <th>Nome</th>
+                                    <th>Email</th>
+                                    <th>Telefone</th>
+                                    <th>Status</th>
+                                    <th>Acompanhantes</th>
+                                    <th>Link do Convite</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for convidado in convidados %}
+                                <tr>
+                                    <td>
+                                        <strong>{{ convidado.nome }}</strong>
+                                        {% if convidado.observacoes %}
+                                        <br><small class="text-muted">{{ convidado.observacoes[:50] }}{% if convidado.observacoes|length > 50 %}...{% endif %}</small>
+                                        {% endif %}
+                                    </td>
+                                    <td>{{ convidado.email or '-' }}</td>
+                                    <td>{{ convidado.telefone or '-' }}</td>
+                                    <td>
+                                        {% if convidado.confirmou_presenca %}
+                                            <span class="badge bg-success">
+                                                <i class="fas fa-check me-1"></i>
+                                                Confirmado
+                                            </span>
+                                        {% else %}
+                                            <span class="badge bg-warning">
+                                                <i class="fas fa-clock me-1"></i>
+                                                Pendente
+                                            </span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if convidado.confirmou_presenca %}
+                                            {{ convidado.acompanhantes }}
+                                        {% else %}
+                                            -
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <button class="btn btn-sm btn-outline-primary" onclick="copyInviteLink('{{ convidado.token }}')">
+                                            <i class="fas fa-copy me-1"></i>
+                                            Copiar Link
+                                        </button>
+                                    </td>
+                                    <td>
+                                        <div class="btn-group">
+                                            <a href="{{ url_for('convite.convite_personalizado', token=convidado.token) }}" 
+                                               target="_blank" class="btn btn-sm btn-outline-info">
+                                                <i class="fas fa-eye"></i>
+                                            </a>
+                                            <button class="btn btn-sm btn-outline-danger" 
+                                                    onclick="deleteItem({{ convidado.id }}, 'convidado', '{{ convidado.nome }}')">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% else %}
+                                <tr>
+                                    <td colspan="7" class="text-center py-4">
+                                        <i class="fas fa-users fa-3x text-muted mb-3"></i>
+                                        <p class="text-muted">Nenhum convidado cadastrado ainda.</p>
+                                        <a href="{{ url_for('admin.add_convidado') }}" class="btn btn-romantic">
+                                            Adicionar Primeiro Convidado
+                                        </a>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Inicializar busca na tabela
+    filterTable('searchInput', 'convidadosTable');
+</script>
+{% endblock %}

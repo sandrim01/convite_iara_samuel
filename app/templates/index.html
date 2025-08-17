@@ -1,0 +1,151 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="hero-section">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8 text-center">
+                <div class="hero-content">
+                    <h1 class="display-2 romantic-title mb-4">
+                        {{ config.nome_noiva }} <span class="text-danger">&</span> {{ config.nome_noivo }}
+                    </h1>
+                    
+                    <div class="wedding-date mb-4">
+                        {% if config.data_casamento %}
+                        <h3 class="elegant-date">{{ config.data_casamento.strftime('%d de %B de %Y') }}</h3>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="invitation-message mb-5">
+                        <p class="lead romantic-text">{{ config.mensagem_principal or 'Com muito amor, convidamos você para celebrar conosco o nosso grande dia!' }}</p>
+                    </div>
+                    
+                    <div class="action-buttons">
+                        <a href="{{ url_for('main.lista_presentes') }}" class="btn btn-romantic btn-lg me-3">
+                            <i class="fas fa-gift me-2"></i>
+                            Lista de Presentes
+                        </a>
+                        <a href="#detalhes" class="btn btn-outline-romantic btn-lg">
+                            <i class="fas fa-info-circle me-2"></i>
+                            Detalhes
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<section id="detalhes" class="details-section py-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-12 text-center mb-5">
+                <h2 class="section-title">Detalhes do Evento</h2>
+                <div class="section-divider"></div>
+            </div>
+        </div>
+        
+        <div class="row">
+            {% if config.local_cerimonia %}
+            <div class="col-md-6 mb-4">
+                <div class="detail-card">
+                    <div class="detail-icon">
+                        <i class="fas fa-church"></i>
+                    </div>
+                    <h4>Cerimônia</h4>
+                    <p class="mb-2"><strong>Local:</strong> {{ config.local_cerimonia }}</p>
+                    {% if config.endereco_cerimonia %}
+                    <p class="mb-2"><strong>Endereço:</strong> {{ config.endereco_cerimonia }}</p>
+                    {% endif %}
+                    {% if config.horario_cerimonia %}
+                    <p><strong>Horário:</strong> {{ config.horario_cerimonia.strftime('%H:%M') }}</p>
+                    {% endif %}
+                </div>
+            </div>
+            {% endif %}
+            
+            {% if config.local_festa %}
+            <div class="col-md-6 mb-4">
+                <div class="detail-card">
+                    <div class="detail-icon">
+                        <i class="fas fa-glass-cheers"></i>
+                    </div>
+                    <h4>Festa</h4>
+                    <p class="mb-2"><strong>Local:</strong> {{ config.local_festa }}</p>
+                    {% if config.endereco_festa %}
+                    <p class="mb-2"><strong>Endereço:</strong> {{ config.endereco_festa }}</p>
+                    {% endif %}
+                    {% if config.horario_festa %}
+                    <p><strong>Horário:</strong> {{ config.horario_festa.strftime('%H:%M') }}</p>
+                    {% endif %}
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</section>
+
+<section class="love-quote-section py-5">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8 text-center">
+                <blockquote class="romantic-quote">
+                    <p class="mb-3">"O amor não consiste em olhar um para o outro, mas sim em olhar juntos na mesma direção."</p>
+                    <footer class="quote-author">Antoine de Saint-Exupéry</footer>
+                </blockquote>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="admin-access py-3">
+    <div class="container">
+        <div class="row">
+            <div class="col-12 text-center">
+                <a href="{{ url_for('admin.login') }}" class="btn btn-sm btn-outline-secondary">
+                    <i class="fas fa-cog me-1"></i>
+                    Área Administrativa
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .hero-section {
+        background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 50%, #fecfef 100%);
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .hero-section::before {
+        content: '';
+        position: absolute;
+        width: 200%;
+        height: 200%;
+        background-image: 
+            radial-gradient(circle at 20% 80%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
+            radial-gradient(circle at 80% 20%, rgba(255, 255, 255, 0.1) 0%, transparent 50%);
+        animation: float 6s ease-in-out infinite;
+    }
+    
+    @keyframes float {
+        0%, 100% { transform: translateY(0px) rotate(0deg); }
+        50% { transform: translateY(-20px) rotate(180deg); }
+    }
+    
+    .details-section {
+        background: #f8f9fa;
+    }
+    
+    .love-quote-section {
+        background: linear-gradient(45deg, #ff9a9e, #fad0c4);
+        color: white;
+    }
+</style>
+{% endblock %}

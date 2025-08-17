@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row">
+        <div class="col-12 text-center mb-5">
+            <h1 class="section-title">Lista de Presentes</h1>
+            <div class="section-divider"></div>
+            <p class="lead">Escolha um presente especial para Iara & Samuel</p>
+        </div>
+    </div>
+    
+    <div class="row">
+        {% for presente in presentes %}
+        <div class="col-lg-4 col-md-6 mb-4">
+            <div class="card presente-card h-100">
+                <div class="presente-img">
+                    {% if presente.imagem_url %}
+                    <img src="{{ presente.imagem_url }}" alt="{{ presente.nome }}" class="img-fluid" style="height: 100%; object-fit: cover;">
+                    {% else %}
+                    <i class="fas fa-gift"></i>
+                    {% endif %}
+                </div>
+                <div class="presente-info">
+                    <h5 class="presente-nome">{{ presente.nome }}</h5>
+                    {% if presente.categoria %}
+                    <span class="presente-categoria">{{ presente.categoria }}</span>
+                    {% endif %}
+                    {% if presente.descricao %}
+                    <p class="text-muted">{{ presente.descricao }}</p>
+                    {% endif %}
+                    {% if presente.preco_sugerido %}
+                    <p class="presente-preco">R$ {{ "%.2f"|format(presente.preco_sugerido) }}</p>
+                    {% endif %}
+                    
+                    {% if presente.link_loja %}
+                    <a href="{{ presente.link_loja }}" target="_blank" class="btn btn-outline-romantic">
+                        <i class="fas fa-external-link-alt me-2"></i>
+                        Ver na Loja
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% else %}
+        <div class="col-12 text-center py-5">
+            <i class="fas fa-gift fa-4x text-muted mb-3"></i>
+            <p class="text-muted">Nenhum presente cadastrado ainda.</p>
+        </div>
+        {% endfor %}
+    </div>
+    
+    <div class="row mt-5">
+        <div class="col-12 text-center">
+            <a href="{{ url_for('main.index') }}" class="btn btn-romantic">
+                <i class="fas fa-arrow-left me-2"></i>
+                Voltar ao Convite
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}
