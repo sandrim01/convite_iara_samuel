@@ -1,0 +1,406 @@
+{% extends "base.html" %}
+
+{% block title %}Lista de Presentes - {{ config.nome_noiva or 'Iara' }} & {{ config.nome_noivo or 'Samuel' }}{% endblock %}
+
+{% block content %}
+<!-- Header Section -->
+<section class="page-header gifts-header">
+    <div class="container">
+        <div class="page-header-content">
+            <h1 class="page-title">Lista de Presentes</h1>
+            <p class="page-subtitle">
+                Escolha um presente especial para nós! Sua presença já é o maior presente, 
+                mas se quiser nos presentear, aqui estão algumas sugestões ♥
+            </p>
+            <div class="breadcrumb">
+                <a href="{{ url_for('main.index') }}">Home</a>
+                <span>/</span>
+                <span>Lista de Presentes</span>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Gift Categories -->
+<section class="gift-categories">
+    <div class="container">
+        <div class="categories-filter">
+            <button class="category-btn active" data-category="todos">
+                <i class="fas fa-th"></i>
+                Todos
+            </button>
+            <button class="category-btn" data-category="casa">
+                <i class="fas fa-home"></i>
+                Casa
+            </button>
+            <button class="category-btn" data-category="cozinha">
+                <i class="fas fa-utensils"></i>
+                Cozinha
+            </button>
+            <button class="category-btn" data-category="quarto">
+                <i class="fas fa-bed"></i>
+                Quarto
+            </button>
+            <button class="category-btn" data-category="sala">
+                <i class="fas fa-couch"></i>
+                Sala
+            </button>
+            <button class="category-btn" data-category="experiencias">
+                <i class="fas fa-plane"></i>
+                Experiências
+            </button>
+        </div>
+    </div>
+</section>
+
+<!-- Gifts Grid -->
+<section class="gifts-section">
+    <div class="container">
+        {% if presentes %}
+            <div class="gifts-grid" id="gifts-grid">
+                {% for presente in presentes %}
+                <div class="gift-card" data-category="{{ presente.categoria }}" data-id="{{ presente.id }}">
+                    <div class="gift-image">
+                        {% if presente.imagem_url %}
+                            <img src="{{ presente.imagem_url }}" alt="{{ presente.nome }}" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        {% endif %}
+                        <div class="gift-placeholder" {% if presente.imagem_url %}style="display: none;"{% endif %}>
+                            <i class="fas fa-gift"></i>
+                        </div>
+                        
+                        {% if not presente.disponivel %}
+                            <div class="gift-chosen-badge">
+                                <i class="fas fa-check"></i>
+                                <span>Escolhido</span>
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="gift-content">
+                        <h3 class="gift-name">{{ presente.nome }}</h3>
+                        
+                        {% if presente.descricao %}
+                            <p class="gift-description">{{ presente.descricao }}</p>
+                        {% endif %}
+                        
+                        <div class="gift-details">
+                            {% if presente.preco %}
+                                <div class="gift-price">
+                                    <i class="fas fa-tag"></i>
+                                    <span>R$ {{ "%.2f"|format(presente.preco) }}</span>
+                                </div>
+                            {% endif %}
+                            
+                            {% if presente.loja %}
+                                <div class="gift-store">
+                                    <i class="fas fa-store"></i>
+                                    <span>{{ presente.loja }}</span>
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="gift-actions">
+                            {% if presente.disponivel %}
+                                <button class="btn btn-primary btn-block" onclick="chooseGift({{ presente.id }})">
+                                    <i class="fas fa-heart"></i>
+                                    Escolher Este Presente
+                                </button>
+                                
+                                {% if presente.link_loja %}
+                                    <a href="{{ presente.link_loja }}" target="_blank" class="btn btn-outline btn-block">
+                                        <i class="fas fa-external-link-alt"></i>
+                                        Ver na Loja
+                                    </a>
+                                {% endif %}
+                            {% else %}
+                                <button class="btn btn-disabled btn-block" disabled>
+                                    <i class="fas fa-check"></i>
+                                    Já foi escolhido
+                                </button>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            
+            <!-- Empty State for Filtered Results -->
+            <div class="empty-state" id="empty-state" style="display: none;">
+                <div class="empty-icon">
+                    <i class="fas fa-search"></i>
+                </div>
+                <h3>Nenhum presente encontrado</h3>
+                <p>Não encontramos presentes nesta categoria. Tente outra categoria.</p>
+            </div>
+        {% else %}
+            <!-- No Gifts State -->
+            <div class="empty-state">
+                <div class="empty-icon">
+                    <i class="fas fa-gift"></i>
+                </div>
+                <h3>Lista de presentes em breve</h3>
+                <p>Estamos preparando nossa lista de presentes com muito carinho. Volte em breve!</p>
+                <a href="{{ url_for('main.index') }}" class="btn btn-primary">
+                    <i class="fas fa-home"></i>
+                    Voltar ao Início
+                </a>
+            </div>
+        {% endif %}
+    </div>
+</section>
+
+<!-- Gift Selection Modal -->
+<div class="modal" id="gift-modal">
+    <div class="modal-overlay" onclick="closeGiftModal()"></div>
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>Escolher Presente</h3>
+            <button class="modal-close" onclick="closeGiftModal()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        
+        <div class="modal-body">
+            <div class="gift-selection-info">
+                <div class="selected-gift-preview">
+                    <div class="gift-preview-image">
+                        <i class="fas fa-gift"></i>
+                    </div>
+                    <div class="gift-preview-details">
+                        <h4 id="selected-gift-name">Nome do Presente</h4>
+                        <p id="selected-gift-price">R$ 0,00</p>
+                    </div>
+                </div>
+                
+                <p class="selection-message">
+                    <i class="fas fa-heart"></i>
+                    Que lindo! Você escolheu este presente para nós. Por favor, preencha seus dados para confirmarmos.
+                </p>
+            </div>
+            
+            <form id="gift-selection-form" class="gift-form">
+                <input type="hidden" id="presente-id" name="presente_id">
+                
+                <div class="form-group">
+                    <label for="nome-presenteador">Seu Nome Completo *</label>
+                    <input type="text" id="nome-presenteador" name="nome_presenteador" required class="form-control">
+                </div>
+                
+                <div class="form-group">
+                    <label for="email-presenteador">Seu E-mail *</label>
+                    <input type="email" id="email-presenteador" name="email_presenteador" required class="form-control">
+                </div>
+                
+                <div class="form-group">
+                    <label for="telefone-presenteador">Seu Telefone</label>
+                    <input type="tel" id="telefone-presenteador" name="telefone_presenteador" class="form-control" placeholder="(11) 99999-9999">
+                </div>
+                
+                <div class="form-group">
+                    <label for="mensagem-presente">Mensagem (opcional)</label>
+                    <textarea id="mensagem-presente" name="mensagem" rows="3" class="form-control" placeholder="Deixe uma mensagem carinhosa para os noivos..."></textarea>
+                </div>
+                
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" onclick="closeGiftModal()">
+                        Cancelar
+                    </button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-heart"></i>
+                        Confirmar Escolha
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Back to Home Section -->
+<section class="back-section">
+    <div class="container">
+        <div class="back-content">
+            <div class="back-message">
+                <h3>Obrigado por pensar em nós! ♥</h3>
+                <p>Sua presença já é o maior presente, mas ficamos muito felizes com seu carinho.</p>
+            </div>
+            
+            <div class="back-actions">
+                <a href="{{ url_for('main.index') }}" class="btn btn-outline">
+                    <i class="fas fa-home"></i>
+                    Voltar ao Início
+                </a>
+                <a href="{{ url_for('main.confirmar_presenca') }}" class="btn btn-primary">
+                    <i class="fas fa-calendar-check"></i>
+                    Confirmar Presença
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+// Filter gifts by category
+document.querySelectorAll('.category-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+        // Update active button
+        document.querySelectorAll('.category-btn').forEach(b => b.classList.remove('active'));
+        this.classList.add('active');
+        
+        const category = this.dataset.category;
+        const gifts = document.querySelectorAll('.gift-card');
+        const emptyState = document.getElementById('empty-state');
+        let visibleCount = 0;
+        
+        gifts.forEach(gift => {
+            if (category === 'todos' || gift.dataset.category === category) {
+                gift.style.display = 'block';
+                visibleCount++;
+            } else {
+                gift.style.display = 'none';
+            }
+        });
+        
+        // Show/hide empty state
+        if (visibleCount === 0) {
+            emptyState.style.display = 'block';
+        } else {
+            emptyState.style.display = 'none';
+        }
+    });
+});
+
+// Choose gift function
+function chooseGift(giftId) {
+    const giftCard = document.querySelector(`[data-id="${giftId}"]`);
+    const giftName = giftCard.querySelector('.gift-name').textContent;
+    const giftPriceElement = giftCard.querySelector('.gift-price span');
+    const giftPrice = giftPriceElement ? giftPriceElement.textContent : 'Preço não informado';
+    
+    // Update modal content
+    document.getElementById('selected-gift-name').textContent = giftName;
+    document.getElementById('selected-gift-price').textContent = giftPrice;
+    document.getElementById('presente-id').value = giftId;
+    
+    // Show modal
+    document.getElementById('gift-modal').classList.add('active');
+    document.body.style.overflow = 'hidden';
+}
+
+// Close gift modal
+function closeGiftModal() {
+    document.getElementById('gift-modal').classList.remove('active');
+    document.body.style.overflow = '';
+    
+    // Reset form
+    document.getElementById('gift-selection-form').reset();
+}
+
+// Handle gift selection form
+document.getElementById('gift-selection-form').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const formData = new FormData(this);
+    
+    // Show loading
+    const submitBtn = this.querySelector('button[type="submit"]');
+    const originalText = submitBtn.innerHTML;
+    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Confirmando...';
+    submitBtn.disabled = true;
+    
+    fetch('{{ url_for("main.escolher_presente") }}', {
+        method: 'POST',
+        body: formData,
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Update gift card to show as chosen
+            const giftCard = document.querySelector(`[data-id="${data.presente_id}"]`);
+            if (giftCard) {
+                giftCard.querySelector('.gift-actions').innerHTML = `
+                    <button class="btn btn-disabled btn-block" disabled>
+                        <i class="fas fa-check"></i>
+                        Já foi escolhido
+                    </button>
+                `;
+                
+                // Add chosen badge
+                const giftImage = giftCard.querySelector('.gift-image');
+                giftImage.innerHTML += `
+                    <div class="gift-chosen-badge">
+                        <i class="fas fa-check"></i>
+                        <span>Escolhido</span>
+                    </div>
+                `;
+            }
+            
+            // Show success message
+            showMessage('success', 'Obrigado! Seu presente foi escolhido com sucesso. ♥');
+            closeGiftModal();
+        } else {
+            showMessage('error', data.message || 'Erro ao escolher presente. Tente novamente.');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        showMessage('error', 'Erro ao escolher presente. Tente novamente.');
+    })
+    .finally(() => {
+        // Reset button
+        submitBtn.innerHTML = originalText;
+        submitBtn.disabled = false;
+    });
+});
+
+// Show message function
+function showMessage(type, message) {
+    const flashContainer = document.querySelector('.flash-messages') || createFlashContainer();
+    
+    const flashMessage = document.createElement('div');
+    flashMessage.className = `flash-message flash-${type}`;
+    flashMessage.innerHTML = `
+        <span>${message}</span>
+        <button type="button" class="flash-close">&times;</button>
+    `;
+    
+    flashContainer.appendChild(flashMessage);
+    
+    // Auto close after 5 seconds
+    setTimeout(() => {
+        flashMessage.remove();
+    }, 5000);
+    
+    // Close button
+    flashMessage.querySelector('.flash-close').addEventListener('click', () => {
+        flashMessage.remove();
+    });
+    
+    // Scroll to top to show message
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function createFlashContainer() {
+    const container = document.createElement('div');
+    container.className = 'flash-messages';
+    document.querySelector('.main-content').insertBefore(container, document.querySelector('.main-content').firstChild);
+    return container;
+}
+
+// Phone mask
+document.getElementById('telefone-presenteador').addEventListener('input', function(e) {
+    let value = e.target.value.replace(/\D/g, '');
+    if (value.length <= 11) {
+        value = value.replace(/(\d{2})(\d{5})(\d{4})/, '($1) $2-$3');
+        if (value.length < 15) {
+            value = value.replace(/(\d{2})(\d{4})(\d{4})/, '($1) $2-$3');
+        }
+    }
+    e.target.value = value;
+});
+</script>
+{% endblock %}

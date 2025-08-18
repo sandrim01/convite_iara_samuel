@@ -1,0 +1,451 @@
+{% extends "base.html" %}
+
+{% block title %}Confirmar Presença - {{ config.nome_noiva or 'Iara' }} & {{ config.nome_noivo or 'Samuel' }}{% endblock %}
+
+{% block content %}
+<!-- Header Section -->
+<section class="page-header rsvp-header">
+    <div class="container">
+        <div class="page-header-content">
+            <h1 class="page-title">Confirme sua Presença</h1>
+            <p class="page-subtitle">
+                Sua presença é muito importante para nós! Por favor, confirme se poderá comparecer 
+                ao nosso casamento para que possamos nos organizar melhor ♥
+            </p>
+            <div class="breadcrumb">
+                <a href="{{ url_for('main.index') }}">Home</a>
+                <span>/</span>
+                <span>Confirmar Presença</span>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- RSVP Form Section -->
+<section class="rsvp-section">
+    <div class="container">
+        <div class="rsvp-container">
+            <div class="rsvp-info">
+                <div class="rsvp-details">
+                    <h3>Detalhes do Evento</h3>
+                    
+                    <div class="event-summary">
+                        <div class="event-item">
+                            <div class="event-icon">
+                                <i class="fas fa-calendar"></i>
+                            </div>
+                            <div class="event-text">
+                                <strong>Data:</strong>
+                                {% if config.data_casamento %}
+                                    {{ config.data_casamento.strftime('%d de %B de %Y') }}
+                                {% else %}
+                                    28 de novembro de 2025
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <div class="event-item">
+                            <div class="event-icon">
+                                <i class="fas fa-church"></i>
+                            </div>
+                            <div class="event-text">
+                                <strong>Cerimônia:</strong>
+                                {% if config.horario_cerimonia %}
+                                    {{ config.horario_cerimonia.strftime('%H:%M') }}
+                                {% else %}
+                                    16:00
+                                {% endif %}
+                                - {{ config.local_cerimonia or 'Igreja São Francisco de Assis' }}
+                            </div>
+                        </div>
+                        
+                        <div class="event-item">
+                            <div class="event-icon">
+                                <i class="fas fa-glass-cheers"></i>
+                            </div>
+                            <div class="event-text">
+                                <strong>Festa:</strong>
+                                {% if config.horario_festa %}
+                                    {{ config.horario_festa.strftime('%H:%M') }}
+                                {% else %}
+                                    18:00
+                                {% endif %}
+                                - {{ config.local_festa or 'Espaço Jardim Encantado' }}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="rsvp-deadline">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <p>
+                            <strong>Importante:</strong> Confirme sua presença até 
+                            {% if config.data_casamento %}
+                                {{ (config.data_casamento - timedelta(days=30)).strftime('%d/%m/%Y') }}
+                            {% else %}
+                                28/10/2025
+                            {% endif %}
+                            para nos ajudar na organização.
+                        </p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="rsvp-form-container">
+                <form id="rsvp-form" class="rsvp-form">
+                    <div class="form-section">
+                        <h3 class="form-section-title">
+                            <i class="fas fa-user"></i>
+                            Seus Dados
+                        </h3>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="nome">Nome Completo *</label>
+                                <input type="text" id="nome" name="nome" required class="form-control">
+                            </div>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="email">E-mail *</label>
+                                <input type="email" id="email" name="email" required class="form-control">
+                            </div>
+                            <div class="form-group">
+                                <label for="telefone">Telefone</label>
+                                <input type="tel" id="telefone" name="telefone" class="form-control" placeholder="(11) 99999-9999">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-section">
+                        <h3 class="form-section-title">
+                            <i class="fas fa-calendar-check"></i>
+                            Confirmação de Presença
+                        </h3>
+                        
+                        <div class="form-group">
+                            <label class="radio-label">Você poderá comparecer ao nosso casamento?</label>
+                            <div class="radio-group">
+                                <label class="radio-option">
+                                    <input type="radio" name="confirmacao" value="sim" required>
+                                    <span class="radio-custom"></span>
+                                    <span class="radio-text">
+                                        <i class="fas fa-heart text-success"></i>
+                                        Sim, estarei presente!
+                                    </span>
+                                </label>
+                                <label class="radio-option">
+                                    <input type="radio" name="confirmacao" value="nao" required>
+                                    <span class="radio-custom"></span>
+                                    <span class="radio-text">
+                                        <i class="fas fa-heart-broken text-error"></i>
+                                        Infelizmente não poderei comparecer
+                                    </span>
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div id="attending-details" class="attending-details" style="display: none;">
+                            <div class="form-group">
+                                <label for="numero_acompanhantes">Número de acompanhantes</label>
+                                <select id="numero_acompanhantes" name="numero_acompanhantes" class="form-control">
+                                    <option value="0">Apenas eu</option>
+                                    <option value="1">1 acompanhante</option>
+                                    <option value="2">2 acompanhantes</option>
+                                    <option value="3">3 acompanhantes</option>
+                                    <option value="4">4 acompanhantes</option>
+                                    <option value="5">5 ou mais acompanhantes</option>
+                                </select>
+                            </div>
+                            
+                            <div id="companions-details" class="companions-details" style="display: none;">
+                                <h4>Dados dos Acompanhantes</h4>
+                                <div id="companions-list"></div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label>Eventos que participará:</label>
+                                <div class="checkbox-group">
+                                    <label class="checkbox-option">
+                                        <input type="checkbox" name="eventos" value="cerimonia" checked>
+                                        <span class="checkbox-custom"></span>
+                                        <span class="checkbox-text">
+                                            <i class="fas fa-church"></i>
+                                            Cerimônia Religiosa
+                                        </span>
+                                    </label>
+                                    <label class="checkbox-option">
+                                        <input type="checkbox" name="eventos" value="festa" checked>
+                                        <span class="checkbox-custom"></span>
+                                        <span class="checkbox-text">
+                                            <i class="fas fa-glass-cheers"></i>
+                                            Festa
+                                        </span>
+                                    </label>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="restricoes_alimentares">Restrições alimentares ou observações</label>
+                                <textarea id="restricoes_alimentares" name="restricoes_alimentares" rows="3" class="form-control" placeholder="Ex: vegetariano, alérgico a frutos do mar, etc."></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-section">
+                        <h3 class="form-section-title">
+                            <i class="fas fa-heart"></i>
+                            Mensagem (Opcional)
+                        </h3>
+                        
+                        <div class="form-group">
+                            <label for="mensagem">Deixe uma mensagem carinhosa para os noivos</label>
+                            <textarea id="mensagem" name="mensagem" rows="4" class="form-control" placeholder="Compartilhe seus votos de felicidade, uma memória especial ou simplesmente o quanto vocês significam para você..."></textarea>
+                        </div>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary btn-large">
+                            <i class="fas fa-heart"></i>
+                            Confirmar Presença
+                        </button>
+                        <a href="{{ url_for('main.index') }}" class="btn btn-secondary btn-large">
+                            <i class="fas fa-arrow-left"></i>
+                            Voltar
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Success Modal -->
+<div class="modal" id="success-modal">
+    <div class="modal-overlay"></div>
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>Presença Confirmada! ♥</h3>
+        </div>
+        
+        <div class="modal-body">
+            <div class="success-message">
+                <div class="success-icon">
+                    <i class="fas fa-heart"></i>
+                </div>
+                <p id="confirmation-message">Obrigado por confirmar sua presença!</p>
+                <p>Mal podemos esperar para celebrar este momento especial com você!</p>
+            </div>
+            
+            <div class="success-actions">
+                <a href="{{ url_for('main.index') }}" class="btn btn-primary">
+                    <i class="fas fa-home"></i>
+                    Voltar ao Início
+                </a>
+                <a href="{{ url_for('main.lista_presentes') }}" class="btn btn-secondary">
+                    <i class="fas fa-gift"></i>
+                    Ver Lista de Presentes
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+// Show/hide attending details based on confirmation
+document.querySelectorAll('input[name="confirmacao"]').forEach(radio => {
+    radio.addEventListener('change', function() {
+        const attendingDetails = document.getElementById('attending-details');
+        if (this.value === 'sim') {
+            attendingDetails.style.display = 'block';
+        } else {
+            attendingDetails.style.display = 'none';
+        }
+    });
+});
+
+// Show/hide companion details based on number of companions
+document.getElementById('numero_acompanhantes').addEventListener('change', function() {
+    const companionsDetails = document.getElementById('companions-details');
+    const companionsList = document.getElementById('companions-list');
+    const numCompanions = parseInt(this.value);
+    
+    if (numCompanions > 0) {
+        companionsDetails.style.display = 'block';
+        generateCompanionFields(numCompanions);
+    } else {
+        companionsDetails.style.display = 'none';
+        companionsList.innerHTML = '';
+    }
+});
+
+// Generate companion input fields
+function generateCompanionFields(numCompanions) {
+    const companionsList = document.getElementById('companions-list');
+    const maxFields = Math.min(numCompanions, 5); // Limit to 5 fields
+    
+    let html = '';
+    for (let i = 1; i <= maxFields; i++) {
+        html += `
+            <div class="companion-group">
+                <h5>Acompanhante ${i}</h5>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="acompanhante_nome_${i}">Nome Completo</label>
+                        <input type="text" id="acompanhante_nome_${i}" name="acompanhante_nome_${i}" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="acompanhante_idade_${i}">Idade</label>
+                        <input type="number" id="acompanhante_idade_${i}" name="acompanhante_idade_${i}" min="0" max="120" class="form-control">
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+    
+    if (numCompanions > 5) {
+        html += `
+            <div class="companion-note">
+                <i class="fas fa-info-circle"></i>
+                <p>Para mais de 5 acompanhantes, entre em contato conosco diretamente.</p>
+            </div>
+        `;
+    }
+    
+    companionsList.innerHTML = html;
+}
+
+// Phone mask
+document.getElementById('telefone').addEventListener('input', function(e) {
+    let value = e.target.value.replace(/\D/g, '');
+    if (value.length <= 11) {
+        value = value.replace(/(\d{2})(\d{5})(\d{4})/, '($1) $2-$3');
+        if (value.length < 15) {
+            value = value.replace(/(\d{2})(\d{4})(\d{4})/, '($1) $2-$3');
+        }
+    }
+    e.target.value = value;
+});
+
+// Handle form submission
+document.getElementById('rsvp-form').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const formData = new FormData(this);
+    
+    // Get selected events
+    const selectedEvents = [];
+    document.querySelectorAll('input[name="eventos"]:checked').forEach(checkbox => {
+        selectedEvents.push(checkbox.value);
+    });
+    formData.set('eventos', selectedEvents.join(','));
+    
+    // Get companion data
+    const companions = [];
+    for (let i = 1; i <= 5; i++) {
+        const nameField = document.getElementById(`acompanhante_nome_${i}`);
+        const ageField = document.getElementById(`acompanhante_idade_${i}`);
+        
+        if (nameField && nameField.value.trim()) {
+            companions.push({
+                nome: nameField.value.trim(),
+                idade: ageField ? ageField.value : ''
+            });
+        }
+    }
+    formData.set('acompanhantes', JSON.stringify(companions));
+    
+    // Show loading
+    const submitBtn = this.querySelector('button[type="submit"]');
+    const originalText = submitBtn.innerHTML;
+    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Confirmando...';
+    submitBtn.disabled = true;
+    
+    fetch('{{ url_for("main.processar_confirmacao") }}', {
+        method: 'POST',
+        body: formData,
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Update confirmation message
+            const confirmacao = formData.get('confirmacao');
+            let message = '';
+            if (confirmacao === 'sim') {
+                message = 'Que alegria! Obrigado por confirmar sua presença!';
+            } else {
+                message = 'Obrigado por nos avisar. Sentiremos sua falta!';
+            }
+            document.getElementById('confirmation-message').textContent = message;
+            
+            // Show success modal
+            document.getElementById('success-modal').classList.add('active');
+            document.body.style.overflow = 'hidden';
+            
+            // Reset form
+            this.reset();
+            document.getElementById('attending-details').style.display = 'none';
+            document.getElementById('companions-details').style.display = 'none';
+        } else {
+            showMessage('error', data.message || 'Erro ao confirmar presença. Tente novamente.');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        showMessage('error', 'Erro ao confirmar presença. Tente novamente.');
+    })
+    .finally(() => {
+        // Reset button
+        submitBtn.innerHTML = originalText;
+        submitBtn.disabled = false;
+    });
+});
+
+// Show message function
+function showMessage(type, message) {
+    const flashContainer = document.querySelector('.flash-messages') || createFlashContainer();
+    
+    const flashMessage = document.createElement('div');
+    flashMessage.className = `flash-message flash-${type}`;
+    flashMessage.innerHTML = `
+        <span>${message}</span>
+        <button type="button" class="flash-close">&times;</button>
+    `;
+    
+    flashContainer.appendChild(flashMessage);
+    
+    // Auto close after 5 seconds
+    setTimeout(() => {
+        flashMessage.remove();
+    }, 5000);
+    
+    // Close button
+    flashMessage.querySelector('.flash-close').addEventListener('click', () => {
+        flashMessage.remove();
+    });
+    
+    // Scroll to top to show message
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function createFlashContainer() {
+    const container = document.createElement('div');
+    container.className = 'flash-messages';
+    document.querySelector('.main-content').insertBefore(container, document.querySelector('.main-content').firstChild);
+    return container;
+}
+
+// Close modal when clicking outside
+document.addEventListener('click', function(e) {
+    if (e.target.classList.contains('modal-overlay')) {
+        e.target.parentElement.classList.remove('active');
+        document.body.style.overflow = '';
+    }
+});
+</script>
+{% endblock %}

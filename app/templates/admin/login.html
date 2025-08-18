@@ -1,0 +1,306 @@
+{% extends "base.html" %}
+
+{% block title %}Painel Administrativo - {{ config.nome_noiva or 'Iara' }} & {{ config.nome_noivo or 'Samuel' }}{% endblock %}
+
+{% block extra_head %}
+<style>
+    .navbar { display: none; }
+    .footer { display: none; }
+    .main-content { padding-top: 0; }
+    body { background: linear-gradient(135deg, var(--primary-color), var(--secondary-color)); }
+</style>
+{% endblock %}
+
+{% block content %}
+<section class="admin-login-section">
+    <div class="admin-login-container">
+        <div class="admin-login-card">
+            <div class="admin-login-header">
+                <div class="admin-logo">
+                    <i class="fas fa-user-shield"></i>
+                </div>
+                <h1 class="admin-title">Painel Administrativo</h1>
+                <p class="admin-subtitle">{{ config.nome_noiva or 'Iara' }} & {{ config.nome_noivo or 'Samuel' }}</p>
+            </div>
+            
+            <form method="POST" class="admin-login-form">
+                {{ form.hidden_tag() }}
+                
+                <div class="form-group">
+                    <label for="username" class="form-label">
+                        <i class="fas fa-user"></i>
+                        Usuário
+                    </label>
+                    {{ form.username(class="form-control", placeholder="Digite seu usuário") }}
+                    {% for error in form.username.errors %}
+                        <div class="form-error">{{ error }}</div>
+                    {% endfor %}
+                </div>
+                
+                <div class="form-group">
+                    <label for="password" class="form-label">
+                        <i class="fas fa-lock"></i>
+                        Senha
+                    </label>
+                    <div class="password-field">
+                        {{ form.password(class="form-control", placeholder="Digite sua senha") }}
+                        <button type="button" class="password-toggle" onclick="togglePassword()">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
+                    {% for error in form.password.errors %}
+                        <div class="form-error">{{ error }}</div>
+                    {% endfor %}
+                </div>
+                
+                <div class="form-group">
+                    <label class="checkbox-container">
+                        {{ form.remember_me() }}
+                        <span class="checkmark"></span>
+                        Lembrar de mim
+                    </label>
+                </div>
+                
+                <button type="submit" class="btn btn-primary btn-block btn-large">
+                    <i class="fas fa-sign-in-alt"></i>
+                    Entrar
+                </button>
+            </form>
+            
+            <div class="admin-footer">
+                <p>
+                    <a href="{{ url_for('main.index') }}" class="admin-back-link">
+                        <i class="fas fa-arrow-left"></i>
+                        Voltar ao site
+                    </a>
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<style>
+.admin-login-section {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+}
+
+.admin-login-container {
+    width: 100%;
+    max-width: 400px;
+}
+
+.admin-login-card {
+    background: var(--white);
+    border-radius: 20px;
+    box-shadow: var(--shadow-heavy);
+    overflow: hidden;
+    animation: slideUp 0.6s ease;
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.admin-login-header {
+    text-align: center;
+    padding: 3rem 2rem 2rem;
+    background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+    color: var(--white);
+}
+
+.admin-logo {
+    width: 80px;
+    height: 80px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1.5rem;
+    font-size: 2rem;
+}
+
+.admin-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+.admin-subtitle {
+    font-family: var(--font-script);
+    font-size: 1.2rem;
+    opacity: 0.9;
+}
+
+.admin-login-form {
+    padding: 2rem;
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+    color: var(--text-dark);
+}
+
+.form-label i {
+    color: var(--primary-color);
+}
+
+.password-field {
+    position: relative;
+}
+
+.password-toggle {
+    position: absolute;
+    right: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: var(--text-light);
+    cursor: pointer;
+    font-size: 1rem;
+    padding: 0;
+}
+
+.password-toggle:hover {
+    color: var(--primary-color);
+}
+
+.checkbox-container {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    cursor: pointer;
+    font-size: 0.9rem;
+    color: var(--text-dark);
+}
+
+.checkbox-container input[type="checkbox"] {
+    display: none;
+}
+
+.checkmark {
+    width: 20px;
+    height: 20px;
+    border: 2px solid var(--primary-color);
+    border-radius: 4px;
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+.checkbox-container input[type="checkbox"]:checked + .checkmark {
+    background: var(--primary-color);
+}
+
+.checkbox-container input[type="checkbox"]:checked + .checkmark::after {
+    content: '\2713';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: var(--white);
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.admin-footer {
+    padding: 1.5rem 2rem;
+    text-align: center;
+    background: var(--background);
+    border-top: 1px solid var(--secondary-color);
+}
+
+.admin-back-link {
+    color: var(--text-light);
+    text-decoration: none;
+    font-size: 0.9rem;
+    transition: color 0.3s ease;
+}
+
+.admin-back-link:hover {
+    color: var(--primary-color);
+}
+
+.admin-back-link i {
+    margin-right: 0.5rem;
+}
+
+.form-error {
+    color: var(--error);
+    font-size: 0.85rem;
+    margin-top: 0.25rem;
+}
+
+@media (max-width: 768px) {
+    .admin-login-section {
+        padding: 1rem;
+    }
+    
+    .admin-login-header {
+        padding: 2rem 1.5rem 1.5rem;
+    }
+    
+    .admin-login-form {
+        padding: 1.5rem;
+    }
+}
+</style>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+function togglePassword() {
+    const passwordField = document.getElementById('password');
+    const toggleBtn = document.querySelector('.password-toggle i');
+    
+    if (passwordField.type === 'password') {
+        passwordField.type = 'text';
+        toggleBtn.className = 'fas fa-eye-slash';
+    } else {
+        passwordField.type = 'password';
+        toggleBtn.className = 'fas fa-eye';
+    }
+}
+
+// Focus on first input
+document.addEventListener('DOMContentLoaded', function() {
+    document.getElementById('username').focus();
+});
+
+// Enter key handling
+document.querySelectorAll('.form-control').forEach(input => {
+    input.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            const form = this.closest('form');
+            const inputs = Array.from(form.querySelectorAll('.form-control'));
+            const currentIndex = inputs.indexOf(this);
+            
+            if (currentIndex < inputs.length - 1) {
+                inputs[currentIndex + 1].focus();
+            } else {
+                form.submit();
+            }
+        }
+    });
+});
+</script>
+{% endblock %}

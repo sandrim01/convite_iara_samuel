@@ -1,0 +1,783 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - Painel Administrativo{% endblock %}
+
+{% block extra_head %}
+<style>
+    .navbar { background: var(--white); box-shadow: var(--shadow-medium); }
+    .nav-menu { margin-left: auto; }
+    .admin-nav { display: flex; align-items: center; gap: 1rem; }
+    .admin-welcome { color: var(--text-dark); font-weight: 500; }
+    .admin-logout { color: var(--error); text-decoration: none; }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Admin Header -->
+<section class="admin-header">
+    <div class="container">
+        <div class="admin-header-content">
+            <div class="admin-title-section">
+                <h1 class="admin-page-title">
+                    <i class="fas fa-tachometer-alt"></i>
+                    Dashboard Administrativo
+                </h1>
+                <p class="admin-page-subtitle">Gerencie seu site de casamento</p>
+            </div>
+            
+            <div class="admin-actions">
+                <a href="{{ url_for('main.index') }}" class="btn btn-outline" target="_blank">
+                    <i class="fas fa-external-link-alt"></i>
+                    Ver Site
+                </a>
+                <a href="{{ url_for('admin.logout') }}" class="btn btn-secondary">
+                    <i class="fas fa-sign-out-alt"></i>
+                    Sair
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Stats Section -->
+<section class="admin-stats">
+    <div class="container">
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon presence">
+                    <i class="fas fa-users"></i>
+                </div>
+                <div class="stat-content">
+                    <div class="stat-number">{{ stats.total_convidados }}</div>
+                    <div class="stat-label">Total de Convidados</div>
+                </div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-icon confirmed">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+                <div class="stat-content">
+                    <div class="stat-number">{{ stats.confirmados }}</div>
+                    <div class="stat-label">Confirmados</div>
+                </div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-icon declined">
+                    <i class="fas fa-times-circle"></i>
+                </div>
+                <div class="stat-content">
+                    <div class="stat-number">{{ stats.nao_confirmados }}</div>
+                    <div class="stat-label">Não Confirmados</div>
+                </div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-icon gifts">
+                    <i class="fas fa-gift"></i>
+                </div>
+                <div class="stat-content">
+                    <div class="stat-number">{{ stats.presentes_escolhidos }}</div>
+                    <div class="stat-label">Presentes Escolhidos</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Quick Actions -->
+<section class="admin-quick-actions">
+    <div class="container">
+        <div class="section-header">
+            <h2 class="section-title">Ações Rápidas</h2>
+        </div>
+        
+        <div class="quick-actions-grid">
+            <a href="{{ url_for('admin.convidados') }}" class="quick-action-card">
+                <div class="action-icon">
+                    <i class="fas fa-users"></i>
+                </div>
+                <div class="action-content">
+                    <h3>Gerenciar Convidados</h3>
+                    <p>Visualize e gerencie confirmações de presença</p>
+                </div>
+                <div class="action-arrow">
+                    <i class="fas fa-arrow-right"></i>
+                </div>
+            </a>
+            
+            <a href="{{ url_for('admin.presentes') }}" class="quick-action-card">
+                <div class="action-icon">
+                    <i class="fas fa-gift"></i>
+                </div>
+                <div class="action-content">
+                    <h3>Lista de Presentes</h3>
+                    <p>Adicione, edite e gerencie presentes</p>
+                </div>
+                <div class="action-arrow">
+                    <i class="fas fa-arrow-right"></i>
+                </div>
+            </a>
+            
+            <a href="{{ url_for('admin.configuracoes') }}" class="quick-action-card">
+                <div class="action-icon">
+                    <i class="fas fa-cog"></i>
+                </div>
+                <div class="action-content">
+                    <h3>Configurações</h3>
+                    <p>Edite informações do casal e evento</p>
+                </div>
+                <div class="action-arrow">
+                    <i class="fas fa-arrow-right"></i>
+                </div>
+            </a>
+            
+            <a href="{{ url_for('admin.mensagens') }}" class="quick-action-card">
+                <div class="action-icon">
+                    <i class="fas fa-envelope"></i>
+                </div>
+                <div class="action-content">
+                    <h3>Mensagens</h3>
+                    <p>Veja mensagens dos convidados</p>
+                </div>
+                <div class="action-arrow">
+                    <i class="fas fa-arrow-right"></i>
+                </div>
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- Recent Activity -->
+<section class="admin-recent">
+    <div class="container">
+        <div class="admin-content-grid">
+            <!-- Recent Confirmations -->
+            <div class="admin-card">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        <i class="fas fa-calendar-check"></i>
+                        Confirmações Recentes
+                    </h3>
+                    <a href="{{ url_for('admin.convidados') }}" class="card-link">Ver todos</a>
+                </div>
+                
+                <div class="card-content">
+                    {% if confirmacoes_recentes %}
+                        <div class="activity-list">
+                            {% for convidado in confirmacoes_recentes %}
+                            <div class="activity-item">
+                                <div class="activity-avatar">
+                                    <i class="fas fa-user"></i>
+                                </div>
+                                <div class="activity-content">
+                                    <div class="activity-title">{{ convidado.nome }}</div>
+                                    <div class="activity-meta">
+                                        {% if convidado.confirmacao %}
+                                            <span class="status confirmed">Confirmou presença</span>
+                                        {% else %}
+                                            <span class="status declined">Não comparecerá</span>
+                                        {% endif %}
+                                        <span class="activity-time">{{ convidado.data_confirmacao.strftime('%d/%m às %H:%M') }}</span>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <div class="empty-state-small">
+                            <i class="fas fa-calendar"></i>
+                            <p>Nenhuma confirmação ainda</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <!-- Recent Gifts -->
+            <div class="admin-card">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        <i class="fas fa-gift"></i>
+                        Presentes Recentes
+                    </h3>
+                    <a href="{{ url_for('admin.presentes') }}" class="card-link">Ver todos</a>
+                </div>
+                
+                <div class="card-content">
+                    {% if presentes_recentes %}
+                        <div class="activity-list">
+                            {% for escolha in presentes_recentes %}
+                            <div class="activity-item">
+                                <div class="activity-avatar">
+                                    <i class="fas fa-gift"></i>
+                                </div>
+                                <div class="activity-content">
+                                    <div class="activity-title">{{ escolha.presente.nome }}</div>
+                                    <div class="activity-meta">
+                                        <span class="activity-person">por {{ escolha.nome_presenteador }}</span>
+                                        <span class="activity-time">{{ escolha.data_escolha.strftime('%d/%m às %H:%M') }}</span>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <div class="empty-state-small">
+                            <i class="fas fa-gift"></i>
+                            <p>Nenhum presente escolhido ainda</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Charts Section -->
+<section class="admin-charts">
+    <div class="container">
+        <div class="admin-content-grid">
+            <!-- RSVP Chart -->
+            <div class="admin-card">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        <i class="fas fa-chart-pie"></i>
+                        Status das Confirmações
+                    </h3>
+                </div>
+                
+                <div class="card-content">
+                    <div class="chart-container">
+                        <canvas id="rsvpChart" width="300" height="300"></canvas>
+                    </div>
+                    
+                    <div class="chart-legend">
+                        <div class="legend-item">
+                            <span class="legend-color confirmed"></span>
+                            <span>Confirmados ({{ stats.confirmados }})</span>
+                        </div>
+                        <div class="legend-item">
+                            <span class="legend-color declined"></span>
+                            <span>Não confirmados ({{ stats.nao_confirmados }})</span>
+                        </div>
+                        <div class="legend-item">
+                            <span class="legend-color pending"></span>
+                            <span>Pendentes ({{ stats.pendentes }})</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Gifts Progress -->
+            <div class="admin-card">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        <i class="fas fa-chart-bar"></i>
+                        Progresso dos Presentes
+                    </h3>
+                </div>
+                
+                <div class="card-content">
+                    <div class="progress-stats">
+                        <div class="progress-item">
+                            <div class="progress-label">
+                                <span>Presentes Escolhidos</span>
+                                <span>{{ stats.presentes_escolhidos }}/{{ stats.total_presentes }}</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: {{ (stats.presentes_escolhidos / stats.total_presentes * 100) if stats.total_presentes > 0 else 0 }}%"></div>
+                            </div>
+                            <div class="progress-percent">
+                                {{ "%.0f"|format((stats.presentes_escolhidos / stats.total_presentes * 100) if stats.total_presentes > 0 else 0) }}%
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="gifts-summary">
+                        <div class="summary-item">
+                            <i class="fas fa-gift"></i>
+                            <div>
+                                <div class="summary-number">{{ stats.total_presentes }}</div>
+                                <div class="summary-label">Total de Presentes</div>
+                            </div>
+                        </div>
+                        <div class="summary-item">
+                            <i class="fas fa-check"></i>
+                            <div>
+                                <div class="summary-number">{{ stats.presentes_escolhidos }}</div>
+                                <div class="summary-label">Escolhidos</div>
+                            </div>
+                        </div>
+                        <div class="summary-item">
+                            <i class="fas fa-clock"></i>
+                            <div>
+                                <div class="summary-number">{{ stats.total_presentes - stats.presentes_escolhidos }}</div>
+                                <div class="summary-label">Disponíveis</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+// RSVP Pie Chart
+const ctx = document.getElementById('rsvpChart').getContext('2d');
+const rsvpChart = new Chart(ctx, {
+    type: 'doughnut',
+    data: {
+        labels: ['Confirmados', 'Não Confirmados', 'Pendentes'],
+        datasets: [{
+            data: [{{ stats.confirmados }}, {{ stats.nao_confirmados }}, {{ stats.pendentes }}],
+            backgroundColor: [
+                'var(--success)',
+                'var(--error)',
+                'var(--warning)'
+            ],
+            borderWidth: 0,
+            cutout: '60%'
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: {
+                display: false
+            }
+        }
+    }
+});
+
+// Auto refresh every 5 minutes
+setInterval(function() {
+    location.reload();
+}, 300000);
+
+// Real-time stats update (you can implement WebSocket for real-time updates)
+function updateStats() {
+    fetch('{{ url_for("admin.api_stats") }}')
+        .then(response => response.json())
+        .then(data => {
+            // Update stat numbers
+            document.querySelectorAll('.stat-number').forEach((el, index) => {
+                switch(index) {
+                    case 0: el.textContent = data.total_convidados; break;
+                    case 1: el.textContent = data.confirmados; break;
+                    case 2: el.textContent = data.nao_confirmados; break;
+                    case 3: el.textContent = data.presentes_escolhidos; break;
+                }
+            });
+            
+            // Update chart
+            rsvpChart.data.datasets[0].data = [data.confirmados, data.nao_confirmados, data.pendentes];
+            rsvpChart.update();
+        })
+        .catch(error => console.error('Error updating stats:', error));
+}
+
+// Update stats every minute
+setInterval(updateStats, 60000);
+</script>
+
+<style>
+.admin-header {
+    background: var(--white);
+    border-bottom: 1px solid var(--secondary-color);
+    padding: 2rem 0;
+    margin-top: 80px;
+}
+
+.admin-header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 2rem;
+}
+
+.admin-page-title {
+    font-size: 2rem;
+    font-weight: 600;
+    color: var(--text-dark);
+    margin-bottom: 0.5rem;
+}
+
+.admin-page-title i {
+    color: var(--primary-color);
+    margin-right: 0.75rem;
+}
+
+.admin-page-subtitle {
+    color: var(--text-light);
+    font-size: 1.1rem;
+}
+
+.admin-actions {
+    display: flex;
+    gap: 1rem;
+}
+
+.admin-stats {
+    padding: 2rem 0;
+    background: var(--background);
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.5rem;
+}
+
+.stat-card {
+    background: var(--white);
+    border-radius: 15px;
+    padding: 1.5rem;
+    box-shadow: var(--shadow-light);
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-medium);
+}
+
+.stat-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    color: var(--white);
+}
+
+.stat-icon.presence { background: linear-gradient(135deg, #667eea, #764ba2); }
+.stat-icon.confirmed { background: linear-gradient(135deg, #4CAF50, #45a049); }
+.stat-icon.declined { background: linear-gradient(135deg, #f44336, #e53935); }
+.stat-icon.gifts { background: linear-gradient(135deg, var(--primary-color), var(--accent-color)); }
+
+.stat-number {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--text-dark);
+    line-height: 1;
+}
+
+.stat-label {
+    color: var(--text-light);
+    font-size: 0.9rem;
+    margin-top: 0.25rem;
+}
+
+.admin-quick-actions,
+.admin-recent,
+.admin-charts {
+    padding: 2rem 0;
+}
+
+.quick-actions-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+}
+
+.quick-action-card {
+    background: var(--white);
+    border-radius: 15px;
+    padding: 1.5rem;
+    box-shadow: var(--shadow-light);
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    text-decoration: none;
+    color: inherit;
+    transition: all 0.3s ease;
+}
+
+.quick-action-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-medium);
+    text-decoration: none;
+    color: inherit;
+}
+
+.action-icon {
+    width: 50px;
+    height: 50px;
+    background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--white);
+    font-size: 1.25rem;
+}
+
+.action-content h3 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+    color: var(--text-dark);
+}
+
+.action-content p {
+    color: var(--text-light);
+    font-size: 0.9rem;
+    margin: 0;
+}
+
+.action-arrow {
+    margin-left: auto;
+    color: var(--primary-color);
+    font-size: 1.25rem;
+}
+
+.admin-content-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+    gap: 2rem;
+}
+
+.admin-card {
+    background: var(--white);
+    border-radius: 15px;
+    box-shadow: var(--shadow-light);
+    overflow: hidden;
+}
+
+.card-header {
+    padding: 1.5rem;
+    border-bottom: 1px solid var(--secondary-color);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.card-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--text-dark);
+    margin: 0;
+}
+
+.card-title i {
+    color: var(--primary-color);
+    margin-right: 0.5rem;
+}
+
+.card-link {
+    color: var(--primary-color);
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.card-content {
+    padding: 1.5rem;
+}
+
+.activity-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.activity-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.activity-avatar {
+    width: 40px;
+    height: 40px;
+    background: var(--secondary-color);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--primary-color);
+}
+
+.activity-title {
+    font-weight: 500;
+    color: var(--text-dark);
+    margin-bottom: 0.25rem;
+}
+
+.activity-meta {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: 0.85rem;
+}
+
+.status {
+    padding: 0.25rem 0.5rem;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 500;
+}
+
+.status.confirmed {
+    background: rgba(76, 175, 80, 0.1);
+    color: #4CAF50;
+}
+
+.status.declined {
+    background: rgba(244, 67, 54, 0.1);
+    color: #f44336;
+}
+
+.activity-time,
+.activity-person {
+    color: var(--text-light);
+}
+
+.empty-state-small {
+    text-align: center;
+    padding: 2rem;
+    color: var(--text-light);
+}
+
+.empty-state-small i {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+    opacity: 0.5;
+}
+
+.chart-container {
+    height: 300px;
+    position: relative;
+}
+
+.chart-legend {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-top: 1rem;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.9rem;
+}
+
+.legend-color {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+}
+
+.legend-color.confirmed { background: var(--success); }
+.legend-color.declined { background: var(--error); }
+.legend-color.pending { background: var(--warning); }
+
+.progress-stats {
+    margin-bottom: 1.5rem;
+}
+
+.progress-item {
+    margin-bottom: 1rem;
+}
+
+.progress-label {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.progress-bar {
+    height: 8px;
+    background: var(--secondary-color);
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
+    transition: width 0.3s ease;
+}
+
+.progress-percent {
+    margin-top: 0.5rem;
+    text-align: right;
+    font-size: 0.85rem;
+    color: var(--text-light);
+}
+
+.gifts-summary {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    margin-top: 1.5rem;
+}
+
+.summary-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    text-align: center;
+}
+
+.summary-item i {
+    color: var(--primary-color);
+    font-size: 1.25rem;
+}
+
+.summary-number {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--text-dark);
+}
+
+.summary-label {
+    font-size: 0.8rem;
+    color: var(--text-light);
+}
+
+@media (max-width: 768px) {
+    .admin-header-content {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+    
+    .admin-actions {
+        width: 100%;
+        justify-content: flex-end;
+    }
+    
+    .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .quick-actions-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .admin-content-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .gifts-summary {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
+{% endblock %}

@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}{{ config.nome_noiva or 'Iara' }} & {{ config.nome_noivo or 'Samuel' }} - Nosso Casamento{% endblock %}</title>
+    
+    <!-- Meta tags -->
+    <meta name="description" content="Site do casamento de {{ config.nome_noiva or 'Iara' }} e {{ config.nome_noivo or 'Samuel' }}. Confirme sua presença e veja nossa lista de presentes.">
+    <meta name="keywords" content="casamento, {{ config.nome_noiva or 'Iara' }}, {{ config.nome_noivo or 'Samuel' }}, convite, presentes">
+    
+    <!-- Open Graph -->
+    <meta property="og:title" content="{{ config.nome_noiva or 'Iara' }} & {{ config.nome_noivo or 'Samuel' }} - Nosso Casamento">
+    <meta property="og:description" content="Você está convidado para nosso casamento! Confirme sua presença e veja nossa lista de presentes.">
+    <meta property="og:type" content="website">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('static', filename='img/favicon.png') }}">
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;600;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    
+    {% block extra_head %}{% endblock %}
+</head>
+<body>
+    <!-- Loading Screen -->
+    <div class="loading" id="loading">
+        <div class="loading-content">
+            <div class="loading-heart">♥</div>
+            <p>Carregando nosso amor...</p>
+        </div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="navbar" id="navbar">
+        <div class="container">
+            <div class="nav-brand">
+                <a href="{{ url_for('main.index') }}" class="nav-logo">
+                    <span class="nav-names">{{ config.nome_noiva or 'Iara' }} & {{ config.nome_noivo or 'Samuel' }}</span>
+                </a>
+            </div>
+            
+            <div class="nav-toggle" id="nav-toggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+            
+            <div class="nav-menu" id="nav-menu">
+                <ul class="nav-list">
+                    <li class="nav-item">
+                        <a href="{{ url_for('main.index') }}" class="nav-link">
+                            <i class="fas fa-home"></i>
+                            <span>Home</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#casal" class="nav-link">
+                            <i class="fas fa-heart"></i>
+                            <span>O Casal</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#local" class="nav-link">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <span>Local</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ url_for('main.lista_presentes') }}" class="nav-link">
+                            <i class="fas fa-gift"></i>
+                            <span>Presentes</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ url_for('main.confirmar_presenca') }}" class="nav-link">
+                            <i class="fas fa-calendar-check"></i>
+                            <span>Confirme Presença</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="flash-messages">
+                    {% for category, message in messages %}
+                        <div class="flash-message flash-{{ category }}">
+                            <span>{{ message }}</span>
+                            <button type="button" class="flash-close">&times;</button>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+        
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-info">
+                    <h3 class="footer-names">{{ config.nome_noiva or 'Iara' }} & {{ config.nome_noivo or 'Samuel' }}</h3>
+                    <p class="footer-date">
+                        {% if config.data_casamento %}
+                            {{ config.data_casamento.strftime('%d.%m.%Y') }}
+                        {% else %}
+                            28.11.2025
+                        {% endif %}
+                    </p>
+                </div>
+                
+                <div class="footer-social">
+                    <div class="social-links">
+                        <a href="#" class="social-link" title="Instagram">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                        <a href="#" class="social-link" title="Facebook">
+                            <i class="fab fa-facebook"></i>
+                        </a>
+                        <a href="#" class="social-link" title="WhatsApp">
+                            <i class="fab fa-whatsapp"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p>&copy; 2025 {{ config.nome_noiva or 'Iara' }} & {{ config.nome_noivo or 'Samuel' }}. Feito com ♥</p>
+                <p>
+                    <a href="{{ url_for('admin.login') }}" class="admin-link">Painel Admin</a>
+                </p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    {% block extra_scripts %}{% endblock %}
+</body>
+</html>

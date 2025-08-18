@@ -1,0 +1,306 @@
+{% extends "base.html" %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero" id="hero">
+    <div class="hero-background">
+        <div class="hero-overlay"></div>
+    </div>
+    
+    <div class="hero-content">
+        <div class="container">
+            <div class="hero-text">
+                <div class="hero-countdown">
+                    {% if dias_restantes > 0 %}
+                        <div class="countdown-badge">
+                            <span class="countdown-text">FALTAM</span>
+                            <span class="countdown-number">{{ dias_restantes }}</span>
+                            <span class="countdown-text">DIAS</span>
+                        </div>
+                    {% elif dias_restantes == 0 %}
+                        <div class="countdown-badge today">
+                            <span class="countdown-text">HOJE É O</span>
+                            <span class="countdown-text">GRANDE DIA!</span>
+                        </div>
+                    {% else %}
+                        <div class="countdown-badge past">
+                            <span class="countdown-text">NOSSO</span>
+                            <span class="countdown-text">CASAMENTO</span>
+                        </div>
+                    {% endif %}
+                </div>
+                
+                <h1 class="hero-names">
+                    <span class="bride-name">{{ config.nome_noiva or 'Iara' }}</span>
+                    <span class="heart">♥</span>
+                    <span class="groom-name">{{ config.nome_noivo or 'Samuel' }}</span>
+                </h1>
+                
+                <div class="hero-date">
+                    {% if config.data_casamento %}
+                        {{ config.data_casamento.strftime('%d.%m.%Y') }}
+                    {% else %}
+                        28.11.2025
+                    {% endif %}
+                </div>
+                
+                <div class="hero-location">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <span>{{ config.local_cerimonia or 'São Paulo' }}</span>
+                </div>
+                
+                <div class="hero-actions">
+                    <a href="{{ url_for('main.confirmar_presenca') }}" class="btn btn-primary btn-large">
+                        <i class="fas fa-calendar-check"></i>
+                        Confirmar Presença
+                    </a>
+                    <a href="{{ url_for('main.lista_presentes') }}" class="btn btn-secondary btn-large">
+                        <i class="fas fa-gift"></i>
+                        Ver Presentes
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Scroll Indicator -->
+    <div class="scroll-indicator">
+        <div class="scroll-arrow">
+            <i class="fas fa-chevron-down"></i>
+        </div>
+    </div>
+</section>
+
+<!-- Welcome Section -->
+<section class="welcome-section" id="welcome">
+    <div class="container">
+        <div class="welcome-content">
+            <div class="section-header">
+                <h2 class="section-title">Bem-vindos ao nosso site!</h2>
+                <div class="section-subtitle">
+                    <i class="fas fa-heart"></i>
+                </div>
+            </div>
+            
+            <div class="welcome-text">
+                <p class="welcome-message">
+                    {{ config.mensagem_principal or 'Criamos esse site para compartilhar com vocês os detalhes da organização do nosso casamento. ♥' }}
+                </p>
+                
+                <p>
+                    Aqui vocês encontrarão também informações sobre a cerimônia, festa, 
+                    e tudo que precisam saber para nosso grande dia. É importante confirmar 
+                    sua presença para que possamos nos organizar melhor.
+                </p>
+                
+                <p>
+                    Para nos presentear, escolham qualquer item da nossa Lista de Casamento. 
+                    Fiquem à vontade! Aguardamos vocês no nosso grande dia!
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- About Couple Section -->
+<section class="couple-section" id="casal">
+    <div class="container">
+        <div class="section-header">
+            <h2 class="section-title">O Casal</h2>
+            <div class="section-subtitle">
+                <i class="fas fa-heart"></i>
+            </div>
+        </div>
+        
+        <div class="couple-grid">
+            <div class="couple-card bride-card">
+                <div class="couple-photo">
+                    <img src="{{ url_for('static', filename='img/noiva.jpg') }}" alt="{{ config.nome_noiva or 'Iara' }}" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                    <div class="photo-placeholder" style="display: none;">
+                        <i class="fas fa-user"></i>
+                    </div>
+                </div>
+                <div class="couple-info">
+                    <h3 class="couple-name">{{ config.nome_noiva or 'Iara' }}</h3>
+                    <p class="couple-title">A Noiva</p>
+                    <p class="couple-description">
+                        Uma pessoa especial que trouxe ainda mais amor e alegria para minha vida. 
+                        Estou ansiosa para começarmos nossa jornada juntos como marido e mulher.
+                    </p>
+                </div>
+            </div>
+            
+            <div class="couple-heart">
+                <div class="heart-icon">♥</div>
+            </div>
+            
+            <div class="couple-card groom-card">
+                <div class="couple-photo">
+                    <img src="{{ url_for('static', filename='img/noivo.jpg') }}" alt="{{ config.nome_noivo or 'Samuel' }}" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                    <div class="photo-placeholder" style="display: none;">
+                        <i class="fas fa-user"></i>
+                    </div>
+                </div>
+                <div class="couple-info">
+                    <h3 class="couple-name">{{ config.nome_noivo or 'Samuel' }}</h3>
+                    <p class="couple-title">O Noivo</p>
+                    <p class="couple-description">
+                        A pessoa que completa minha vida e me faz querer ser melhor a cada dia. 
+                        Mal posso esperar para chamarmos um ao outro de marido e mulher.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Event Details Section -->
+<section class="event-section" id="local">
+    <div class="container">
+        <div class="section-header">
+            <h2 class="section-title">Informações do Evento</h2>
+            <div class="section-subtitle">
+                <i class="fas fa-calendar-heart"></i>
+            </div>
+        </div>
+        
+        <div class="event-grid">
+            <!-- Cerimônia -->
+            <div class="event-card ceremony-card">
+                <div class="event-icon">
+                    <i class="fas fa-church"></i>
+                </div>
+                <div class="event-content">
+                    <h3 class="event-title">Cerimônia</h3>
+                    <div class="event-details">
+                        <div class="event-detail">
+                            <i class="fas fa-clock"></i>
+                            <span>
+                                {% if config.horario_cerimonia %}
+                                    {{ config.horario_cerimonia.strftime('%H:%M') }}
+                                {% else %}
+                                    16:00
+                                {% endif %}
+                            </span>
+                        </div>
+                        <div class="event-detail">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <span>{{ config.local_cerimonia or 'Igreja São Francisco de Assis' }}</span>
+                        </div>
+                        <div class="event-address">
+                            {{ config.endereco_cerimonia or 'Rua das Flores, 123 - Centro, São Paulo - SP' }}
+                        </div>
+                    </div>
+                    <a href="#" class="btn btn-outline btn-small" onclick="openMap('cerimonia')">
+                        <i class="fas fa-directions"></i>
+                        Ver no Mapa
+                    </a>
+                </div>
+            </div>
+            
+            <!-- Festa -->
+            <div class="event-card reception-card">
+                <div class="event-icon">
+                    <i class="fas fa-glass-cheers"></i>
+                </div>
+                <div class="event-content">
+                    <h3 class="event-title">Festa</h3>
+                    <div class="event-details">
+                        <div class="event-detail">
+                            <i class="fas fa-clock"></i>
+                            <span>
+                                {% if config.horario_festa %}
+                                    {{ config.horario_festa.strftime('%H:%M') }}
+                                {% else %}
+                                    18:00
+                                {% endif %}
+                            </span>
+                        </div>
+                        <div class="event-detail">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <span>{{ config.local_festa or 'Espaço Jardim Encantado' }}</span>
+                        </div>
+                        <div class="event-address">
+                            {{ config.endereco_festa or 'Av. Paulista, 456 - Bela Vista, São Paulo - SP' }}
+                        </div>
+                    </div>
+                    <a href="#" class="btn btn-outline btn-small" onclick="openMap('festa')">
+                        <i class="fas fa-directions"></i>
+                        Ver no Mapa
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Quick Actions Section -->
+<section class="quick-actions-section">
+    <div class="container">
+        <div class="quick-actions-grid">
+            <div class="quick-action">
+                <a href="{{ url_for('main.confirmar_presenca') }}" class="quick-action-link">
+                    <div class="quick-action-icon">
+                        <i class="fas fa-calendar-check"></i>
+                    </div>
+                    <div class="quick-action-content">
+                        <h3>Confirmar Presença</h3>
+                        <p>Nos ajude a organizar melhor nosso grande dia</p>
+                    </div>
+                    <div class="quick-action-arrow">
+                        <i class="fas fa-arrow-right"></i>
+                    </div>
+                </a>
+            </div>
+            
+            <div class="quick-action">
+                <a href="{{ url_for('main.lista_presentes') }}" class="quick-action-link">
+                    <div class="quick-action-icon">
+                        <i class="fas fa-gift"></i>
+                    </div>
+                    <div class="quick-action-content">
+                        <h3>Lista de Presentes</h3>
+                        <p>Escolha um presente especial para nós</p>
+                    </div>
+                    <div class="quick-action-arrow">
+                        <i class="fas fa-arrow-right"></i>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+// Função para abrir mapa
+function openMap(type) {
+    let address = '';
+    if (type === 'cerimonia') {
+        address = '{{ config.endereco_cerimonia or "Rua das Flores, 123 - Centro, São Paulo - SP" }}';
+    } else if (type === 'festa') {
+        address = '{{ config.endereco_festa or "Av. Paulista, 456 - Bela Vista, São Paulo - SP" }}';
+    }
+    
+    const encodedAddress = encodeURIComponent(address);
+    const mapUrl = `https://www.google.com/maps/search/?api=1&query=${encodedAddress}`;
+    window.open(mapUrl, '_blank');
+}
+
+// Smooth scroll para seções
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+            const offsetTop = target.offsetTop - 80; // Considerando altura do navbar
+            window.scrollTo({
+                top: offsetTop,
+                behavior: 'smooth'
+            });
+        }
+    });
+});
+</script>
+{% endblock %}
