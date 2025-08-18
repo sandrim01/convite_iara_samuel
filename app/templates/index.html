@@ -179,13 +179,13 @@
                                 {% if config.horario_cerimonia %}
                                     {{ config.horario_cerimonia.strftime('%H:%M') }}
                                 {% else %}
-                                    16:00
+                                    19:00
                                 {% endif %}
                             </span>
                         </div>
                         <div class="event-detail">
                             <i class="fas fa-map-marker-alt text-primary"></i>
-                            <span class="font-medium">{{ config.local_cerimonia or 'Igreja São Francisco de Assis' }}</span>
+                            <span class="font-medium">{{ config.local_cerimonia or 'Igreja Nossa Senhora das Graças' }}</span>
                         </div>
                         <div class="event-address text-small text-secondary">
                             {{ config.endereco_cerimonia or 'Rua das Flores, 123 - Centro, São Paulo - SP' }}
@@ -212,7 +212,7 @@
                                 {% if config.horario_festa %}
                                     {{ config.horario_festa.strftime('%H:%M') }}
                                 {% else %}
-                                    18:00
+                                    20:00
                                 {% endif %}
                             </span>
                         </div>

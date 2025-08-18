@@ -40,7 +40,7 @@
                                 {% if config.data_casamento %}
                                     {{ config.data_casamento.strftime('%d de %B de %Y') }}
                                 {% else %}
-                                    28 de novembro de 2025
+                                    08 de novembro de 2025
                                 {% endif %}
                                 </span>
                             </div>
@@ -56,9 +56,9 @@
                                 {% if config.horario_cerimonia %}
                                     {{ config.horario_cerimonia.strftime('%H:%M') }}
                                 {% else %}
-                                    16:00
+                                    19:00
                                 {% endif %}
-                                - {{ config.local_cerimonia or 'Igreja São Francisco de Assis' }}
+                                - {{ config.local_cerimonia or 'Igreja Nossa Senhora das Graças' }}
                                 </span>
                             </div>
                         </div>
@@ -73,7 +73,7 @@
                                 {% if config.horario_festa %}
                                     {{ config.horario_festa.strftime('%H:%M') }}
                                 {% else %}
-                                    18:00
+                                    20:00
                                 {% endif %}
                                 - {{ config.local_festa or 'Espaço Jardim Encantado' }}
                                 </span>

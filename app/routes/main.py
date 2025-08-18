@@ -13,13 +13,13 @@ def index():
         config = ConfiguracaoSite(
             nome_noiva='Iara',
             nome_noivo='Samuel',
-            data_casamento=datetime(2025, 11, 28).date(),
-            local_cerimonia='Igreja São Francisco de Assis',
-            endereco_cerimonia='Rua das Flores, 123 - Centro, São Paulo - SP',
-            horario_cerimonia=datetime.strptime('16:00', '%H:%M').time(),
+            data_casamento=datetime(2025, 11, 8).date(),
+            local_cerimonia='Igreja Nossa Senhora das Graças',
+            endereco_cerimonia='Rua Domingos Alcíno Dadalto, 114, Jardim Itapemirim, Cachoeiro de Itapemirim - ES',
+            horario_cerimonia=datetime.strptime('19:00', '%H:%M').time(),
             local_festa='Espaço Jardim Encantado',
             endereco_festa='Av. Paulista, 456 - Bela Vista, São Paulo - SP',
-            horario_festa=datetime.strptime('18:00', '%H:%M').time(),
+            horario_festa=datetime.strptime('20:00', '%H:%M').time(),
             mensagem_principal='Criamos esse site para compartilhar com vocês os detalhes da organização do nosso casamento. ♥'
         )
         db.session.add(config)
