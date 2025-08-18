@@ -46,7 +46,14 @@ def lista_presentes():
 def confirmar_presenca():
     """Página de confirmação de presença"""
     config = ConfiguracaoSite.query.first()
-    return render_template('confirmar_presenca.html', config=config)
+    
+    # Calcular data limite para confirmação (30 dias antes do casamento)
+    data_limite = None
+    if config and config.data_casamento:
+        from datetime import timedelta
+        data_limite = config.data_casamento - timedelta(days=30)
+    
+    return render_template('confirmar_presenca.html', config=config, data_limite=data_limite)
 
 @main.route('/confirmar-presenca', methods=['POST'])
 def processar_confirmacao():
@@ -55,62 +62,78 @@ def processar_confirmacao():
         nome = request.form.get('nome')
         email = request.form.get('email')
         telefone = request.form.get('telefone')
-        acompanhantes = int(request.form.get('acompanhantes', 0))
-        observacoes = request.form.get('observacoes')
+        confirmacao = request.form.get('confirmacao')
+        numero_acompanhantes = request.form.get('numero_acompanhantes', 0)
+        eventos = request.form.get('eventos', '')
+        restricoes_alimentares = request.form.get('restricoes_alimentares', '')
+        mensagem = request.form.get('mensagem', '')
         
-        # Gerar token único
-        import uuid
-        token = str(uuid.uuid4())
+        # Verificar se convidado já existe
+        convidado_existente = Convidado.query.filter_by(email=email).first()
         
-        # Criar novo convidado
-        convidado = Convidado(
-            nome=nome,
-            email=email,
-            telefone=telefone,
-            token=token,
-            confirmou_presenca=True,
-            data_confirmacao=datetime.utcnow(),
-            acompanhantes=acompanhantes,
-            observacoes=observacoes
-        )
+        if convidado_existente:
+            # Atualizar dados do convidado existente
+            convidado_existente.nome = nome
+            convidado_existente.telefone = telefone
+            convidado_existente.confirmacao = (confirmacao == 'sim')
+            convidado_existente.numero_acompanhantes = int(numero_acompanhantes)
+            convidado_existente.eventos_participara = eventos
+            convidado_existente.restricoes_alimentares = restricoes_alimentares
+            convidado_existente.mensagem = mensagem
+            convidado_existente.data_confirmacao = datetime.utcnow()
+            convidado = convidado_existente
+        else:
+            # Gerar token único
+            import uuid
+            token = str(uuid.uuid4())
+            
+            # Criar novo convidado
+            convidado = Convidado(
+                nome=nome,
+                email=email,
+                telefone=telefone,
+                token=token,
+                confirmacao=(confirmacao == 'sim'),
+                numero_acompanhantes=int(numero_acompanhantes),
+                eventos_participara=eventos,
+                restricoes_alimentares=restricoes_alimentares,
+                mensagem=mensagem,
+                data_confirmacao=datetime.utcnow()
+            )
+            db.session.add(convidado)
         
-        db.session.add(convidado)
         db.session.commit()
         
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            return jsonify({'success': True, 'message': 'Confirmação realizada com sucesso!'})
+        
         flash('Presença confirmada com sucesso! Obrigado por confirmar.', 'success')
-        return redirect(url_for('main.presentes'))
+        return redirect(url_for('main.index'))
         
     except Exception as e:
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            return jsonify({'success': False, 'message': 'Erro ao confirmar presença. Tente novamente.'})
+        
         flash('Erro ao confirmar presença. Tente novamente.', 'error')
         return redirect(url_for('main.confirmar_presenca'))
 
-@main.route('/escolher-presente/<int:presente_id>')
-def escolher_presente(presente_id):
-    """Escolher um presente da lista"""
-    presente = Presente.query.get_or_404(presente_id)
-    
-    if presente.foi_escolhido:
-        flash('Este presente já foi escolhido por outro convidado.', 'warning')
-        return redirect(url_for('main.lista_presentes'))
-    
-    return render_template('escolher_presente.html', presente=presente)
-
-@main.route('/escolher-presente/<int:presente_id>', methods=['POST'])
-def processar_escolha_presente(presente_id):
-    """Processar escolha de presente"""
+@main.route('/escolher-presente', methods=['POST'])
+def escolher_presente():
+    """Processar escolha de presente via AJAX"""
     try:
+        presente_id = request.form.get('presente_id')
+        nome_presenteador = request.form.get('nome_presenteador')
+        email_presenteador = request.form.get('email_presenteador')
+        telefone_presenteador = request.form.get('telefone_presenteador')
+        mensagem = request.form.get('mensagem', '')
+        
         presente = Presente.query.get_or_404(presente_id)
         
-        if presente.foi_escolhido:
-            flash('Este presente já foi escolhido por outro convidado.', 'warning')
-            return redirect(url_for('main.lista_presentes'))
-        
-        nome = request.form.get('nome')
-        email = request.form.get('email')
-        telefone = request.form.get('telefone')
+        if not presente.disponivel:
+            return jsonify({'success': False, 'message': 'Este presente já foi escolhido.'})
         
         # Verificar se o convidado já existe
-        convidado = Convidado.query.filter_by(email=email).first()
+        convidado = Convidado.query.filter_by(email=email_presenteador).first()
         
         if not convidado:
             # Criar novo convidado
@@ -118,9 +141,9 @@ def processar_escolha_presente(presente_id):
             token = str(uuid.uuid4())
             
             convidado = Convidado(
-                nome=nome,
-                email=email,
-                telefone=telefone,
+                nome=nome_presenteador,
+                email=email_presenteador,
+                telefone=telefone_presenteador,
                 token=token
             )
             db.session.add(convidado)
@@ -129,18 +152,28 @@ def processar_escolha_presente(presente_id):
         # Criar escolha do presente
         escolha = EscolhaPresente(
             convidado_id=convidado.id,
-            presente_id=presente.id
+            presente_id=presente.id,
+            nome_presenteador=nome_presenteador,
+            email_presenteador=email_presenteador,
+            telefone_presenteador=telefone_presenteador,
+            mensagem=mensagem,
+            data_escolha=datetime.utcnow()
         )
+        
+        # Marcar presente como não disponível
+        presente.disponivel = False
         
         db.session.add(escolha)
         db.session.commit()
         
-        flash(f'Presente "{presente.nome}" reservado com sucesso! Obrigado.', 'success')
-        return redirect(url_for('main.lista_presentes'))
+        return jsonify({
+            'success': True, 
+            'message': f'Presente "{presente.nome}" escolhido com sucesso!',
+            'presente_id': presente.id
+        })
         
     except Exception as e:
-        flash('Erro ao escolher presente. Tente novamente.', 'error')
-        return redirect(url_for('main.lista_presentes'))
+        return jsonify({'success': False, 'message': 'Erro ao escolher presente. Tente novamente.'})
 
 @main.route('/api/presentes')
 def api_presentes():
@@ -156,3 +189,80 @@ def api_presentes():
         'foi_escolhido': p.foi_escolhido,
         'imagem_url': p.imagem_url
     } for p in presentes])
+
+@main.route('/init-data')
+def init_data():
+    """Inicializar dados de exemplo (apenas desenvolvimento)"""
+    # Verificar se já existem presentes
+    if Presente.query.count() > 0:
+        flash('Dados já foram inicializados.', 'info')
+        return redirect(url_for('main.index'))
+    
+    # Criar presentes de exemplo
+    presentes = [
+        {
+            'nome': 'Jogo de Panelas Antiaderente',
+            'descricao': 'Conjunto com 5 panelas antiaderentes de alta qualidade',
+            'categoria': 'cozinha',
+            'preco_sugerido': 299.90,
+            'disponivel': True
+        },
+        {
+            'nome': 'Conjunto de Taças de Cristal',
+            'descricao': 'Kit com 6 taças de cristal para vinho e champanhe',
+            'categoria': 'casa',
+            'preco_sugerido': 189.90,
+            'disponivel': True
+        },
+        {
+            'nome': 'Jogo de Cama King Size',
+            'descricao': 'Jogo de cama 100% algodão, 4 peças, king size',
+            'categoria': 'quarto',
+            'preco_sugerido': 159.90,
+            'disponivel': True
+        },
+        {
+            'nome': 'Cafeteira Elétrica',
+            'descricao': 'Cafeteira elétrica programável para 12 xícaras',
+            'categoria': 'cozinha',
+            'preco_sugerido': 149.90,
+            'disponivel': True
+        },
+        {
+            'nome': 'Conjunto de Almofadas Decorativas',
+            'descricao': 'Kit com 4 almofadas decorativas para sala',
+            'categoria': 'sala',
+            'preco_sugerido': 79.90,
+            'disponivel': True
+        },
+        {
+            'nome': 'Jantar Romântico para Dois',
+            'descricao': 'Vale para jantar romântico em restaurante especial',
+            'categoria': 'experiencias',
+            'preco_sugerido': 250.00,
+            'disponivel': True
+        },
+        {
+            'nome': 'Aparelho de Jantar 20 Peças',
+            'descricao': 'Aparelho de jantar em porcelana, 20 peças',
+            'categoria': 'casa',
+            'preco_sugerido': 199.90,
+            'disponivel': True
+        },
+        {
+            'nome': 'Liquidificador High Power',
+            'descricao': 'Liquidificador de alta potência com 12 velocidades',
+            'categoria': 'cozinha',
+            'preco_sugerido': 179.90,
+            'disponivel': True
+        }
+    ]
+    
+    for presente_data in presentes:
+        presente = Presente(**presente_data)
+        db.session.add(presente)
+    
+    db.session.commit()
+    
+    flash(f'{len(presentes)} presentes adicionados com sucesso!', 'success')
+    return redirect(url_for('main.lista_presentes'))

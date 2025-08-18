@@ -52,11 +52,38 @@ class Convidado(db.Model):
     email = db.Column(db.String(120), nullable=True)
     telefone = db.Column(db.String(20), nullable=True)
     token = db.Column(db.String(100), unique=True, nullable=False)
-    confirmou_presenca = db.Column(db.Boolean, default=False)
+    confirmacao = db.Column(db.Boolean, default=False)  # True = confirmou, False = não confirmou
     data_confirmacao = db.Column(db.DateTime, nullable=True)
-    acompanhantes = db.Column(db.Integer, default=0)
-    observacoes = db.Column(db.Text, nullable=True)
+    numero_acompanhantes = db.Column(db.Integer, default=0)
+    eventos_participara = db.Column(db.String(200), nullable=True)  # cerimonia,festa
+    restricoes_alimentares = db.Column(db.Text, nullable=True)
+    mensagem = db.Column(db.Text, nullable=True)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    
+    # Compatibilidade com código antigo
+    @property
+    def confirmou_presenca(self):
+        return self.confirmacao
+    
+    @confirmou_presenca.setter
+    def confirmou_presenca(self, value):
+        self.confirmacao = value
+    
+    @property
+    def acompanhantes(self):
+        return self.numero_acompanhantes
+    
+    @acompanhantes.setter
+    def acompanhantes(self, value):
+        self.numero_acompanhantes = value
+    
+    @property
+    def observacoes(self):
+        return self.mensagem
+    
+    @observacoes.setter
+    def observacoes(self, value):
+        self.mensagem = value
     
     # Relacionamento com presentes escolhidos
     presentes_escolhidos = db.relationship('EscolhaPresente', backref='convidado', lazy=True)
@@ -96,6 +123,10 @@ class EscolhaPresente(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     convidado_id = db.Column(db.Integer, db.ForeignKey('convidado.id'), nullable=False)
     presente_id = db.Column(db.Integer, db.ForeignKey('presente.id'), nullable=False)
+    nome_presenteador = db.Column(db.String(100), nullable=True)
+    email_presenteador = db.Column(db.String(120), nullable=True)
+    telefone_presenteador = db.Column(db.String(20), nullable=True)
+    mensagem = db.Column(db.Text, nullable=True)
     data_escolha = db.Column(db.DateTime, default=datetime.utcnow)
     entregue = db.Column(db.Boolean, default=False)
     data_entrega = db.Column(db.DateTime, nullable=True)

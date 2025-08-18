@@ -79,8 +79,8 @@
                         <i class="fas fa-exclamation-triangle"></i>
                         <p>
                             <strong>Importante:</strong> Confirme sua presença até 
-                            {% if config.data_casamento %}
-                                {{ (config.data_casamento - timedelta(days=30)).strftime('%d/%m/%Y') }}
+                            {% if data_limite %}
+                                {{ data_limite.strftime('%d/%m/%Y') }}
                             {% else %}
                                 28/10/2025
                             {% endif %}
@@ -91,7 +91,7 @@
             </div>
             
             <div class="rsvp-form-container">
-                <form id="rsvp-form" class="rsvp-form">
+                <form id="rsvp-form" class="rsvp-form" action="{{ url_for('main.processar_confirmacao') }}" method="POST">
                     <div class="form-section">
                         <h3 class="form-section-title">
                             <i class="fas fa-user"></i>

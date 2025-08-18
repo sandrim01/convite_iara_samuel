@@ -41,11 +41,11 @@ def create_app():
     # Registrar blueprints
     from app.routes.main import main
     from app.routes.admin import admin
-    from app.routes.convite import convite
+    # from app.routes.convite import convite
     
     app.register_blueprint(main)
     app.register_blueprint(admin, url_prefix='/admin')
-    app.register_blueprint(convite, url_prefix='/convite')
+    # app.register_blueprint(convite, url_prefix='/convite')
     
     # Importar modelos e criar tabelas
     with app.app_context():
