@@ -43,12 +43,14 @@ function initializeNavigation() {
     const navToggle = document.querySelector('.nav-toggle');
     const navMenu = document.querySelector('.nav-menu');
     const navLinks = document.querySelectorAll('.nav-link');
+    const body = document.body;
 
     // Mobile menu toggle
     if (navToggle && navMenu) {
         navToggle.addEventListener('click', function() {
             navToggle.classList.toggle('active');
             navMenu.classList.toggle('active');
+            body.classList.toggle('nav-open');
             
             // Animate hamburger lines
             const spans = navToggle.querySelectorAll('span');
@@ -68,6 +70,7 @@ function initializeNavigation() {
             link.addEventListener('click', function() {
                 navToggle.classList.remove('active');
                 navMenu.classList.remove('active');
+                body.classList.remove('nav-open');
                 
                 // Reset hamburger animation
                 const spans = navToggle.querySelectorAll('span');
@@ -77,11 +80,42 @@ function initializeNavigation() {
             });
         });
 
+        // Close menu when clicking on mobile overlay
+        navMenu.addEventListener('click', function(e) {
+            if (e.target === navMenu || e.target.classList.contains('nav-menu')) {
+                navToggle.classList.remove('active');
+                navMenu.classList.remove('active');
+                body.classList.remove('nav-open');
+                
+                // Reset hamburger animation
+                const spans = navToggle.querySelectorAll('span');
+                spans[0].style.transform = 'none';
+                spans[1].style.opacity = '1';
+                spans[2].style.transform = 'none';
+            }
+        });
+
         // Close menu when clicking outside
         document.addEventListener('click', function(e) {
             if (!navToggle.contains(e.target) && !navMenu.contains(e.target)) {
                 navToggle.classList.remove('active');
                 navMenu.classList.remove('active');
+                body.classList.remove('nav-open');
+                
+                // Reset hamburger animation
+                const spans = navToggle.querySelectorAll('span');
+                spans[0].style.transform = 'none';
+                spans[1].style.opacity = '1';
+                spans[2].style.transform = 'none';
+            }
+        });
+
+        // Close menu on escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && navMenu.classList.contains('active')) {
+                navToggle.classList.remove('active');
+                navMenu.classList.remove('active');
+                body.classList.remove('nav-open');
                 
                 // Reset hamburger animation
                 const spans = navToggle.querySelectorAll('span');
@@ -92,16 +126,47 @@ function initializeNavigation() {
         });
     }
 
-    // Navbar scroll effect
+    // Navbar scroll effect with hide/show
+    let lastScrollTop = 0;
     if (navbar) {
         window.addEventListener('scroll', function() {
-            if (window.scrollY > 100) {
+            const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+            
+            if (scrollTop > 100) {
                 navbar.classList.add('scrolled');
             } else {
                 navbar.classList.remove('scrolled');
             }
+            
+            // Hide/show navbar on scroll (only on mobile)
+            if (window.innerWidth <= 768) {
+                if (scrollTop > lastScrollTop && scrollTop > 200) {
+                    navbar.style.transform = 'translateY(-100%)';
+                } else {
+                    navbar.style.transform = 'translateY(0)';
+                }
+            }
+            
+            lastScrollTop = scrollTop;
         });
     }
+
+    // Active navigation highlighting
+    function setActiveNavItem() {
+        const currentPath = window.location.pathname;
+        
+        navLinks.forEach(link => {
+            link.classList.remove('active');
+            
+            const href = link.getAttribute('href');
+            if ((currentPath === '/' && href === '/') || 
+                (currentPath !== '/' && href !== '/' && currentPath.includes(href))) {
+                link.classList.add('active');
+            }
+        });
+    }
+    
+    setActiveNavItem();
 
     // Smooth scroll for anchor links
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
