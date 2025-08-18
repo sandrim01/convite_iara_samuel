@@ -9,22 +9,27 @@ load_dotenv()
 def create_app():
     app = Flask(__name__)
     
-    # Configurações
-    app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY') or 'dev-key-change-in-production'
+    # Determinar ambiente
+    env = os.environ.get('FLASK_ENV', 'development')
+    if os.environ.get('RAILWAY_ENVIRONMENT_NAME'):
+        env = 'production'
     
-    # Configuração do banco PostgreSQL
-    database_url = os.environ.get('DATABASE_URL')
-    if database_url and database_url.startswith('postgresql://'):
-        # Usar pg8000 como driver PostgreSQL
-        postgres_url = database_url.replace('postgresql://', 'postgresql+pg8000://')
-        app.config['SQLALCHEMY_DATABASE_URI'] = postgres_url
-        print("🐘 Conectando ao PostgreSQL usando pg8000...")
+    # Configurações baseadas no ambiente
+    if env == 'production':
+        from config import ProductionConfig
+        app.config.from_object(ProductionConfig)
+        print("🚀 Rodando em modo PRODUÇÃO...")
     else:
-        # Fallback para SQLite em desenvolvimento
-        app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///convite.db'
-        print("📂 Usando SQLite para desenvolvimento...")
+        from config import DevelopmentConfig
+        app.config.from_object(DevelopmentConfig)
+        print("� Rodando em modo DESENVOLVIMENTO...")
     
-    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+    # Log da configuração do banco
+    db_uri = app.config['SQLALCHEMY_DATABASE_URI']
+    if 'postgresql' in db_uri:
+        print("🐘 Conectando ao PostgreSQL...")
+    else:
+        print("📂 Usando SQLite para desenvolvimento...")
     
     # Inicializar extensões
     db.init_app(app)
