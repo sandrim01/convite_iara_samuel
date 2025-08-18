@@ -24,6 +24,17 @@
 <!-- Gift Categories -->
 <section class="gift-categories">
     <div class="container">
+        <!-- Search Box -->
+        <div class="gift-search">
+            <div class="search-box">
+                <i class="fas fa-search"></i>
+                <input type="text" id="gift-search-input" placeholder="Buscar presentes...">
+                <button type="button" id="clear-search" style="display: none;">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+        </div>
+        
         <div class="categories-filter">
             <button class="category-btn active" data-category="todos">
                 <i class="fas fa-th"></i>
@@ -62,7 +73,10 @@
                 <div class="gift-card" data-category="{{ presente.categoria }}" data-id="{{ presente.id }}">
                     <div class="gift-image">
                         {% if presente.imagem_url %}
-                            <img src="{{ presente.imagem_url }}" alt="{{ presente.nome }}" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                            <div class="loading-spinner"></div>
+                            <img src="{{ presente.imagem_url }}" alt="{{ presente.nome }}" 
+                                 onload="this.classList.add('loaded'); this.previousElementSibling.style.display='none';"
+                                 onerror="this.style.display='none'; this.previousElementSibling.style.display='none'; this.nextElementSibling.style.display='flex';">
                         {% endif %}
                         <div class="gift-placeholder" {% if presente.imagem_url %}style="display: none;"{% endif %}>
                             <i class="fas fa-gift"></i>
@@ -80,7 +94,13 @@
                         <h3 class="gift-name">{{ presente.nome }}</h3>
                         
                         {% if presente.descricao %}
-                            <p class="gift-description">{{ presente.descricao }}</p>
+                            <p class="gift-description">
+                                {% if " - Loja: " in presente.descricao %}
+                                    {{ presente.descricao.split(" - Loja: ")[0] }}
+                                {% else %}
+                                    {{ presente.descricao }}
+                                {% endif %}
+                            </p>
                         {% endif %}
                         
                         <div class="gift-details">
@@ -91,10 +111,10 @@
                                 </div>
                             {% endif %}
                             
-                            {% if presente.loja %}
+                            {% if presente.descricao and " - Loja: " in presente.descricao %}
                                 <div class="gift-store">
                                     <i class="fas fa-store"></i>
-                                    <span>{{ presente.loja }}</span>
+                                    <span>{{ presente.descricao.split(" - Loja: ")[-1] }}</span>
                                 </div>
                             {% endif %}
                         </div>
