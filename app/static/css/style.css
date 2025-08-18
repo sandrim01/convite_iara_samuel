@@ -1,106 +1,745 @@
-/* Estilos Principais - Design Romântico */
+/* ===== MODERN WEDDING INVITATION DESIGN ===== */
 
 :root {
-    --primary-pink: #ff69b4;
-    --secondary-pink: #ffb6c1;
-    --accent-rose: #ff1493;
-    --soft-pink: #ffc0cb;
-    --cream: #fff5ee;
-    --gold: #ffd700;
-    --text-dark: #2c3e50;
-    --text-light: #6c757d;
+    --primary-color: #d4a574;
+    --secondary-color: #f4f1ed;
+    --accent-color: #8b6f47;
+    --text-dark: #2c2c2c;
+    --text-light: #666666;
+    --white: #ffffff;
+    --gradient-primary: linear-gradient(135deg, #d4a574 0%, #c49b6b 100%);
+    --gradient-secondary: linear-gradient(135deg, #f4f1ed 0%, #ede7df 100%);
+    --shadow-light: 0 10px 30px rgba(0, 0, 0, 0.1);
+    --shadow-medium: 0 20px 60px rgba(0, 0, 0, 0.15);
 }
 
-/* Fontes */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
 body {
-    font-family: 'Open Sans', sans-serif;
+    font-family: 'Poppins', sans-serif;
     color: var(--text-dark);
     line-height: 1.6;
+    scroll-behavior: smooth;
 }
 
-.romantic-title {
-    font-family: 'Dancing Script', cursive;
-    font-weight: 700;
-    color: var(--text-dark);
-    text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+/* ===== NAVIGATION ===== */
+.wedding-navbar {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    padding: 15px 0;
+    transition: all 0.3s ease;
+    border-bottom: 1px solid rgba(212, 165, 116, 0.1);
 }
 
-.elegant-date {
-    font-family: 'Playfair Display', serif;
+.wedding-navbar.scrolled {
+    background: rgba(255, 255, 255, 0.98);
+    padding: 10px 0;
+    box-shadow: var(--shadow-light);
+}
+
+.navbar-brand .brand-text {
+    font-family: 'Great Vibes', cursive;
+    font-size: 2rem;
+    color: var(--primary-color);
     font-weight: 400;
-    color: var(--accent-rose);
-    font-size: 1.8rem;
 }
 
-.romantic-text {
-    font-size: 1.2rem;
-    color: var(--text-dark);
-    font-style: italic;
-}
-
-/* Botões Românticos */
-.btn-romantic {
-    background: linear-gradient(135deg, var(--primary-pink), var(--accent-rose));
-    border: none;
-    color: white;
-    padding: 12px 30px;
-    border-radius: 50px;
-    font-weight: 600;
-    text-transform: uppercase;
+.navbar-nav .nav-link {
+    color: var(--text-dark) !important;
+    font-weight: 500;
+    font-size: 0.9rem;
     letter-spacing: 1px;
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 15px rgba(255, 105, 180, 0.3);
-}
-
-.btn-romantic:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(255, 105, 180, 0.4);
-    color: white;
-}
-
-.btn-outline-romantic {
-    border: 2px solid var(--primary-pink);
-    color: var(--primary-pink);
-    padding: 12px 30px;
-    border-radius: 50px;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    background: transparent;
+    margin: 0 15px;
+    padding: 8px 0 !important;
+    position: relative;
     transition: all 0.3s ease;
 }
 
-.btn-outline-romantic:hover {
-    background: var(--primary-pink);
-    color: white;
-    transform: translateY(-2px);
+.navbar-nav .nav-link:hover {
+    color: var(--primary-color) !important;
 }
 
-/* Seções */
-.section-title {
-    font-family: 'Playfair Display', serif;
-    font-size: 2.5rem;
+.navbar-nav .nav-link::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    width: 0;
+    height: 2px;
+    background: var(--gradient-primary);
+    transition: all 0.3s ease;
+    transform: translateX(-50%);
+}
+
+.navbar-nav .nav-link:hover::after {
+    width: 100%;
+}
+
+/* ===== HERO SECTION ===== */
+.hero-wedding {
+    height: 100vh;
+    background: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)),
+                url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800"><defs><pattern id="floral" x="0" y="0" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="50" cy="50" r="2" fill="%23d4a574" opacity="0.1"/></pattern></defs><rect width="100%" height="100%" fill="%23f4f1ed"/><rect width="100%" height="100%" fill="url(%23floral)"/></svg>');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    display: flex;
+    align-items: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.hero-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: var(--gradient-secondary);
+    opacity: 0.9;
+}
+
+.hero-content {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+}
+
+.couple-names {
+    font-family: 'Great Vibes', cursive;
+    font-size: clamp(3rem, 8vw, 6rem);
     color: var(--text-dark);
     margin-bottom: 20px;
+    line-height: 1.2;
+}
+
+.ampersand {
+    color: var(--primary-color);
+    font-size: 0.8em;
+    margin: 0 20px;
+}
+
+.wedding-date-hero {
+    margin: 30px 0;
+}
+
+.date-text {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.5rem;
+    color: var(--primary-color);
+    font-weight: 600;
+    display: block;
+}
+
+.location-text {
+    font-size: 1.1rem;
+    color: var(--text-light);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-top: 5px;
+    display: block;
+}
+
+.countdown-container {
+    margin: 40px 0;
+}
+
+.countdown-label {
+    font-size: 0.9rem;
+    color: var(--text-light);
+    letter-spacing: 2px;
+    margin-bottom: 15px;
+}
+
+.countdown-display {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+}
+
+.countdown-item {
+    text-align: center;
+}
+
+.countdown-number {
+    font-family: 'Playfair Display', serif;
+    font-size: 3rem;
+    font-weight: 700;
+    color: var(--primary-color);
+    display: block;
+    line-height: 1;
+}
+
+.countdown-text {
+    font-size: 0.8rem;
+    color: var(--text-light);
+    letter-spacing: 1px;
+    margin-top: 5px;
+}
+
+.hero-message {
+    max-width: 600px;
+    margin: 40px auto;
+    font-size: 1.1rem;
+    color: var(--text-light);
+    line-height: 1.8;
+}
+
+.hero-buttons {
+    margin-top: 50px;
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.scroll-down {
+    position: absolute;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 2;
+}
+
+.scroll-down a {
+    color: var(--primary-color);
+    font-size: 1.5rem;
+    animation: bounce 2s infinite;
+    text-decoration: none;
+}
+
+@keyframes bounce {
+    0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+    40% { transform: translateY(-10px); }
+    60% { transform: translateY(-5px); }
+}
+
+/* ===== BUTTONS ===== */
+.btn-wedding {
+    display: inline-block;
+    padding: 15px 30px;
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 0.9rem;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    border-radius: 30px;
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-wedding.primary {
+    background: var(--gradient-primary);
+    color: var(--white);
+    box-shadow: var(--shadow-light);
+}
+
+.btn-wedding.primary:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-medium);
+    color: var(--white);
+}
+
+.btn-wedding.secondary {
+    background: transparent;
+    color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+.btn-wedding.secondary:hover {
+    background: var(--primary-color);
+    color: var(--white);
+}
+
+/* ===== SECTIONS ===== */
+.couple-section,
+.event-section,
+.confirm-section {
+    padding: 100px 0;
+}
+
+.couple-section {
+    background: var(--white);
+}
+
+.event-section {
+    background: var(--gradient-secondary);
+}
+
+.quote-section {
+    padding: 80px 0;
+    background: var(--primary-color);
+    color: var(--white);
+}
+
+.confirm-section {
+    background: var(--white);
+}
+
+.section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 3rem;
+    color: var(--text-dark);
+    text-align: center;
+    margin-bottom: 20px;
+    font-weight: 400;
 }
 
 .section-divider {
-    width: 100px;
+    width: 80px;
     height: 3px;
-    background: linear-gradient(to right, var(--primary-pink), var(--accent-rose));
-    margin: 0 auto 40px;
+    background: var(--gradient-primary);
+    margin: 0 auto 60px;
     border-radius: 2px;
 }
 
-/* Cards de Detalhes */
-.detail-card {
+/* ===== COUPLE SECTION ===== */
+.couple-story h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 2rem;
+    color: var(--text-dark);
+    margin-bottom: 25px;
+}
+
+.couple-story p {
+    font-size: 1.1rem;
+    color: var(--text-light);
+    margin-bottom: 20px;
+    line-height: 1.8;
+}
+
+.couple-heart {
+    font-size: 4rem;
+    color: var(--primary-color);
+    text-align: center;
+    padding: 40px 0;
+}
+
+.couple-photo {
+    text-align: center;
+}
+
+.photo-placeholder {
+    width: 300px;
+    height: 400px;
+    background: var(--gradient-secondary);
+    border-radius: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+    border: 3px solid var(--primary-color);
+}
+
+.photo-placeholder i {
+    font-size: 3rem;
+    color: var(--primary-color);
+    margin-bottom: 15px;
+}
+
+.photo-placeholder p {
+    color: var(--text-light);
+    font-size: 1.1rem;
+}
+
+/* ===== EVENT CARDS ===== */
+.event-card {
+    background: var(--white);
+    padding: 40px 30px;
+    border-radius: 20px;
+    text-align: center;
+    box-shadow: var(--shadow-light);
+    transition: all 0.3s ease;
+    height: 100%;
+    border-top: 4px solid var(--primary-color);
+}
+
+.event-card:hover {
+    transform: translateY(-10px);
+    box-shadow: var(--shadow-medium);
+}
+
+.event-icon {
+    font-size: 3.5rem;
+    color: var(--primary-color);
+    margin-bottom: 25px;
+}
+
+.event-card h4 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.8rem;
+    color: var(--text-dark);
+    margin-bottom: 25px;
+}
+
+.event-details p {
+    margin-bottom: 15px;
+    font-size: 1rem;
+}
+
+.event-details .address {
+    color: var(--text-light);
+    font-size: 0.95rem;
+}
+
+.event-details .time {
+    color: var(--primary-color);
+    font-weight: 600;
+}
+
+.event-details .time i {
+    margin-right: 8px;
+}
+
+/* ===== QUOTE SECTION ===== */
+.love-quote blockquote {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.8rem;
+    font-style: italic;
+    text-align: center;
+    margin: 0;
+    position: relative;
+}
+
+.love-quote blockquote::before,
+.love-quote blockquote::after {
+    content: '"';
+    font-size: 4rem;
+    color: rgba(255, 255, 255, 0.3);
+    position: absolute;
+    top: -20px;
+}
+
+.love-quote blockquote::before {
+    left: -30px;
+}
+
+.love-quote blockquote::after {
+    right: -30px;
+}
+
+.love-quote cite {
+    display: block;
+    margin-top: 25px;
+    font-size: 1.1rem;
+    opacity: 0.8;
+    font-style: normal;
+}
+
+/* ===== CONFIRM SECTION ===== */
+.confirm-card {
+    background: var(--gradient-secondary);
+    padding: 60px 40px;
+    border-radius: 20px;
+    box-shadow: var(--shadow-light);
+    text-align: center;
+    border: 2px solid var(--primary-color);
+}
+
+.confirm-card h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.2rem;
+    color: var(--text-dark);
+    margin-bottom: 25px;
+}
+
+.confirm-card p {
+    font-size: 1.1rem;
+    color: var(--text-light);
+    line-height: 1.8;
+}
+
+.confirm-buttons {
+    margin-top: 40px;
+}
+
+/* ===== FOOTER ===== */
+.wedding-footer {
+    background: var(--text-dark);
+    color: var(--white);
+    padding: 50px 0 30px;
+    text-align: center;
+}
+
+.footer-hearts {
+    font-size: 1.5rem;
+    color: var(--primary-color);
+    margin-bottom: 20px;
+}
+
+.footer-hearts i {
+    margin: 0 10px;
+    animation: pulse 2s infinite;
+}
+
+.footer-text {
+    font-size: 1.1rem;
+    margin-bottom: 15px;
+}
+
+.footer-copyright {
+    font-size: 0.9rem;
+    opacity: 0.7;
+    margin: 0;
+}
+
+/* ===== FLASH MESSAGES ===== */
+.flash-messages {
+    position: fixed;
+    top: 80px;
+    right: 20px;
+    z-index: 1050;
+    max-width: 400px;
+}
+
+.flash-messages .alert {
+    border-radius: 10px;
+    border: none;
+    box-shadow: var(--shadow-light);
+}
+
+/* ===== RESPONSIVE DESIGN ===== */
+@media (max-width: 768px) {
+    .hero-wedding {
+        height: 90vh;
+    }
+    
+    .couple-names {
+        font-size: 3rem;
+    }
+    
+    .ampersand {
+        margin: 0 10px;
+    }
+    
+    .date-text {
+        font-size: 2rem;
+    }
+    
+    .countdown-number {
+        font-size: 2.5rem;
+    }
+    
+    .section-title {
+        font-size: 2.2rem;
+    }
+    
+    .hero-buttons {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .navbar-nav .nav-link {
+        margin: 0 5px;
+    }
+    
+    .couple-section,
+    .event-section,
+    .confirm-section {
+        padding: 60px 0;
+    }
+    
+    .photo-placeholder {
+        width: 250px;
+        height: 320px;
+    }
+    
+    .love-quote blockquote {
+        font-size: 1.4rem;
+    }
+    
+    .love-quote blockquote::before,
+    .love-quote blockquote::after {
+        display: none;
+    }
+}
+
+@media (max-width: 576px) {
+    .confirm-card {
+        padding: 40px 20px;
+    }
+    
+    .event-card {
+        padding: 30px 20px;
+    }
+    
+    .hero-message {
+        padding: 0 20px;
+    }
+}
+
+/* ===== ANIMATIONS ===== */
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); }
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.fade-in-up {
+    animation: fadeInUp 0.8s ease-out;
+}
+
+/* ===== LISTA DE PRESENTES (mantido para compatibilidade) ===== */
+.presente-card {
     background: white;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+    border: 1px solid rgba(212, 165, 116, 0.1);
+}
+
+.presente-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+}
+
+.presente-img {
+    height: 200px;
+    background-size: cover;
+    background-position: center;
+    background-color: var(--secondary-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 3rem;
+    color: var(--primary-color);
+}
+
+.presente-info {
+    padding: 20px;
+}
+
+.presente-nome {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.3rem;
+    color: var(--text-dark);
+    margin-bottom: 10px;
+}
+
+.presente-preco {
+    color: var(--primary-color);
+    font-weight: 600;
+    font-size: 1.1rem;
+}
+
+.presente-categoria {
+    background: var(--secondary-color);
+    color: var(--text-dark);
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    display: inline-block;
+    margin-bottom: 10px;
+}
+
+/* ===== ADMIN STYLES (mantido para compatibilidade) ===== */
+.admin-navbar {
+    background: var(--text-dark) !important;
+}
+
+.admin-sidebar {
+    background: #343a40;
+    min-height: calc(100vh - 56px);
+    padding: 20px 0;
+}
+
+.admin-sidebar .nav-link {
+    color: #adb5bd;
+    padding: 12px 20px;
+    border-radius: 5px;
+    margin: 5px 10px;
+    transition: all 0.3s ease;
+}
+
+.admin-sidebar .nav-link:hover,
+.admin-sidebar .nav-link.active {
+    background: var(--primary-color);
+    color: white;
+}
+
+.admin-card {
+    border: none;
+    border-radius: 15px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+    transition: transform 0.3s ease;
+}
+
+.admin-card:hover {
+    transform: translateY(-3px);
+}
+
+.stat-card {
+    background: var(--gradient-primary);
+    color: white;
     padding: 30px;
     border-radius: 15px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
     text-align: center;
-    transition: transform 0.3s ease;
-    border-top: 4px solid var(--primary-pink);
+}
+
+.stat-number {
+    font-size: 2.5rem;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.stat-label {
+    font-size: 1rem;
+    opacity: 0.9;
+}
+
+/* ===== FORM STYLES ===== */
+.form-romantic {
+    background: white;
+    padding: 40px;
+    border-radius: 20px;
+    box-shadow: var(--shadow-light);
+}
+
+.form-control:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 0.2rem rgba(212, 165, 116, 0.25);
+}
+
+.form-label {
+    color: var(--text-dark);
+    font-weight: 600;
+    margin-bottom: 8px;
+}
+
+/* ===== TABLE STYLES ===== */
+.table-romantic {
+    background: white;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: var(--shadow-light);
+}
+
+.table-romantic thead {
+    background: var(--gradient-primary);
+    color: white;
+}
+
+.table-romantic tbody tr:hover {
+    background-color: rgba(212, 165, 116, 0.05);
 }
 
 .detail-card:hover {
