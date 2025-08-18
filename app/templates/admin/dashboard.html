@@ -18,21 +18,21 @@
     <div class="container">
         <div class="admin-header-content">
             <div class="admin-title-section">
-                <h1 class="admin-page-title">
+                <h1 class="admin-page-title heading-primary">
                     <i class="fas fa-tachometer-alt"></i>
                     Dashboard Administrativo
                 </h1>
-                <p class="admin-page-subtitle">Gerencie seu site de casamento</p>
+                <p class="admin-page-subtitle text-large text-secondary">Gerencie seu site de casamento</p>
             </div>
             
             <div class="admin-actions">
                 <a href="{{ url_for('main.index') }}" class="btn btn-outline" target="_blank">
                     <i class="fas fa-external-link-alt"></i>
-                    Ver Site
+                    <span class="text-base">Ver Site</span>
                 </a>
                 <a href="{{ url_for('admin.logout') }}" class="btn btn-secondary">
                     <i class="fas fa-sign-out-alt"></i>
-                    Sair
+                    <span class="text-base">Sair</span>
                 </a>
             </div>
         </div>

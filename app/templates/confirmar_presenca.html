@@ -7,15 +7,15 @@
 <section class="page-header rsvp-header">
     <div class="container">
         <div class="page-header-content">
-            <h1 class="page-title">Confirme sua Presença</h1>
-            <p class="page-subtitle">
+            <h1 class="heading-primary text-center">Confirme sua Presença</h1>
+            <p class="text-large text-center text-secondary spacing-bottom-medium">
                 Sua presença é muito importante para nós! Por favor, confirme se poderá comparecer 
                 ao nosso casamento para que possamos nos organizar melhor ♥
             </p>
-            <div class="breadcrumb">
-                <a href="{{ url_for('main.index') }}">Home</a>
-                <span>/</span>
-                <span>Confirmar Presença</span>
+            <div class="breadcrumb text-center">
+                <a href="{{ url_for('main.index') }}" class="text-small">Home</a>
+                <span class="text-small">/</span>
+                <span class="text-small">Confirmar Presença</span>
             </div>
         </div>
     </div>
@@ -27,7 +27,7 @@
         <div class="rsvp-container">
             <div class="rsvp-info">
                 <div class="rsvp-details">
-                    <h3>Detalhes do Evento</h3>
+                    <h3 class="heading-secondary text-center spacing-bottom-medium">Detalhes do Evento</h3>
                     
                     <div class="event-summary">
                         <div class="event-item">
@@ -35,12 +35,14 @@
                                 <i class="fas fa-calendar"></i>
                             </div>
                             <div class="event-text">
-                                <strong>Data:</strong>
+                                <strong class="font-semibold">Data:</strong>
+                                <span class="text-base">
                                 {% if config.data_casamento %}
                                     {{ config.data_casamento.strftime('%d de %B de %Y') }}
                                 {% else %}
                                     28 de novembro de 2025
                                 {% endif %}
+                                </span>
                             </div>
                         </div>
                         
@@ -49,13 +51,15 @@
                                 <i class="fas fa-church"></i>
                             </div>
                             <div class="event-text">
-                                <strong>Cerimônia:</strong>
+                                <strong class="font-semibold">Cerimônia:</strong>
+                                <span class="text-base">
                                 {% if config.horario_cerimonia %}
                                     {{ config.horario_cerimonia.strftime('%H:%M') }}
                                 {% else %}
                                     16:00
                                 {% endif %}
                                 - {{ config.local_cerimonia or 'Igreja São Francisco de Assis' }}
+                                </span>
                             </div>
                         </div>
                         
@@ -64,21 +68,23 @@
                                 <i class="fas fa-glass-cheers"></i>
                             </div>
                             <div class="event-text">
-                                <strong>Festa:</strong>
+                                <strong class="font-semibold">Festa:</strong>
+                                <span class="text-base">
                                 {% if config.horario_festa %}
                                     {{ config.horario_festa.strftime('%H:%M') }}
                                 {% else %}
                                     18:00
                                 {% endif %}
                                 - {{ config.local_festa or 'Espaço Jardim Encantado' }}
+                                </span>
                             </div>
                         </div>
                     </div>
                     
                     <div class="rsvp-deadline">
                         <i class="fas fa-exclamation-triangle"></i>
-                        <p>
-                            <strong>Importante:</strong> Confirme sua presença até 
+                        <p class="text-small text-center">
+                            <strong class="font-semibold">Importante:</strong> Confirme sua presença até 
                             {% if data_limite %}
                                 {{ data_limite.strftime('%d/%m/%Y') }}
                             {% else %}
@@ -93,43 +99,43 @@
             <div class="rsvp-form-container">
                 <form id="rsvp-form" class="rsvp-form" action="{{ url_for('main.processar_confirmacao') }}" method="POST">
                     <div class="form-section">
-                        <h3 class="form-section-title">
+                        <h3 class="form-section-title heading-tertiary">
                             <i class="fas fa-user"></i>
-                            Seus Dados
+                            <span class="text-base font-semibold">Seus Dados</span>
                         </h3>
                         
                         <div class="form-row">
                             <div class="form-group">
-                                <label for="nome">Nome Completo *</label>
+                                <label for="nome" class="text-small font-semibold">Nome Completo *</label>
                                 <input type="text" id="nome" name="nome" required class="form-control">
                             </div>
                         </div>
                         
                         <div class="form-row">
                             <div class="form-group">
-                                <label for="email">E-mail *</label>
+                                <label for="email" class="text-small font-semibold">E-mail *</label>
                                 <input type="email" id="email" name="email" required class="form-control">
                             </div>
                             <div class="form-group">
-                                <label for="telefone">Telefone</label>
+                                <label for="telefone" class="text-small font-semibold">Telefone</label>
                                 <input type="tel" id="telefone" name="telefone" class="form-control" placeholder="(11) 99999-9999">
                             </div>
                         </div>
                     </div>
                     
                     <div class="form-section">
-                        <h3 class="form-section-title">
+                        <h3 class="form-section-title heading-tertiary">
                             <i class="fas fa-calendar-check"></i>
-                            Confirmação de Presença
+                            <span class="text-base font-semibold">Confirmação de Presença</span>
                         </h3>
                         
                         <div class="form-group">
-                            <label class="radio-label">Você poderá comparecer ao nosso casamento?</label>
+                            <label class="radio-label text-small font-semibold">Você poderá comparecer ao nosso casamento?</label>
                             <div class="radio-group">
                                 <label class="radio-option">
                                     <input type="radio" name="confirmacao" value="sim" required>
                                     <span class="radio-custom"></span>
-                                    <span class="radio-text">
+                                    <span class="radio-text text-base">
                                         <i class="fas fa-heart text-success"></i>
                                         Sim, estarei presente!
                                     </span>
@@ -137,7 +143,7 @@
                                 <label class="radio-option">
                                     <input type="radio" name="confirmacao" value="nao" required>
                                     <span class="radio-custom"></span>
-                                    <span class="radio-text">
+                                    <span class="radio-text text-base">
                                         <i class="fas fa-heart-broken text-error"></i>
                                         Infelizmente não poderei comparecer
                                     </span>
@@ -147,7 +153,7 @@
                         
                         <div id="attending-details" class="attending-details" style="display: none;">
                             <div class="form-group">
-                                <label for="numero_acompanhantes">Número de acompanhantes</label>
+                                <label for="numero_acompanhantes" class="text-small font-semibold">Número de acompanhantes</label>
                                 <select id="numero_acompanhantes" name="numero_acompanhantes" class="form-control">
                                     <option value="0">Apenas eu</option>
                                     <option value="1">1 acompanhante</option>
@@ -159,17 +165,17 @@
                             </div>
                             
                             <div id="companions-details" class="companions-details" style="display: none;">
-                                <h4>Dados dos Acompanhantes</h4>
+                                <h4 class="heading-quaternary text-base font-semibold">Dados dos Acompanhantes</h4>
                                 <div id="companions-list"></div>
                             </div>
                             
                             <div class="form-group">
-                                <label>Eventos que participará:</label>
+                                <label class="text-small font-semibold">Eventos que participará:</label>
                                 <div class="checkbox-group">
                                     <label class="checkbox-option">
                                         <input type="checkbox" name="eventos" value="cerimonia" checked>
                                         <span class="checkbox-custom"></span>
-                                        <span class="checkbox-text">
+                                        <span class="checkbox-text text-base">
                                             <i class="fas fa-church"></i>
                                             Cerimônia Religiosa
                                         </span>
@@ -177,7 +183,7 @@
                                     <label class="checkbox-option">
                                         <input type="checkbox" name="eventos" value="festa" checked>
                                         <span class="checkbox-custom"></span>
-                                        <span class="checkbox-text">
+                                        <span class="checkbox-text text-base">
                                             <i class="fas fa-glass-cheers"></i>
                                             Festa
                                         </span>
@@ -186,20 +192,20 @@
                             </div>
                             
                             <div class="form-group">
-                                <label for="restricoes_alimentares">Restrições alimentares ou observações</label>
+                                <label for="restricoes_alimentares" class="text-small font-semibold">Restrições alimentares ou observações</label>
                                 <textarea id="restricoes_alimentares" name="restricoes_alimentares" rows="3" class="form-control" placeholder="Ex: vegetariano, alérgico a frutos do mar, etc."></textarea>
                             </div>
                         </div>
                     </div>
                     
                     <div class="form-section">
-                        <h3 class="form-section-title">
+                        <h3 class="form-section-title heading-tertiary">
                             <i class="fas fa-heart"></i>
-                            Mensagem (Opcional)
+                            <span class="text-base font-semibold">Mensagem (Opcional)</span>
                         </h3>
                         
                         <div class="form-group">
-                            <label for="mensagem">Deixe uma mensagem carinhosa para os noivos</label>
+                            <label for="mensagem" class="text-small font-semibold">Deixe uma mensagem carinhosa para os noivos</label>
                             <textarea id="mensagem" name="mensagem" rows="4" class="form-control" placeholder="Compartilhe seus votos de felicidade, uma memória especial ou simplesmente o quanto vocês significam para você..."></textarea>
                         </div>
                     </div>
@@ -225,7 +231,7 @@
     <div class="modal-overlay"></div>
     <div class="modal-content">
         <div class="modal-header">
-            <h3>Presença Confirmada! ♥</h3>
+            <h3 class="heading-secondary text-center">Presença Confirmada! ♥</h3>
         </div>
         
         <div class="modal-body">
@@ -233,11 +239,11 @@
                 <div class="success-icon">
                     <i class="fas fa-heart"></i>
                 </div>
-                <p id="confirmation-message">Obrigado por confirmar sua presença!</p>
-                <p>Mal podemos esperar para celebrar este momento especial com você!</p>
+                <p id="confirmation-message" class="text-base text-center font-semibold">Obrigado por confirmar sua presença!</p>
+                <p class="text-base text-center text-secondary">Mal podemos esperar para celebrar este momento especial com você!</p>
             </div>
             
-            <div class="success-actions">
+            <div class="success-actions text-center">
                 <a href="{{ url_for('main.index') }}" class="btn btn-primary">
                     <i class="fas fa-home"></i>
                     Voltar ao Início
@@ -290,14 +296,14 @@ function generateCompanionFields(numCompanions) {
     for (let i = 1; i <= maxFields; i++) {
         html += `
             <div class="companion-group">
-                <h5>Acompanhante ${i}</h5>
+                <h5 class="heading-quaternary text-small font-semibold">Acompanhante ${i}</h5>
                 <div class="form-row">
                     <div class="form-group">
-                        <label for="acompanhante_nome_${i}">Nome Completo</label>
+                        <label for="acompanhante_nome_${i}" class="text-small font-semibold">Nome Completo</label>
                         <input type="text" id="acompanhante_nome_${i}" name="acompanhante_nome_${i}" class="form-control" required>
                     </div>
                     <div class="form-group">
-                        <label for="acompanhante_idade_${i}">Idade</label>
+                        <label for="acompanhante_idade_${i}" class="text-small font-semibold">Idade</label>
                         <input type="number" id="acompanhante_idade_${i}" name="acompanhante_idade_${i}" min="0" max="120" class="form-control">
                     </div>
                 </div>
@@ -309,7 +315,7 @@ function generateCompanionFields(numCompanions) {
         html += `
             <div class="companion-note">
                 <i class="fas fa-info-circle"></i>
-                <p>Para mais de 5 acompanhantes, entre em contato conosco diretamente.</p>
+                <p class="text-small text-center text-secondary">Para mais de 5 acompanhantes, entre em contato conosco diretamente.</p>
             </div>
         `;
     }

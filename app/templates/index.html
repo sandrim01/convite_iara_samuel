@@ -30,13 +30,13 @@
                     {% endif %}
                 </div>
                 
-                <h1 class="hero-names">
+                <h1 class="hero-names heading-script">
                     <span class="bride-name">{{ config.nome_noiva or 'Iara' }}</span>
                     <span class="heart">♥</span>
                     <span class="groom-name">{{ config.nome_noivo or 'Samuel' }}</span>
                 </h1>
                 
-                <div class="hero-date">
+                <div class="hero-date text-large font-medium">
                     {% if config.data_casamento %}
                         {{ config.data_casamento.strftime('%d.%m.%Y') }}
                     {% else %}
@@ -44,7 +44,7 @@
                     {% endif %}
                 </div>
                 
-                <div class="hero-location">
+                <div class="hero-location text-base">
                     <i class="fas fa-map-marker-alt"></i>
                     <span>{{ config.local_cerimonia or 'São Paulo' }}</span>
                 </div>
@@ -72,28 +72,28 @@
 </section>
 
 <!-- Welcome Section -->
-<section class="welcome-section" id="welcome">
+<section class="welcome-section section" id="welcome">
     <div class="container">
         <div class="welcome-content">
-            <div class="section-header">
-                <h2 class="section-title">Bem-vindos ao nosso site!</h2>
-                <div class="section-subtitle">
+            <div class="section-header text-center">
+                <h2 class="section-title heading-serif">Bem-vindos ao nosso site!</h2>
+                <div class="section-subtitle text-primary">
                     <i class="fas fa-heart"></i>
                 </div>
             </div>
             
             <div class="welcome-text">
-                <p class="welcome-message">
+                <p class="welcome-message lead text-center">
                     {{ config.mensagem_principal or 'Criamos esse site para compartilhar com vocês os detalhes da organização do nosso casamento. ♥' }}
                 </p>
                 
-                <p>
+                <p class="text-center">
                     Aqui vocês encontrarão também informações sobre a cerimônia, festa, 
                     e tudo que precisam saber para nosso grande dia. É importante confirmar 
                     sua presença para que possamos nos organizar melhor.
                 </p>
                 
-                <p>
+                <p class="text-center">
                     Para nos presentear, escolham qualquer item da nossa Lista de Casamento. 
                     Fiquem à vontade! Aguardamos vocês no nosso grande dia!
                 </p>
@@ -103,11 +103,11 @@
 </section>
 
 <!-- About Couple Section -->
-<section class="couple-section" id="casal">
+<section class="couple-section section" id="casal">
     <div class="container">
-        <div class="section-header">
-            <h2 class="section-title">O Casal</h2>
-            <div class="section-subtitle">
+        <div class="section-header text-center">
+            <h2 class="section-title heading-serif">O Casal</h2>
+            <div class="section-subtitle text-primary">
                 <i class="fas fa-heart"></i>
             </div>
         </div>
@@ -121,9 +121,9 @@
                     </div>
                 </div>
                 <div class="couple-info">
-                    <h3 class="couple-name">{{ config.nome_noiva or 'Iara' }}</h3>
-                    <p class="couple-title">A Noiva</p>
-                    <p class="couple-description">
+                    <h3 class="couple-name heading-script text-primary">{{ config.nome_noiva or 'Iara' }}</h3>
+                    <p class="couple-title text-small uppercase font-medium text-secondary">A Noiva</p>
+                    <p class="couple-description text-center">
                         Uma pessoa especial que trouxe ainda mais amor e alegria para minha vida. 
                         Estou ansiosa para começarmos nossa jornada juntos como marido e mulher.
                     </p>
@@ -131,7 +131,7 @@
             </div>
             
             <div class="couple-heart">
-                <div class="heart-icon">♥</div>
+                <div class="heart-icon text-primary">♥</div>
             </div>
             
             <div class="couple-card groom-card">
@@ -142,9 +142,9 @@
                     </div>
                 </div>
                 <div class="couple-info">
-                    <h3 class="couple-name">{{ config.nome_noivo or 'Samuel' }}</h3>
-                    <p class="couple-title">O Noivo</p>
-                    <p class="couple-description">
+                    <h3 class="couple-name heading-script text-primary">{{ config.nome_noivo or 'Samuel' }}</h3>
+                    <p class="couple-title text-small uppercase font-medium text-secondary">O Noivo</p>
+                    <p class="couple-description text-center">
                         A pessoa que completa minha vida e me faz querer ser melhor a cada dia. 
                         Mal posso esperar para chamarmos um ao outro de marido e mulher.
                     </p>
@@ -155,11 +155,11 @@
 </section>
 
 <!-- Event Details Section -->
-<section class="event-section" id="local">
+<section class="event-section section" id="local">
     <div class="container">
-        <div class="section-header">
-            <h2 class="section-title">Informações do Evento</h2>
-            <div class="section-subtitle">
+        <div class="section-header text-center">
+            <h2 class="section-title heading-serif">Informações do Evento</h2>
+            <div class="section-subtitle text-primary">
                 <i class="fas fa-calendar-heart"></i>
             </div>
         </div>
@@ -167,15 +167,15 @@
         <div class="event-grid">
             <!-- Cerimônia -->
             <div class="event-card ceremony-card">
-                <div class="event-icon">
+                <div class="event-icon text-primary">
                     <i class="fas fa-church"></i>
                 </div>
                 <div class="event-content">
-                    <h3 class="event-title">Cerimônia</h3>
+                    <h3 class="event-title font-semibold">Cerimônia</h3>
                     <div class="event-details">
                         <div class="event-detail">
-                            <i class="fas fa-clock"></i>
-                            <span>
+                            <i class="fas fa-clock text-primary"></i>
+                            <span class="font-medium">
                                 {% if config.horario_cerimonia %}
                                     {{ config.horario_cerimonia.strftime('%H:%M') }}
                                 {% else %}
@@ -184,10 +184,10 @@
                             </span>
                         </div>
                         <div class="event-detail">
-                            <i class="fas fa-map-marker-alt"></i>
-                            <span>{{ config.local_cerimonia or 'Igreja São Francisco de Assis' }}</span>
+                            <i class="fas fa-map-marker-alt text-primary"></i>
+                            <span class="font-medium">{{ config.local_cerimonia or 'Igreja São Francisco de Assis' }}</span>
                         </div>
-                        <div class="event-address">
+                        <div class="event-address text-small text-secondary">
                             {{ config.endereco_cerimonia or 'Rua das Flores, 123 - Centro, São Paulo - SP' }}
                         </div>
                     </div>
