@@ -17,16 +17,21 @@ def create_app():
     # Configurações
     app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY') or 'dev-key-change-in-production'
     
-    # Usar SQLite para desenvolvimento se PostgreSQL não estiver disponível
+    # Configuração do banco de dados
     database_url = os.environ.get('DATABASE_URL')
     if database_url and database_url.startswith('postgresql://'):
         try:
-            import psycopg2
-            app.config['SQLALCHEMY_DATABASE_URI'] = database_url
+            # Usar pg8000 como driver PostgreSQL
+            import pg8000
+            # Substituir postgresql:// por postgresql+pg8000:// para SQLAlchemy
+            postgres_url = database_url.replace('postgresql://', 'postgresql+pg8000://')
+            app.config['SQLALCHEMY_DATABASE_URI'] = postgres_url
+            print("🐘 Conectando ao PostgreSQL usando pg8000...")
         except ImportError:
-            print("⚠️  PostgreSQL não disponível, usando SQLite para desenvolvimento")
+            print("⚠️  pg8000 não disponível, usando SQLite para desenvolvimento")
             app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///convite_dev.db'
     else:
+        print("📂 Usando SQLite para desenvolvimento...")
         app.config['SQLALCHEMY_DATABASE_URI'] = database_url or 'sqlite:///convite_dev.db'
     
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
