@@ -47,6 +47,7 @@ def o_casal():
     return render_template('o_casal.html', config=config)
 
 @main.route('/local')
+@main.route('/local-teste')  # Rota adicional para teste
 def local():
     """Página do local da cerimônia com confirmação de presença"""
     config = ConfiguracaoSite.query.first()
@@ -91,14 +92,20 @@ def processar_confirmacao():
         flash('Já existe uma confirmação com esse nome. Entre em contato conosco se precisar fazer alterações.', 'warning')
         return redirect(url_for('main.local'))
     
+    # Gerar token único para o convidado
+    import uuid
+    token = str(uuid.uuid4())
+    
     # Criar novo convidado
     novo_convidado = Convidado(
         nome=nome,
         telefone=telefone,
         email=email,
-        acompanhantes=acompanhantes,
-        observacoes=observacoes,
-        confirmado=True,
+        numero_acompanhantes=acompanhantes,
+        mensagem=observacoes,
+        token=token,
+        confirmacao=True,
+        data_confirmacao=datetime.utcnow(),
         liberado_recepcao=True  # Liberar automaticamente para recepção
     )
     
