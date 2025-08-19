@@ -49,14 +49,44 @@
                     <span>{{ config.local_cerimonia or 'São Paulo' }}</span>
                 </div>
                 
-                <div class="hero-actions">
-                    <a href="{{ url_for('main.confirmar_presenca') }}" class="btn btn-primary btn-large">
-                        <i class="fas fa-calendar-check"></i>
-                        Confirmar Presença
-                    </a>
-                    <a href="{{ url_for('main.lista_presentes') }}" class="btn btn-secondary btn-large">
-                        <i class="fas fa-gift"></i>
-                        Ver Presentes
+                <div class="hero-verse">
+                    <blockquote class="biblical-quote">
+                        <p class="quote-text text-large text-center font-medium">
+                            "Assim, permanecem agora estes três: a fé, a esperança e o amor. O maior deles, porém, é o amor."
+                        </p>
+                        <cite class="quote-reference text-base text-center text-secondary">
+                            <i class="fas fa-book"></i>
+                            I Coríntios 13:13
+                        </cite>
+                    </blockquote>
+                </div>
+
+                <!-- Navegação Step by Step -->
+                <div class="step-navigation">
+                    <div class="step-indicator-home">
+                        <div class="step-nav current">
+                            <span class="step-number active">1</span>
+                            <span class="step-label">Início</span>
+                        </div>
+                        <div class="step-connector"></div>
+                        <div class="step-nav">
+                            <span class="step-number">2</span>
+                            <span class="step-label">O Casal</span>
+                        </div>
+                        <div class="step-connector"></div>
+                        <div class="step-nav">
+                            <span class="step-number">3</span>
+                            <span class="step-label">Local</span>
+                        </div>
+                        <div class="step-connector"></div>
+                        <div class="step-nav">
+                            <span class="step-number">4</span>
+                            <span class="step-label">Presentes</span>
+                        </div>
+                    </div>
+                    <a href="{{ url_for('main.o_casal') }}" class="btn btn-step-next">
+                        <span>Conhecer o Casal</span>
+                        <i class="fas fa-arrow-right"></i>
                     </a>
                 </div>
             </div>
@@ -88,9 +118,8 @@
                 </p>
                 
                 <p class="text-center">
-                    Aqui vocês encontrarão também informações sobre a cerimônia, festa, 
-                    e tudo que precisam saber para nosso grande dia. É importante confirmar 
-                    sua presença para que possamos nos organizar melhor.
+                    Aqui vocês encontrarão também informações sobre a cerimônia 
+                    e tudo que precisam saber para nosso grande dia.
                 </p>
                 
                 <p class="text-center">
@@ -197,39 +226,17 @@
                     </a>
                 </div>
             </div>
-            
-            <!-- Festa -->
-            <div class="event-card reception-card">
-                <div class="event-icon">
-                    <i class="fas fa-glass-cheers"></i>
-                </div>
-                <div class="event-content">
-                    <h3 class="event-title">Festa</h3>
-                    <div class="event-details">
-                        <div class="event-detail">
-                            <i class="fas fa-clock"></i>
-                            <span>
-                                {% if config.horario_festa %}
-                                    {{ config.horario_festa.strftime('%H:%M') }}
-                                {% else %}
-                                    20:00
-                                {% endif %}
-                            </span>
-                        </div>
-                        <div class="event-detail">
-                            <i class="fas fa-map-marker-alt"></i>
-                            <span>{{ config.local_festa or 'Espaço Jardim Encantado' }}</span>
-                        </div>
-                        <div class="event-address">
-                            {{ config.endereco_festa or 'Av. Paulista, 456 - Bela Vista, São Paulo - SP' }}
-                        </div>
-                    </div>
-                    <a href="#" class="btn btn-outline btn-small" onclick="openMap('festa')">
-                        <i class="fas fa-directions"></i>
-                        Ver no Mapa
-                    </a>
-                </div>
-            </div>
+        </div>
+        
+        <!-- Botão para Confirmar Presença apenas aqui na seção do evento -->
+        <div class="event-actions text-center">
+            <a href="{{ url_for('main.confirmar_presenca') }}" class="btn btn-primary btn-large">
+                <i class="fas fa-calendar-check"></i>
+                Confirmar Presença na Cerimônia
+            </a>
+            <p class="text-small text-secondary spacing-top-sm">
+                Confirme sua presença para receber informações adicionais sobre a recepção
+            </p>
         </div>
     </div>
 </section>
@@ -239,13 +246,13 @@
     <div class="container">
         <div class="quick-actions-grid">
             <div class="quick-action">
-                <a href="{{ url_for('main.confirmar_presenca') }}" class="quick-action-link">
+                <a href="#evento-details" class="quick-action-link">
                     <div class="quick-action-icon">
-                        <i class="fas fa-calendar-check"></i>
+                        <i class="fas fa-map-marker-alt"></i>
                     </div>
                     <div class="quick-action-content">
-                        <h3>Confirmar Presença</h3>
-                        <p>Nos ajude a organizar melhor nosso grande dia</p>
+                        <h3>Local e Horário</h3>
+                        <p>Veja onde e quando será nossa cerimônia</p>
                     </div>
                     <div class="quick-action-arrow">
                         <i class="fas fa-arrow-right"></i>
@@ -278,9 +285,7 @@
 function openMap(type) {
     let address = '';
     if (type === 'cerimonia') {
-        address = '{{ config.endereco_cerimonia or "Rua das Flores, 123 - Centro, São Paulo - SP" }}';
-    } else if (type === 'festa') {
-        address = '{{ config.endereco_festa or "Av. Paulista, 456 - Bela Vista, São Paulo - SP" }}';
+        address = '{{ config.endereco_cerimonia or "Rua Domingos Alcíno Dadalto, 114, Jardim Itapemirim, Cachoeiro de Itapemirim - ES" }}';
     }
     
     const encodedAddress = encodeURIComponent(address);

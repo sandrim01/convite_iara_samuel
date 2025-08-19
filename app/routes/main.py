@@ -34,6 +34,84 @@ def index():
     
     return render_template('index.html', config=config, dias_restantes=dias_restantes)
 
+@main.route('/o-casal')
+def o_casal():
+    """Página sobre o casal"""
+    config = ConfiguracaoSite.query.first()
+    if not config:
+        config = ConfiguracaoSite(
+            nome_noiva='Iara',
+            nome_noivo='Samuel'
+        )
+    
+    return render_template('o_casal.html', config=config)
+
+@main.route('/local')
+def local():
+    """Página do local da cerimônia com confirmação de presença"""
+    config = ConfiguracaoSite.query.first()
+    if not config:
+        config = ConfiguracaoSite(
+            nome_noiva='Iara',
+            nome_noivo='Samuel',
+            data_casamento=datetime(2025, 11, 8).date(),
+            local_cerimonia='Igreja Nossa Senhora das Graças',
+            endereco_cerimonia='Rua Domingos Alcíno Dadalto, 114, Jardim Itapemirim, Cachoeiro de Itapemirim - ES',
+            horario_cerimonia=datetime.strptime('19:00', '%H:%M').time()
+        )
+    
+    # Calcular dias restantes
+    if config.data_casamento:
+        hoje = datetime.now().date()
+        dias_restantes = (config.data_casamento - hoje).days
+        data_limite = config.data_casamento
+    else:
+        dias_restantes = 0
+        data_limite = None
+    
+    return render_template('local.html', config=config, dias_restantes=dias_restantes, data_limite=data_limite)
+
+@main.route('/processar-confirmacao', methods=['POST'])
+def processar_confirmacao():
+    """Processar confirmação de presença"""
+    nome = request.form.get('nome')
+    telefone = request.form.get('telefone')
+    email = request.form.get('email')
+    acompanhantes = int(request.form.get('acompanhantes', 0))
+    observacoes = request.form.get('observacoes')
+    
+    if not nome:
+        flash('Nome é obrigatório', 'error')
+        return redirect(url_for('main.local'))
+    
+    # Verificar se já existe um convidado com esse nome
+    convidado_existente = Convidado.query.filter_by(nome=nome).first()
+    
+    if convidado_existente:
+        flash('Já existe uma confirmação com esse nome. Entre em contato conosco se precisar fazer alterações.', 'warning')
+        return redirect(url_for('main.local'))
+    
+    # Criar novo convidado
+    novo_convidado = Convidado(
+        nome=nome,
+        telefone=telefone,
+        email=email,
+        acompanhantes=acompanhantes,
+        observacoes=observacoes,
+        confirmado=True,
+        liberado_recepcao=True  # Liberar automaticamente para recepção
+    )
+    
+    try:
+        db.session.add(novo_convidado)
+        db.session.commit()
+        flash(f'Presença confirmada com sucesso! Obrigado, {nome}!', 'success')
+        return redirect(url_for('main.lista_presentes'))
+    except Exception as e:
+        db.session.rollback()
+        flash('Erro ao confirmar presença. Tente novamente.', 'error')
+        return redirect(url_for('main.local'))
+
 @main.route('/presentes')
 def lista_presentes():
     """Página da lista de presentes"""
@@ -81,6 +159,9 @@ def processar_confirmacao():
             convidado_existente.restricoes_alimentares = restricoes_alimentares
             convidado_existente.mensagem = mensagem
             convidado_existente.data_confirmacao = datetime.utcnow()
+            # Liberar convite de recepção se confirmou presença
+            if confirmacao == 'sim':
+                convidado_existente.liberado_recepcao = True
             convidado = convidado_existente
         else:
             # Gerar token único
@@ -98,7 +179,8 @@ def processar_confirmacao():
                 eventos_participara=eventos,
                 restricoes_alimentares=restricoes_alimentares,
                 mensagem=mensagem,
-                data_confirmacao=datetime.utcnow()
+                data_confirmacao=datetime.utcnow(),
+                liberado_recepcao=(confirmacao == 'sim')  # Liberar automaticamente se confirmou
             )
             db.session.add(convidado)
         
@@ -116,6 +198,28 @@ def processar_confirmacao():
         
         flash('Erro ao confirmar presença. Tente novamente.', 'error')
         return redirect(url_for('main.confirmar_presenca'))
+
+@main.route('/convite-recepcao')
+def convite_recepcao():
+    """Página do convite de recepção - apenas para quem confirmou presença"""
+    config = ConfiguracaoSite.query.first()
+    if not config:
+        # Criar configuração padrão se não existir
+        config = ConfiguracaoSite(
+            nome_noiva='Iara',
+            nome_noivo='Samuel',
+            data_casamento=datetime(2025, 11, 8).date(),
+            local_cerimonia='Igreja Nossa Senhora das Graças',
+            endereco_cerimonia='Rua Domingos Alcíno Dadalto, 114, Jardim Itapemirim, Cachoeiro de Itapemirim - ES',
+            horario_cerimonia=datetime.strptime('19:00', '%H:%M').time(),
+            local_festa='Espaço Jardim Encantado',
+            endereco_festa='Av. Paulista, 456 - Bela Vista, São Paulo - SP',
+            horario_festa=datetime.strptime('20:00', '%H:%M').time(),
+        )
+        db.session.add(config)
+        db.session.commit()
+    
+    return render_template('convite_recepcao.html', config=config)
 
 @main.route('/escolher-presente', methods=['POST'])
 def escolher_presente():

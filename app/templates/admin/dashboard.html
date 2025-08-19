@@ -64,6 +64,16 @@
             </div>
             
             <div class="stat-card">
+                <div class="stat-icon reception">
+                    <i class="fas fa-glass-cheers"></i>
+                </div>
+                <div class="stat-content">
+                    <div class="stat-number">{{ stats.liberados_recepcao }}</div>
+                    <div class="stat-label">Liberados Recepção</div>
+                </div>
+            </div>
+            
+            <div class="stat-card">
                 <div class="stat-icon declined">
                     <i class="fas fa-times-circle"></i>
                 </div>
@@ -117,6 +127,19 @@
                 </div>
                 <div class="action-arrow">
                     <i class="fas fa-arrow-right"></i>
+                </div>
+            </a>
+            
+            <a href="{{ url_for('main.convite_recepcao') }}" class="quick-action-card" target="_blank">
+                <div class="action-icon">
+                    <i class="fas fa-glass-cheers"></i>
+                </div>
+                <div class="action-content">
+                    <h3>Convite de Recepção</h3>
+                    <p>Visualizar convite para quem confirmou</p>
+                </div>
+                <div class="action-arrow">
+                    <i class="fas fa-external-link-alt"></i>
                 </div>
             </a>
             
@@ -194,29 +217,29 @@
                 </div>
             </div>
             
-            <!-- Recent Gifts -->
+            <!-- Liberados para Recepção -->
             <div class="admin-card">
                 <div class="card-header">
                     <h3 class="card-title">
-                        <i class="fas fa-gift"></i>
-                        Presentes Recentes
+                        <i class="fas fa-glass-cheers"></i>
+                        Liberados para Recepção
                     </h3>
-                    <a href="{{ url_for('admin.presentes') }}" class="card-link">Ver todos</a>
+                    <a href="{{ url_for('main.convite_recepcao') }}" class="card-link" target="_blank">Ver Convite</a>
                 </div>
                 
                 <div class="card-content">
-                    {% if presentes_recentes %}
+                    {% if convidados_liberados %}
                         <div class="activity-list">
-                            {% for escolha in presentes_recentes %}
+                            {% for convidado in convidados_liberados %}
                             <div class="activity-item">
                                 <div class="activity-avatar">
-                                    <i class="fas fa-gift"></i>
+                                    <i class="fas fa-glass-cheers"></i>
                                 </div>
                                 <div class="activity-content">
-                                    <div class="activity-title">{{ escolha.presente.nome }}</div>
+                                    <div class="activity-title">{{ convidado.nome }}</div>
                                     <div class="activity-meta">
-                                        <span class="activity-person">por {{ escolha.nome_presenteador }}</span>
-                                        <span class="activity-time">{{ escolha.data_escolha.strftime('%d/%m às %H:%M') }}</span>
+                                        <span class="status confirmed">Liberado para recepção</span>
+                                        <span class="activity-time">{{ convidado.data_confirmacao.strftime('%d/%m às %H:%M') }}</span>
                                     </div>
                                 </div>
                             </div>
@@ -224,7 +247,12 @@
                         </div>
                     {% else %}
                         <div class="empty-state-small">
-                            <i class="fas fa-gift"></i>
+                            <i class="fas fa-glass-cheers"></i>
+                            <p>Nenhum convidado liberado ainda</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
                             <p>Nenhum presente escolhido ainda</p>
                         </div>
                     {% endif %}

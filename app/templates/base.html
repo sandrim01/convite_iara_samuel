@@ -39,6 +39,11 @@
         </div>
     </div>
 
+    <!-- Step Progress Bar -->
+    <div class="step-progress-bar">
+        <div class="step-progress-fill" id="step-progress"></div>
+    </div>
+
     <!-- Navigation -->
     <nav class="navbar" id="navbar">
         <div class="container">
@@ -59,17 +64,17 @@
                     <li class="nav-item">
                         <a href="{{ url_for('main.index') }}" class="nav-link">
                             <i class="fas fa-home"></i>
-                            <span>Home</span>
+                            <span>Início</span>
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a href="#casal" class="nav-link">
+                        <a href="{{ url_for('main.o_casal') }}" class="nav-link">
                             <i class="fas fa-heart"></i>
                             <span>O Casal</span>
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a href="#local" class="nav-link">
+                        <a href="{{ url_for('main.local') }}" class="nav-link">
                             <i class="fas fa-map-marker-alt"></i>
                             <span>Local</span>
                         </a>
@@ -78,12 +83,6 @@
                         <a href="{{ url_for('main.lista_presentes') }}" class="nav-link">
                             <i class="fas fa-gift"></i>
                             <span>Presentes</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="{{ url_for('main.confirmar_presenca') }}" class="nav-link">
-                            <i class="fas fa-calendar-check"></i>
-                            <span>Confirme Presença</span>
                         </a>
                     </li>
                 </ul>
@@ -150,6 +149,35 @@
 
     <!-- Scripts -->
     <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    <script>
+        // Highlight current page in navigation and update progress
+        document.addEventListener('DOMContentLoaded', function() {
+            const currentPath = window.location.pathname;
+            const navLinks = document.querySelectorAll('.nav-link');
+            const progressBar = document.getElementById('step-progress');
+            
+            // Page to step mapping
+            const pageSteps = {
+                '/': 'step-1',
+                '/o-casal': 'step-2', 
+                '/local': 'step-3',
+                '/presentes': 'step-4'
+            };
+            
+            navLinks.forEach(link => {
+                const linkPath = new URL(link.href).pathname;
+                if (linkPath === currentPath) {
+                    link.classList.add('nav-link-active');
+                }
+            });
+            
+            // Update progress bar
+            const stepClass = pageSteps[currentPath];
+            if (stepClass && progressBar) {
+                progressBar.className = `step-progress-fill ${stepClass}`;
+            }
+        });
+    </script>
     {% block extra_scripts %}{% endblock %}
 </body>
 </html>

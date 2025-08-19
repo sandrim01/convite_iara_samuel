@@ -1,0 +1,233 @@
+{% extends "base.html" %}
+
+{% block title %}Convite de Recepção - {{ config.nome_noiva or 'Iara' }} & {{ config.nome_noivo or 'Samuel' }}{% endblock %}
+
+{% block content %}
+<!-- Hero Section - Convite de Recepção -->
+<section class="hero reception-hero">
+    <div class="container">
+        <div class="hero-content text-center">
+            <div class="hero-announcement">
+                <h2 class="text-xl text-noivos spacing-bottom-sm">Parabéns!</h2>
+                <p class="text-large text-secondary">Você confirmou presença na cerimônia</p>
+            </div>
+            
+            <div class="hero-names">
+                <h1 class="bride-name text-noivos">{{ config.nome_noiva or 'Iara' }}</h1>
+                <div class="ampersand text-primary">&</div>
+                <h1 class="groom-name text-noivos">{{ config.nome_noivo or 'Samuel' }}</h1>
+            </div>
+            
+            <div class="hero-subtitle">
+                <h2 class="heading-secondary text-center">Agora você está convidado(a) para nossa</h2>
+                <h1 class="heading-primary text-center text-accent">RECEPÇÃO</h1>
+            </div>
+            
+            <div class="hero-date">
+                <p class="text-2xl font-bold">
+                    {% if config.data_casamento %}
+                        {{ config.data_casamento.strftime('%d.%m.%Y') }}
+                    {% else %}
+                        08.11.2025
+                    {% endif %}
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Reception Details Section -->
+<section class="reception-details-section" id="recepcao-details">
+    <div class="container">
+        <div class="section-header text-center">
+            <h2 class="heading-secondary text-title">Detalhes da Recepção</h2>
+            <p class="text-large text-secondary">Celebre conosco este momento especial</p>
+        </div>
+        
+        <div class="reception-info">
+            <div class="reception-card">
+                <div class="reception-icon">
+                    <i class="fas fa-glass-cheers text-accent"></i>
+                </div>
+                <div class="reception-content">
+                    <h3 class="heading-tertiary text-title">Festa de Casamento</h3>
+                    <div class="reception-details">
+                        <div class="reception-detail">
+                            <i class="fas fa-clock text-highlight"></i>
+                            <span class="text-base font-semibold">
+                                {% if config.horario_festa %}
+                                    {{ config.horario_festa.strftime('%H:%M') }}
+                                {% else %}
+                                    20:00
+                                {% endif %}
+                            </span>
+                        </div>
+                        <div class="reception-detail">
+                            <i class="fas fa-map-marker-alt text-highlight"></i>
+                            <span class="text-base font-semibold">{{ config.local_festa or 'Espaço Jardim Encantado' }}</span>
+                        </div>
+                        <div class="reception-address text-base text-secondary">
+                            {{ config.endereco_festa or 'Av. Paulista, 456 - Bela Vista, São Paulo - SP' }}
+                        </div>
+                    </div>
+                    <a href="#" class="btn btn-primary" onclick="openReceptionMap()">
+                        <i class="fas fa-directions"></i>
+                        Ver no Mapa
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Informações Especiais da Recepção -->
+        <div class="reception-info-cards">
+            <div class="info-card">
+                <div class="info-icon">
+                    <i class="fas fa-utensils text-accent"></i>
+                </div>
+                <h4 class="heading-quaternary text-title">Jantar</h4>
+                <p class="text-base text-secondary">Menu especial será servido durante a recepção</p>
+            </div>
+            
+            <div class="info-card">
+                <div class="info-icon">
+                    <i class="fas fa-music text-accent"></i>
+                </div>
+                <h4 class="heading-quaternary text-title">Música</h4>
+                <p class="text-base text-secondary">DJ e pista de dança para celebrarmos juntos</p>
+            </div>
+            
+            <div class="info-card">
+                <div class="info-icon">
+                    <i class="fas fa-camera text-accent"></i>
+                </div>
+                <h4 class="heading-quaternary text-title">Fotos</h4>
+                <p class="text-base text-secondary">Fotógrafo profissional registrará nossos momentos</p>
+            </div>
+        </div>
+        
+        <!-- Dress Code -->
+        <div class="dress-code-section text-center">
+            <h3 class="heading-tertiary text-title spacing-bottom-medium">Dress Code</h3>
+            <div class="dress-code-cards">
+                <div class="dress-code-card">
+                    <i class="fas fa-tshirt text-accent"></i>
+                    <h4 class="text-base font-semibold">Esporte Fino</h4>
+                    <p class="text-small text-secondary">Traje elegante e confortável</p>
+                </div>
+                <div class="dress-code-card">
+                    <i class="fas fa-palette text-accent"></i>
+                    <h4 class="text-base font-semibold">Cores</h4>
+                    <p class="text-small text-secondary">Evite branco e vermelho</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Timeline Section -->
+<section class="timeline-section">
+    <div class="container">
+        <div class="section-header text-center">
+            <h2 class="heading-secondary text-title">Cronograma do Dia</h2>
+            <p class="text-large text-secondary">Programação completa da nossa celebração</p>
+        </div>
+        
+        <div class="timeline">
+            <div class="timeline-item">
+                <div class="timeline-time">
+                    <span class="text-base font-bold text-highlight">19:00</span>
+                </div>
+                <div class="timeline-content">
+                    <h4 class="text-base font-semibold">Cerimônia Religiosa</h4>
+                    <p class="text-small text-secondary">{{ config.local_cerimonia or 'Igreja Nossa Senhora das Graças' }}</p>
+                </div>
+            </div>
+            
+            <div class="timeline-item">
+                <div class="timeline-time">
+                    <span class="text-base font-bold text-highlight">20:00</span>
+                </div>
+                <div class="timeline-content">
+                    <h4 class="text-base font-semibold">Chegada na Recepção</h4>
+                    <p class="text-small text-secondary">Cocktail de boas-vindas</p>
+                </div>
+            </div>
+            
+            <div class="timeline-item">
+                <div class="timeline-time">
+                    <span class="text-base font-bold text-highlight">20:30</span>
+                </div>
+                <div class="timeline-content">
+                    <h4 class="text-base font-semibold">Jantar</h4>
+                    <p class="text-small text-secondary">Menu especial para todos os convidados</p>
+                </div>
+            </div>
+            
+            <div class="timeline-item">
+                <div class="timeline-time">
+                    <span class="text-base font-bold text-highlight">22:00</span>
+                </div>
+                <div class="timeline-content">
+                    <h4 class="text-base font-semibold">Festa e Dança</h4>
+                    <p class="text-small text-secondary">Momento de celebrar e dançar conosco</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Actions Section -->
+<section class="reception-actions-section">
+    <div class="container text-center">
+        <h3 class="heading-tertiary text-title spacing-bottom-medium">Nos vemos lá!</h3>
+        <p class="text-base text-secondary spacing-bottom-medium">
+            Mal podemos esperar para celebrar este momento especial com você!
+        </p>
+        
+        <div class="reception-buttons">
+            <a href="{{ url_for('main.index') }}" class="btn btn-secondary btn-large">
+                <i class="fas fa-arrow-left"></i>
+                Voltar ao Início
+            </a>
+            <a href="{{ url_for('main.lista_presentes') }}" class="btn btn-primary btn-large">
+                <i class="fas fa-gift"></i>
+                Ver Lista de Presentes
+            </a>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+// Função para abrir mapa da recepção
+function openReceptionMap() {
+    const address = '{{ config.endereco_festa or "Av. Paulista, 456 - Bela Vista, São Paulo - SP" }}';
+    const encodedAddress = encodeURIComponent(address);
+    const mapUrl = `https://www.google.com/maps/search/?api=1&query=${encodedAddress}`;
+    window.open(mapUrl, '_blank');
+}
+
+// Animação de entrada
+document.addEventListener('DOMContentLoaded', function() {
+    // Adicionar animações suaves aos elementos
+    const elements = document.querySelectorAll('.timeline-item, .info-card, .dress-code-card');
+    
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.style.opacity = '1';
+                entry.target.style.transform = 'translateY(0)';
+            }
+        });
+    });
+    
+    elements.forEach(el => {
+        el.style.opacity = '0';
+        el.style.transform = 'translateY(20px)';
+        el.style.transition = 'all 0.6s ease';
+        observer.observe(el);
+    });
+});
+</script>
+{% endblock %}

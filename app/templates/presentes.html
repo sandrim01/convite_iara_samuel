@@ -6,17 +6,36 @@
 <!-- Header Section -->
 <section class="page-header gifts-header">
     <div class="container">
+        <div class="step-header">
+            <div class="step-indicator">
+                <a href="{{ url_for('main.index') }}" class="step-nav">
+                    <span class="step-number completed">1</span>
+                    <span class="step-label">Início</span>
+                </a>
+                <div class="step-connector completed"></div>
+                <a href="{{ url_for('main.o_casal') }}" class="step-nav">
+                    <span class="step-number completed">2</span>
+                    <span class="step-label">O Casal</span>
+                </a>
+                <div class="step-connector completed"></div>
+                <a href="{{ url_for('main.local') }}" class="step-nav">
+                    <span class="step-number completed">3</span>
+                    <span class="step-label">Local</span>
+                </a>
+                <div class="step-connector completed"></div>
+                <div class="step-nav current">
+                    <span class="step-number active">4</span>
+                    <span class="step-label">Presentes</span>
+                </div>
+            </div>
+        </div>
+        
         <div class="page-header-content text-center">
             <h1 class="page-title heading-serif">Lista de Presentes</h1>
             <p class="page-subtitle lead">
                 Escolha um presente especial para nós! Sua presença já é o maior presente, 
                 mas se quiser nos presentear, aqui estão algumas sugestões ♥
             </p>
-            <div class="breadcrumb">
-                <a href="{{ url_for('main.index') }}" class="text-white">Home</a>
-                <span class="text-white">/</span>
-                <span class="text-white">Lista de Presentes</span>
-            </div>
         </div>
     </div>
 </section>
@@ -166,6 +185,26 @@
                 </a>
             </div>
         {% endif %}
+    </div>
+</section>
+
+<!-- Navegação Step by Step -->
+<section class="step-navigation-section">
+    <div class="container">
+        <div class="step-navigation-bottom">
+            <a href="{{ url_for('main.local') }}" class="btn btn-step-prev">
+                <i class="fas fa-arrow-left"></i>
+                <span>Voltar ao Local</span>
+            </a>
+            <div class="step-completion">
+                <i class="fas fa-check-circle"></i>
+                <span>Parabéns! Você completou todo o convite!</span>
+            </div>
+            <a href="{{ url_for('main.index') }}" class="btn btn-step-restart">
+                <i class="fas fa-home"></i>
+                <span>Voltar ao Início</span>
+            </a>
+        </div>
     </div>
 </section>
 

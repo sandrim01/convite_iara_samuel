@@ -1,0 +1,164 @@
+{% extends "base.html" %}
+
+{% block content %}
+<!-- Hero Section - O Casal -->
+<section class="hero hero-couple" id="hero-couple">
+    <div class="hero-background">
+        <div class="hero-overlay"></div>
+    </div>
+    
+    <div class="hero-content">
+        <div class="container">
+            <div class="step-header">
+                <div class="step-indicator">
+                    <a href="{{ url_for('main.index') }}" class="step-nav">
+                        <span class="step-number completed">1</span>
+                        <span class="step-label">Início</span>
+                    </a>
+                    <div class="step-connector completed"></div>
+                    <div class="step-nav current">
+                        <span class="step-number active">2</span>
+                        <span class="step-label">O Casal</span>
+                    </div>
+                    <div class="step-connector"></div>
+                    <div class="step-nav">
+                        <span class="step-number">3</span>
+                        <span class="step-label">Local</span>
+                    </div>
+                    <div class="step-connector"></div>
+                    <div class="step-nav">
+                        <span class="step-number">4</span>
+                        <span class="step-label">Presentes</span>
+                    </div>
+                </div>
+            </div>
+            
+            <h1 class="page-title heading-script">
+                Conheçam Nossa História
+            </h1>
+            
+            <p class="page-subtitle text-large text-center">
+                A jornada que nos trouxe até aqui ♥
+            </p>
+        </div>
+    </div>
+</section>
+
+<!-- Seção do Casal -->
+<section class="couple-section section">
+    <div class="container">
+        <div class="couple-grid">
+            <!-- Sobre a Noiva -->
+            <div class="couple-card bride-card">
+                <div class="couple-photo">
+                    <div class="photo-placeholder">
+                        <i class="fas fa-heart"></i>
+                    </div>
+                </div>
+                <div class="couple-info">
+                    <h3 class="couple-name heading-script">{{ config.nome_noiva or 'Iara' }}</h3>
+                    <div class="couple-role">A Noiva</div>
+                    <div class="couple-description">
+                        <p>Uma mulher de fé, cheia de sonhos e amor no coração. Apaixonada pela vida e por fazer cada momento especial ao lado de quem ama.</p>
+                        <div class="couple-details">
+                            <div class="detail-item">
+                                <i class="fas fa-birthday-cake"></i>
+                                <span>Aniversário: 15 de Março</span>
+                            </div>
+                            <div class="detail-item">
+                                <i class="fas fa-heart"></i>
+                                <span>Paixões: Família, culinária e música</span>
+                            </div>
+                            <div class="detail-item">
+                                <i class="fas fa-quote-left"></i>
+                                <span>"O amor é a ponte entre duas almas"</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sobre o Noivo -->
+            <div class="couple-card groom-card">
+                <div class="couple-photo">
+                    <div class="photo-placeholder">
+                        <i class="fas fa-heart"></i>
+                    </div>
+                </div>
+                <div class="couple-info">
+                    <h3 class="couple-name heading-script">{{ config.nome_noivo or 'Samuel' }}</h3>
+                    <div class="couple-role">O Noivo</div>
+                    <div class="couple-description">
+                        <p>Um homem dedicado, com coração generoso e sorriso que ilumina qualquer ambiente. Sempre pronto para uma nova aventura ao lado de sua amada.</p>
+                        <div class="couple-details">
+                            <div class="detail-item">
+                                <i class="fas fa-birthday-cake"></i>
+                                <span>Aniversário: 22 de Julho</span>
+                            </div>
+                            <div class="detail-item">
+                                <i class="fas fa-heart"></i>
+                                <span>Paixões: Esportes, tecnologia e viagens</span>
+                            </div>
+                            <div class="detail-item">
+                                <i class="fas fa-quote-left"></i>
+                                <span>"Juntos somos mais fortes"</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Nossa História -->
+        <div class="love-story-section">
+            <h2 class="section-title heading-serif">Nossa História de Amor</h2>
+            
+            <div class="timeline-love">
+                <div class="timeline-item">
+                    <div class="timeline-date">2020</div>
+                    <div class="timeline-content">
+                        <h4>O Primeiro Encontro</h4>
+                        <p>Foi em uma tarde de domingo, na igreja, que nossos olhares se cruzaram pela primeira vez. O que começou como uma amizade especial, logo se transformou em algo muito maior.</p>
+                    </div>
+                </div>
+                
+                <div class="timeline-item">
+                    <div class="timeline-date">2022</div>
+                    <div class="timeline-content">
+                        <h4>O Namoro</h4>
+                        <p>Depois de dois anos de amizade, decidimos dar o próximo passo. Foi um período de descobertas, crescimento mútuo e muito amor.</p>
+                    </div>
+                </div>
+                
+                <div class="timeline-item">
+                    <div class="timeline-date">2024</div>
+                    <div class="timeline-content">
+                        <h4>O Pedido</h4>
+                        <p>Em uma noite estrelada, com o coração cheio de amor e certeza, veio o pedido de casamento. Um momento mágico que ficará para sempre em nossas memórias.</p>
+                    </div>
+                </div>
+                
+                <div class="timeline-item">
+                    <div class="timeline-date">2025</div>
+                    <div class="timeline-content">
+                        <h4>O Grande Dia</h4>
+                        <p>E agora chegou o momento de unirmos nossas vidas para sempre, na presença de Deus e de todos que amamos. Será um dia inesquecível!</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Navegação -->
+        <div class="step-navigation-bottom">
+            <a href="{{ url_for('main.index') }}" class="btn btn-step-prev">
+                <i class="fas fa-arrow-left"></i>
+                <span>Voltar ao Início</span>
+            </a>
+            <a href="{{ url_for('main.local') }}" class="btn btn-step-next">
+                <span>Ver Local da Cerimônia</span>
+                <i class="fas fa-arrow-right"></i>
+            </a>
+        </div>
+    </div>
+</section>
+{% endblock %}

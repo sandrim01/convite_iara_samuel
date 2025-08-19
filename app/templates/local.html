@@ -1,0 +1,194 @@
+{% extends "base.html" %}
+
+{% block content %}
+<!-- Hero Section - Local -->
+<section class="hero hero-location" id="hero-location">
+    <div class="hero-background">
+        <div class="hero-overlay"></div>
+    </div>
+    
+    <div class="hero-content">
+        <div class="container">
+            <div class="step-header">
+                <div class="step-indicator">
+                    <a href="{{ url_for('main.index') }}" class="step-nav">
+                        <span class="step-number completed">1</span>
+                        <span class="step-label">Início</span>
+                    </a>
+                    <div class="step-connector completed"></div>
+                    <a href="{{ url_for('main.o_casal') }}" class="step-nav">
+                        <span class="step-number completed">2</span>
+                        <span class="step-label">O Casal</span>
+                    </a>
+                    <div class="step-connector completed"></div>
+                    <div class="step-nav current">
+                        <span class="step-number active">3</span>
+                        <span class="step-label">Local</span>
+                    </div>
+                    <div class="step-connector"></div>
+                    <div class="step-nav">
+                        <span class="step-number">4</span>
+                        <span class="step-label">Presentes</span>
+                    </div>
+                </div>
+            </div>
+            
+            <h1 class="page-title heading-script">
+                Local da Cerimônia
+            </h1>
+            
+            <p class="page-subtitle text-large text-center">
+                Onde celebraremos nosso amor ♥
+            </p>
+        </div>
+    </div>
+</section>
+
+<!-- Seção do Local -->
+<section class="location-section section">
+    <div class="container">
+        <!-- Informações do Local -->
+        <div class="location-info">
+            <div class="location-card">
+                <div class="location-header">
+                    <i class="fas fa-church icon-large"></i>
+                    <h2 class="location-name heading-serif">{{ config.local_cerimonia or 'Igreja Nossa Senhora das Graças' }}</h2>
+                </div>
+                
+                <div class="location-details">
+                    <div class="detail-row">
+                        <div class="detail-icon">
+                            <i class="fas fa-map-marker-alt"></i>
+                        </div>
+                        <div class="detail-content">
+                            <h4>Endereço</h4>
+                            <p>{{ config.endereco_cerimonia or 'Rua Domingos Alcíno Dadalto, 114, Jardim Itapemirim, Cachoeiro de Itapemirim - ES' }}</p>
+                        </div>
+                    </div>
+                    
+                    <div class="detail-row">
+                        <div class="detail-icon">
+                            <i class="fas fa-calendar-alt"></i>
+                        </div>
+                        <div class="detail-content">
+                            <h4>Data</h4>
+                            <p>
+                                {% if config.data_casamento %}
+                                    {{ config.data_casamento.strftime('%d de %B de %Y') }} - Sábado
+                                {% else %}
+                                    08 de Novembro de 2025 - Sábado
+                                {% endif %}
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <div class="detail-row">
+                        <div class="detail-icon">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <div class="detail-content">
+                            <h4>Horário</h4>
+                            <p>
+                                {% if config.horario_cerimonia %}
+                                    {{ config.horario_cerimonia.strftime('%H:%M') }}h
+                                {% else %}
+                                    19:00h
+                                {% endif %}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Mapa placeholder -->
+                <div class="location-map">
+                    <div class="map-placeholder">
+                        <i class="fas fa-map"></i>
+                        <p>Mapa do Local</p>
+                        <small>Clique para abrir no Google Maps</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Seção de Confirmação de Presença -->
+        <div class="confirmation-section">
+            <h2 class="section-title heading-serif">Confirmação de Presença</h2>
+            
+            <div class="confirmation-info">
+                <p class="text-center lead">
+                    Sua presença é muito importante para nós! Por favor, confirme sua participação na cerimônia.
+                </p>
+                
+                {% if dias_restantes > 0 %}
+                    <div class="countdown-info">
+                        <div class="countdown-circle">
+                            <span class="countdown-number">{{ dias_restantes }}</span>
+                            <span class="countdown-label">dias restantes</span>
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+
+            <!-- Formulário de Confirmação -->
+            <div class="confirmation-form-container">
+                <form class="confirmation-form" action="{{ url_for('main.processar_confirmacao') }}" method="POST">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="nome">Nome Completo</label>
+                            <input type="text" id="nome" name="nome" required placeholder="Seu nome completo">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="telefone">Telefone</label>
+                            <input type="tel" id="telefone" name="telefone" placeholder="(00) 00000-0000">
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="email">E-mail</label>
+                            <input type="email" id="email" name="email" placeholder="seu@email.com">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="acompanhantes">Quantidade de Acompanhantes</label>
+                            <select id="acompanhantes" name="acompanhantes">
+                                <option value="0">Só eu</option>
+                                <option value="1">1 acompanhante</option>
+                                <option value="2">2 acompanhantes</option>
+                                <option value="3">3 acompanhantes</option>
+                                <option value="4">4 acompanhantes</option>
+                                <option value="5">5+ acompanhantes</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="observacoes">Observações (opcional)</label>
+                        <textarea id="observacoes" name="observacoes" rows="3" placeholder="Alguma observação especial, restrição alimentar ou necessidade especial"></textarea>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-confirm">
+                            <i class="fas fa-check"></i>
+                            Confirmar Presença
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Navegação -->
+        <div class="step-navigation-bottom">
+            <a href="{{ url_for('main.o_casal') }}" class="btn btn-step-prev">
+                <i class="fas fa-arrow-left"></i>
+                <span>Voltar ao Casal</span>
+            </a>
+            <a href="{{ url_for('main.lista_presentes') }}" class="btn btn-step-next">
+                <span>Escolher Presente</span>
+                <i class="fas fa-arrow-right"></i>
+            </a>
+        </div>
+    </div>
+</section>
+{% endblock %}

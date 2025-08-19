@@ -47,11 +47,15 @@ def dashboard():
     # Estatísticas gerais
     total_convidados = Convidado.query.count()
     confirmados = Convidado.query.filter_by(confirmou_presenca=True).count()
+    liberados_recepcao = Convidado.query.filter_by(liberado_recepcao=True).count()
     total_presentes = Presente.query.count()
     presentes_escolhidos = EscolhaPresente.query.count()
     
     # Convidados recentes
     convidados_recentes = Convidado.query.order_by(Convidado.created_at.desc()).limit(5).all()
+    
+    # Convidados liberados para recepção
+    convidados_liberados = Convidado.query.filter_by(liberado_recepcao=True).order_by(Convidado.data_confirmacao.desc()).limit(10).all()
     
     # Presentes mais populares
     presentes_populares = db.session.query(
@@ -63,14 +67,16 @@ def dashboard():
     stats = {
         'total_convidados': total_convidados,
         'confirmados': confirmados,
+        'liberados_recepcao': liberados_recepcao,
         'total_presentes': total_presentes,
         'presentes_escolhidos': presentes_escolhidos,
-        'pendentes': total_convidados - confirmados
+        'nao_confirmados': total_convidados - confirmados
     }
     
     return render_template('admin/dashboard.html', 
                          stats=stats, 
                          convidados_recentes=convidados_recentes,
+                         convidados_liberados=convidados_liberados,
                          presentes_populares=presentes_populares,
                          config=config)
 

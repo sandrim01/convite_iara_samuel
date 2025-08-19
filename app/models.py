@@ -58,6 +58,7 @@ class Convidado(db.Model):
     eventos_participara = db.Column(db.String(200), nullable=True)  # cerimonia,festa
     restricoes_alimentares = db.Column(db.Text, nullable=True)
     mensagem = db.Column(db.Text, nullable=True)
+    liberado_recepcao = db.Column(db.Boolean, default=False)  # Liberado para ver convite de recepção
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     
     # Compatibilidade com código antigo
