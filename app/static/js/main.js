@@ -1089,6 +1089,78 @@ const giftAnimations = `
     }
 `;
 
+/**
+ * Confirmation Modal Functionality
+ */
+function initializeConfirmationModal() {
+    const openModalBtn = document.getElementById('openConfirmationModal');
+    const modal = document.getElementById('confirmationModal');
+    const closeModalBtn = document.getElementById('closeConfirmationModal');
+    const cancelBtn = document.getElementById('cancelConfirmation');
+    
+    if (!openModalBtn || !modal) return;
+    
+    // Open modal
+    openModalBtn.addEventListener('click', function() {
+        modal.classList.add('active');
+        document.body.style.overflow = 'hidden';
+        
+        // Focus on first input
+        const firstInput = modal.querySelector('input');
+        if (firstInput) {
+            setTimeout(() => firstInput.focus(), 100);
+        }
+    });
+    
+    // Close modal function
+    function closeModal() {
+        modal.classList.remove('active');
+        document.body.style.overflow = '';
+    }
+    
+    // Close modal events
+    if (closeModalBtn) {
+        closeModalBtn.addEventListener('click', closeModal);
+    }
+    
+    if (cancelBtn) {
+        cancelBtn.addEventListener('click', closeModal);
+    }
+    
+    // Close on overlay click
+    modal.addEventListener('click', function(e) {
+        if (e.target === modal) {
+            closeModal();
+        }
+    });
+    
+    // Close on escape key
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && modal.classList.contains('active')) {
+            closeModal();
+        }
+    });
+    
+    // Form submission
+    const form = modal.querySelector('form');
+    if (form) {
+        form.addEventListener('submit', function(e) {
+            const submitBtn = form.querySelector('button[type="submit"]');
+            if (submitBtn) {
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Confirmando...';
+            }
+        });
+    }
+    
+    console.log('✅ Modal de Confirmação Inicializado');
+}
+
+// Initialize confirmation modal when DOM is loaded
+document.addEventListener('DOMContentLoaded', function() {
+    initializeConfirmationModal();
+});
+
 // Inject animations
 if (!document.getElementById('gift-animations')) {
     const style = document.createElement('style');
