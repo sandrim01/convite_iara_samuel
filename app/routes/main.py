@@ -235,6 +235,11 @@ def api_presentes():
         'imagem_url': p.imagem_url
     } for p in presentes])
 
+@main.route('/teste-presentes')
+def teste_presentes():
+    """Página de teste para verificar se os presentes estão carregando"""
+    return render_template('teste_presentes_simples.html')
+
 @main.route('/init-data')
 def init_data():
     """Inicializar dados de exemplo (apenas desenvolvimento)"""

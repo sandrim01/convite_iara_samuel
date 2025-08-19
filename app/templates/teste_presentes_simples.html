@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Teste Rápido - Lista de Presentes</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .gift { border: 1px solid #ddd; margin: 10px; padding: 15px; border-radius: 8px; }
+        .gift h3 { color: #333; margin: 0 0 10px 0; }
+        .gift p { margin: 5px 0; color: #666; }
+        .price { color: #007bff; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <h1>🎁 Lista de Presentes - Teste Rápido</h1>
+    
+    <div id="presentes-container">
+        <p>Carregando presentes...</p>
+    </div>
+
+    <script>
+        // Buscar presentes via API
+        fetch('/api/presentes')
+            .then(response => response.json())
+            .then(data => {
+                const container = document.getElementById('presentes-container');
+                
+                if (data.length === 0) {
+                    container.innerHTML = '<p style="color: red;">❌ Nenhum presente encontrado!</p>';
+                    return;
+                }
+                
+                container.innerHTML = `
+                    <p style="color: green;">✅ ${data.length} presentes encontrados!</p>
+                    ${data.map(presente => `
+                        <div class="gift">
+                            <h3>${presente.nome}</h3>
+                            <p class="price">R$ ${presente.preco_sugerido ? presente.preco_sugerido.toFixed(2) : '0.00'}</p>
+                            <p><strong>Categoria:</strong> ${presente.categoria || 'Não definida'}</p>
+                            <p><strong>Disponível:</strong> ${presente.disponivel ? 'Sim' : 'Não'}</p>
+                        </div>
+                    `).join('')}
+                `;
+            })
+            .catch(error => {
+                console.error('Erro:', error);
+                document.getElementById('presentes-container').innerHTML = 
+                    '<p style="color: red;">❌ Erro ao carregar presentes!</p>';
+            });
+    </script>
+</body>
+</html>
