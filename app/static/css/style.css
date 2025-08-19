@@ -3495,3 +3495,425 @@ body.nav-open {
         align-items: center;
     }
 }
+
+/* ========================================
+   OTIMIZAÇÕES MOBILE COMPLETAS
+======================================== */
+
+/* Mobile First - 480px e abaixo */
+@media (max-width: 480px) {
+    /* Container e espaçamentos */
+    .container {
+        padding: 0 1rem;
+        max-width: 100%;
+    }
+    
+    /* Hero Section Mobile */
+    .hero {
+        min-height: 85vh;
+        padding: 2rem 0;
+    }
+    
+    .hero-content {
+        padding: 1rem 0;
+    }
+    
+    .hero-names {
+        font-size: clamp(2rem, 8vw, 3rem);
+        line-height: 1.2;
+        margin: 1rem 0;
+    }
+    
+    .bride-name,
+    .groom-name {
+        display: block;
+        margin: 0.5rem 0;
+    }
+    
+    .heart {
+        display: block;
+        font-size: 1.5rem;
+        margin: 0.5rem 0;
+    }
+    
+    .hero-date {
+        font-size: 1.2rem;
+        margin: 1rem 0;
+    }
+    
+    .hero-location {
+        font-size: 1rem;
+        margin: 1rem 0;
+    }
+    
+    .countdown-badge {
+        padding: 1rem;
+        margin: 1rem 0;
+    }
+    
+    .countdown-number {
+        font-size: 2rem;
+    }
+    
+    /* Navegação Mobile */
+    .step-navigation {
+        margin: 2rem 0;
+        text-align: center;
+    }
+    
+    .btn-step-next {
+        width: 100%;
+        max-width: 280px;
+        padding: 1.2rem 2rem;
+        font-size: 1rem;
+    }
+    
+    /* Seções */
+    .section {
+        padding: 3rem 0;
+    }
+    
+    .page-title {
+        font-size: clamp(2rem, 6vw, 2.5rem);
+        margin-bottom: 1rem;
+        text-align: center;
+    }
+    
+    .page-subtitle {
+        font-size: 1rem;
+        margin-bottom: 2rem;
+        text-align: center;
+        padding: 0 1rem;
+    }
+    
+    /* Cards do Casal */
+    .couple-grid {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+        margin-bottom: 3rem;
+    }
+    
+    .couple-card {
+        padding: 2rem 1.5rem;
+        margin: 0;
+    }
+    
+    .couple-photo {
+        width: 120px;
+        height: 120px;
+        margin: 0 auto 1rem;
+    }
+    
+    .couple-name {
+        font-size: 1.5rem;
+        margin-bottom: 0.5rem;
+    }
+    
+    .couple-age {
+        font-size: 0.9rem;
+        margin-bottom: 1rem;
+    }
+    
+    .couple-description {
+        font-size: 0.95rem;
+        line-height: 1.6;
+    }
+    
+    /* Timeline */
+    .timeline-section {
+        padding: 3rem 0;
+    }
+    
+    .timeline-title {
+        font-size: 1.8rem;
+        margin-bottom: 2rem;
+        text-align: center;
+    }
+    
+    .timeline {
+        padding: 0 1rem;
+    }
+    
+    .timeline::before {
+        left: 15px;
+        width: 2px;
+    }
+    
+    .timeline-item {
+        margin-left: 35px;
+        margin-bottom: 2rem;
+        padding-left: 1rem;
+    }
+    
+    .timeline-item::before {
+        left: -45px;
+        width: 12px;
+        height: 12px;
+    }
+    
+    .timeline-date {
+        font-size: 0.8rem;
+        margin-bottom: 0.5rem;
+    }
+    
+    .timeline-event {
+        font-size: 1rem;
+        margin-bottom: 0.5rem;
+    }
+    
+    .timeline-description {
+        font-size: 0.9rem;
+        line-height: 1.5;
+    }
+    
+    /* Local Page */
+    .location-info {
+        padding: 2rem 1rem;
+        margin: 2rem 0;
+    }
+    
+    .location-details h3 {
+        font-size: 1.3rem;
+        margin-bottom: 1rem;
+    }
+    
+    .location-details p {
+        font-size: 0.95rem;
+        margin-bottom: 0.8rem;
+    }
+    
+    .location-map {
+        height: 250px;
+        margin: 2rem 0;
+        border-radius: 12px;
+    }
+    
+    /* Confirmação de Presença */
+    .confirmation-section {
+        padding: 3rem 0;
+    }
+    
+    .confirmation-form {
+        background: var(--white);
+        padding: 2rem 1.5rem;
+        border-radius: 16px;
+        box-shadow: var(--shadow-light);
+        margin: 2rem 0;
+    }
+    
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+    
+    .form-group label {
+        font-size: 0.95rem;
+        margin-bottom: 0.5rem;
+        display: block;
+    }
+    
+    .form-control {
+        width: 100%;
+        padding: 1rem;
+        font-size: 1rem;
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+    }
+    
+    .btn-confirm {
+        width: 100%;
+        padding: 1.2rem;
+        font-size: 1rem;
+        margin-top: 1rem;
+    }
+    
+    /* Lista de Presentes */
+    .gifts-header {
+        padding: 3rem 0 2rem;
+    }
+    
+    .gift-search {
+        margin: 2rem 0;
+        padding: 0 1rem;
+    }
+    
+    .search-box {
+        width: 100%;
+        max-width: 100%;
+    }
+    
+    .search-box input {
+        font-size: 1rem;
+        padding: 1rem 1rem 1rem 3rem;
+    }
+    
+    .gift-filters {
+        flex-direction: column;
+        gap: 1rem;
+        align-items: stretch;
+        margin: 2rem 0;
+    }
+    
+    .filter-btn {
+        padding: 0.8rem 1rem;
+        font-size: 0.9rem;
+        text-align: center;
+    }
+    
+    .gifts-grid {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+        padding: 0 1rem;
+    }
+    
+    .gift-card {
+        padding: 1.5rem;
+        margin: 0;
+    }
+    
+    .gift-image {
+        height: 200px;
+        margin-bottom: 1rem;
+    }
+    
+    .gift-name {
+        font-size: 1.1rem;
+        margin-bottom: 0.5rem;
+    }
+    
+    .gift-price {
+        font-size: 1.3rem;
+        margin: 1rem 0;
+    }
+    
+    .gift-description {
+        font-size: 0.9rem;
+        line-height: 1.5;
+        margin-bottom: 1rem;
+    }
+    
+    .gift-actions {
+        gap: 0.5rem;
+    }
+    
+    .btn-gift {
+        flex: 1;
+        padding: 0.8rem;
+        font-size: 0.9rem;
+    }
+    
+    /* Navigation Bottom */
+    .step-navigation-bottom {
+        padding: 2rem 1rem;
+        text-align: center;
+    }
+    
+    .navigation-buttons {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+        align-items: center;
+    }
+    
+    .btn-nav {
+        width: 100%;
+        max-width: 280px;
+        padding: 1rem 2rem;
+        font-size: 1rem;
+    }
+    
+    /* Footer */
+    .footer {
+        padding: 2rem 0;
+        text-align: center;
+    }
+    
+    .footer-content {
+        padding: 0 1rem;
+    }
+    
+    .footer-text {
+        font-size: 0.9rem;
+        line-height: 1.6;
+    }
+    
+    /* Utility Classes Mobile */
+    .text-center-mobile {
+        text-align: center;
+    }
+    
+    .hidden-mobile {
+        display: none;
+    }
+    
+    .block-mobile {
+        display: block;
+    }
+    
+    .flex-col-mobile {
+        flex-direction: column;
+    }
+    
+    .w-full-mobile {
+        width: 100%;
+    }
+    
+    .p-mobile {
+        padding: 1rem;
+    }
+    
+    .m-mobile {
+        margin: 1rem;
+    }
+}
+
+/* Mobile Landscape */
+@media (max-width: 768px) and (orientation: landscape) {
+    .hero {
+        min-height: 100vh;
+        padding: 1rem 0;
+    }
+    
+    .hero-names {
+        font-size: 2.5rem;
+    }
+    
+    .countdown-badge {
+        padding: 0.8rem;
+    }
+    
+    .section {
+        padding: 2rem 0;
+    }
+}
+
+/* Very Small Mobile */
+@media (max-width: 360px) {
+    .container {
+        padding: 0 0.8rem;
+    }
+    
+    .hero-names {
+        font-size: 1.8rem;
+    }
+    
+    .countdown-number {
+        font-size: 1.5rem;
+    }
+    
+    .btn-step-next {
+        padding: 1rem 1.5rem;
+        font-size: 0.9rem;
+    }
+    
+    .couple-card {
+        padding: 1.5rem 1rem;
+    }
+    
+    .gift-card {
+        padding: 1rem;
+    }
+    
+    .timeline-item {
+        margin-left: 25px;
+    }
+}
