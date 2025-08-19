@@ -1,0 +1,390 @@
+{% extends "base.html" %}
+
+{% block title %}Editar Presente - Painel Administrativo{% endblock %}
+
+{% block extra_head %}
+<style>
+    .navbar { background: var(--white); box-shadow: var(--shadow-medium); }
+    .form-container {
+        max-width: 800px;
+        margin: 0 auto;
+        background: var(--white);
+        border-radius: var(--border-radius-large);
+        box-shadow: var(--shadow-medium);
+        padding: 2rem;
+    }
+    
+    .form-header {
+        text-align: center;
+        margin-bottom: 2rem;
+    }
+    
+    .form-header h1 {
+        color: var(--primary);
+        margin-bottom: 0.5rem;
+    }
+    
+    .form-header p {
+        color: var(--text-secondary);
+    }
+    
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+    
+    .form-group label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 600;
+        color: var(--text-dark);
+    }
+    
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+        width: 100%;
+        padding: 0.875rem;
+        border: 2px solid var(--border-light);
+        border-radius: var(--border-radius);
+        font-size: 1rem;
+        transition: all 0.3s ease;
+        font-family: inherit;
+    }
+    
+    .form-group textarea {
+        resize: vertical;
+        min-height: 100px;
+    }
+    
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+        outline: none;
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.1);
+    }
+    
+    .form-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+    }
+    
+    .form-actions {
+        display: flex;
+        gap: 1rem;
+        justify-content: flex-end;
+        margin-top: 2rem;
+        padding-top: 2rem;
+        border-top: 1px solid var(--border-light);
+    }
+    
+    .btn-back {
+        background: var(--gray-light);
+        color: var(--text-dark);
+    }
+    
+    .btn-back:hover {
+        background: var(--gray-medium);
+    }
+    
+    .currency-input {
+        position: relative;
+    }
+    
+    .currency-input::before {
+        content: 'R$';
+        position: absolute;
+        left: 12px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--text-secondary);
+        font-weight: 500;
+    }
+    
+    .currency-input input {
+        padding-left: 2.5rem;
+    }
+    
+    .help-text {
+        font-size: 0.875rem;
+        color: var(--text-secondary);
+        margin-top: 0.25rem;
+    }
+    
+    .present-preview {
+        background: var(--gray-light);
+        border-radius: var(--border-radius);
+        padding: 1rem;
+        margin-bottom: 1.5rem;
+    }
+    
+    .preview-image {
+        width: 100%;
+        max-width: 200px;
+        height: 150px;
+        object-fit: cover;
+        border-radius: var(--border-radius);
+        background: var(--white);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--text-secondary);
+        font-size: 2rem;
+        margin: 0 auto 1rem;
+    }
+    
+    .delete-section {
+        background: #fef2f2;
+        border: 1px solid #fecaca;
+        border-radius: var(--border-radius);
+        padding: 1rem;
+        margin-top: 2rem;
+    }
+    
+    .delete-section h3 {
+        color: #dc2626;
+        margin-bottom: 0.5rem;
+    }
+    
+    .delete-section p {
+        color: #7f1d1d;
+        margin-bottom: 1rem;
+        font-size: 0.9rem;
+    }
+    
+    @media (max-width: 768px) {
+        .form-row {
+            grid-template-columns: 1fr;
+        }
+        
+        .form-actions {
+            flex-direction: column;
+        }
+        
+        .form-container {
+            margin: 1rem;
+            padding: 1.5rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Admin Header -->
+<section class="admin-header">
+    <div class="container">
+        <div class="admin-header-content">
+            <div class="admin-title-section">
+                <h1 class="admin-page-title heading-primary">
+                    <i class="fas fa-edit"></i>
+                    Editar Presente
+                </h1>
+                <p class="admin-page-subtitle text-large text-secondary">Edite as informações do presente</p>
+            </div>
+            
+            <div class="admin-actions">
+                <a href="{{ url_for('admin.presentes') }}" class="btn btn-outline">
+                    <i class="fas fa-arrow-left"></i>
+                    <span class="text-base">Voltar</span>
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Form Section -->
+<section class="section">
+    <div class="container">
+        <div class="form-container">
+            <div class="form-header">
+                <h1><i class="fas fa-edit"></i> Editar Presente</h1>
+                <p>Atualize as informações do presente "{{ presente.nome }}"</p>
+            </div>
+            
+            <!-- Preview do presente atual -->
+            <div class="present-preview">
+                <h3 style="text-align: center; margin-bottom: 1rem; color: var(--text-dark);">Preview Atual</h3>
+                <div class="preview-image">
+                    {% if presente.imagem_url %}
+                        <img src="{{ presente.imagem_url }}" alt="{{ presente.nome }}" style="width: 100%; height: 100%; object-fit: cover;">
+                    {% else %}
+                        <i class="fas fa-gift"></i>
+                    {% endif %}
+                </div>
+                <div style="text-align: center;">
+                    <strong>{{ presente.nome }}</strong>
+                    {% if presente.categoria %}
+                        <br><small style="color: var(--text-secondary);">Categoria: {{ presente.categoria.title() }}</small>
+                    {% endif %}
+                    {% if presente.preco_sugerido %}
+                        <br><small style="color: var(--success); font-weight: 600;">R$ {{ "%.2f"|format(presente.preco_sugerido) }}</small>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <form method="POST" action="{{ url_for('admin.processar_editar_presente', id=presente.id) }}">
+                <div class="form-group">
+                    <label for="nome">
+                        <i class="fas fa-tag"></i> Nome do Presente *
+                    </label>
+                    <input type="text" id="nome" name="nome" required 
+                           value="{{ presente.nome }}"
+                           placeholder="Ex: Jogo de Panelas Antiaderente">
+                    <div class="help-text">Digite o nome do presente de forma clara e atrativa</div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="descricao">
+                        <i class="fas fa-align-left"></i> Descrição
+                    </label>
+                    <textarea id="descricao" name="descricao" 
+                              placeholder="Descreva as características e detalhes do presente...">{{ presente.descricao or '' }}</textarea>
+                    <div class="help-text">Adicione uma descrição detalhada para ajudar os convidados</div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="categoria">
+                            <i class="fas fa-folder"></i> Categoria *
+                        </label>
+                        <select id="categoria" name="categoria" required>
+                            <option value="">Selecione uma categoria</option>
+                            <option value="cozinha" {{ 'selected' if presente.categoria == 'cozinha' }}>🍳 Cozinha</option>
+                            <option value="casa" {{ 'selected' if presente.categoria == 'casa' }}>🏠 Casa</option>
+                            <option value="quarto" {{ 'selected' if presente.categoria == 'quarto' }}>🛏️ Quarto</option>
+                            <option value="sala" {{ 'selected' if presente.categoria == 'sala' }}>🛋️ Sala</option>
+                            <option value="banheiro" {{ 'selected' if presente.categoria == 'banheiro' }}>🛁 Banheiro</option>
+                            <option value="eletronicos" {{ 'selected' if presente.categoria == 'eletronicos' }}>📱 Eletrônicos</option>
+                            <option value="experiencias" {{ 'selected' if presente.categoria == 'experiencias' }}>🎁 Experiências</option>
+                            <option value="diversos" {{ 'selected' if presente.categoria == 'diversos' }}>📦 Diversos</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="preco_sugerido">
+                            <i class="fas fa-dollar-sign"></i> Preço Sugerido
+                        </label>
+                        <div class="currency-input">
+                            <input type="number" id="preco_sugerido" name="preco_sugerido" 
+                                   step="0.01" min="0" 
+                                   value="{{ presente.preco_sugerido or '' }}"
+                                   placeholder="0,00">
+                        </div>
+                        <div class="help-text">Valor de referência (opcional)</div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="link_loja">
+                        <i class="fas fa-shopping-cart"></i> Link da Loja
+                    </label>
+                    <input type="url" id="link_loja" name="link_loja" 
+                           value="{{ presente.link_loja or '' }}"
+                           placeholder="https://www.loja.com.br/produto">
+                    <div class="help-text">Link onde o presente pode ser comprado (opcional)</div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="imagem_url">
+                        <i class="fas fa-image"></i> URL da Imagem
+                    </label>
+                    <input type="url" id="imagem_url" name="imagem_url" 
+                           value="{{ presente.imagem_url or '' }}"
+                           placeholder="https://example.com/imagem.jpg">
+                    <div class="help-text">Link para uma imagem do presente (opcional)</div>
+                </div>
+                
+                <div class="form-actions">
+                    <a href="{{ url_for('admin.presentes') }}" class="btn btn-back">
+                        <i class="fas fa-times"></i>
+                        <span>Cancelar</span>
+                    </a>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save"></i>
+                        <span>Salvar Alterações</span>
+                    </button>
+                </div>
+            </form>
+            
+            <!-- Seção de exclusão -->
+            <div class="delete-section">
+                <h3><i class="fas fa-exclamation-triangle"></i> Zona de Perigo</h3>
+                <p>Remover este presente da lista. Esta ação não pode ser desfeita.</p>
+                <button onclick="confirmarRemocao('{{ presente.id }}', '{{ presente.nome }}')" 
+                        class="btn btn-danger">
+                    <i class="fas fa-trash"></i>
+                    <span>Remover Presente</span>
+                </button>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Formatação automática do preço
+    document.getElementById('preco_sugerido').addEventListener('input', function(e) {
+        let value = e.target.value;
+        if (value) {
+            // Remove caracteres não numéricos exceto ponto
+            value = value.replace(/[^\d.]/g, '');
+            // Limita a 2 casas decimais
+            if (value.includes('.')) {
+                const parts = value.split('.');
+                if (parts[1] && parts[1].length > 2) {
+                    value = parts[0] + '.' + parts[1].slice(0, 2);
+                }
+            }
+            e.target.value = value;
+        }
+    });
+    
+    // Preview da imagem
+    document.getElementById('imagem_url').addEventListener('input', function(e) {
+        const url = e.target.value;
+        const preview = document.querySelector('.preview-image img');
+        
+        if (url && preview) {
+            preview.src = url;
+            preview.onerror = function() {
+                this.style.display = 'none';
+                this.parentElement.innerHTML = '<i class="fas fa-gift"></i>';
+            };
+        }
+    });
+    
+    // Validação do formulário
+    document.querySelector('form').addEventListener('submit', function(e) {
+        const nome = document.getElementById('nome').value.trim();
+        const categoria = document.getElementById('categoria').value;
+        
+        if (!nome) {
+            e.preventDefault();
+            alert('Por favor, preencha o nome do presente.');
+            document.getElementById('nome').focus();
+            return;
+        }
+        
+        if (!categoria) {
+            e.preventDefault();
+            alert('Por favor, selecione uma categoria.');
+            document.getElementById('categoria').focus();
+            return;
+        }
+    });
+    
+    function confirmarRemocao(presenteId, nomePresente) {
+        if (confirm(`Tem certeza que deseja remover o presente "${nomePresente}"?\n\nEsta ação não pode ser desfeita.`)) {
+            // Criar form para DELETE request
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = `/admin/presentes/${presenteId}/remover`;
+            
+            document.body.appendChild(form);
+            form.submit();
+        }
+    }
+</script>
+{% endblock %}

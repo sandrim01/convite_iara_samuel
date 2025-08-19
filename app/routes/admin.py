@@ -176,6 +176,63 @@ def processar_adicionar_presente():
         flash('Erro ao adicionar presente. Tente novamente.', 'error')
         return redirect(url_for('admin.adicionar_presente'))
 
+@admin.route('/presentes/<int:id>/editar')
+@login_required
+def editar_presente(id):
+    """Formulário para editar presente"""
+    presente = Presente.query.get_or_404(id)
+    return render_template('admin/editar_presente.html', presente=presente)
+
+@admin.route('/presentes/<int:id>/editar', methods=['POST'])
+@login_required
+def processar_editar_presente(id):
+    """Processar edição de presente"""
+    try:
+        presente = Presente.query.get_or_404(id)
+        
+        presente.nome = request.form.get('nome')
+        presente.descricao = request.form.get('descricao')
+        presente.categoria = request.form.get('categoria')
+        
+        preco_sugerido = request.form.get('preco_sugerido')
+        presente.preco_sugerido = float(preco_sugerido) if preco_sugerido else None
+        
+        presente.link_loja = request.form.get('link_loja')
+        presente.imagem_url = request.form.get('imagem_url')
+        
+        db.session.commit()
+        
+        flash(f'Presente "{presente.nome}" atualizado com sucesso!', 'success')
+        return redirect(url_for('admin.presentes'))
+        
+    except Exception as e:
+        flash('Erro ao atualizar presente. Tente novamente.', 'error')
+        return redirect(url_for('admin.editar_presente', id=id))
+
+@admin.route('/presentes/<int:id>/remover', methods=['POST'])
+@login_required
+def remover_presente(id):
+    """Remover presente"""
+    try:
+        presente = Presente.query.get_or_404(id)
+        nome = presente.nome
+        
+        # Verificar se o presente já foi escolhido
+        escolhas = EscolhaPresente.query.filter_by(presente_id=id).count()
+        if escolhas > 0:
+            flash(f'Não é possível remover o presente "{nome}" pois já foi escolhido por {escolhas} pessoa(s).', 'error')
+            return redirect(url_for('admin.presentes'))
+        
+        db.session.delete(presente)
+        db.session.commit()
+        
+        flash(f'Presente "{nome}" removido com sucesso!', 'success')
+        return redirect(url_for('admin.presentes'))
+        
+    except Exception as e:
+        flash('Erro ao remover presente. Tente novamente.', 'error')
+        return redirect(url_for('admin.presentes'))
+
 @admin.route('/configuracoes')
 @login_required
 def configuracoes():
