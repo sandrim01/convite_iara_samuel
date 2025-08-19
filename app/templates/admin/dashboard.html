@@ -156,18 +156,6 @@
                 </div>
             </a>
             
-            <a href="{{ url_for('admin.mensagens') }}" class="quick-action-card">
-                <div class="action-icon">
-                    <i class="fas fa-envelope"></i>
-                </div>
-                <div class="action-content">
-                    <h3>Mensagens</h3>
-                    <p>Veja mensagens dos convidados</p>
-                </div>
-                <div class="action-arrow">
-                    <i class="fas fa-arrow-right"></i>
-                </div>
-            </a>
         </div>
     </div>
 </section>
@@ -249,11 +237,6 @@
                         <div class="empty-state-small">
                             <i class="fas fa-glass-cheers"></i>
                             <p>Nenhum convidado liberado ainda</p>
-                        </div>
-                    {% endif %}
-                </div>
-            </div>
-                            <p>Nenhum presente escolhido ainda</p>
                         </div>
                     {% endif %}
                 </div>
@@ -388,9 +371,10 @@ setInterval(function() {
     location.reload();
 }, 300000);
 
-// Real-time stats update (you can implement WebSocket for real-time updates)
+// Real-time stats update (disabled - admin.api_stats route not implemented)
+/*
 function updateStats() {
-    fetch('{{ url_for("admin.api_stats") }}')
+    fetch('/admin/api_stats') // URL hardcoded instead of url_for
         .then(response => response.json())
         .then(data => {
             // Update stat numbers
@@ -412,6 +396,7 @@ function updateStats() {
 
 // Update stats every minute
 setInterval(updateStats, 60000);
+*/
 </script>
 
 <style>

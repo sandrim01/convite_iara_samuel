@@ -13,7 +13,8 @@ def load_user(user_id):
 @admin.route('/login')
 def login():
     """Página de login do administrador"""
-    return render_template('admin/login.html')
+    config = ConfiguracaoSite.query.first()
+    return render_template('admin/login.html', config=config)
 
 @admin.route('/login', methods=['POST'])
 def process_login():
