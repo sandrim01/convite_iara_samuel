@@ -2,199 +2,645 @@
 
 {% block title %}Convite de Recepção - {{ config.nome_noiva or 'Iara' }} & {{ config.nome_noivo or 'Samuel' }}{% endblock %}
 
+{% block extra_head %}
+<style>
+    .reception-hero {
+        background: linear-gradient(135deg, 
+            rgba(185, 28, 28, 0.9) 0%, 
+            rgba(127, 29, 29, 0.95) 50%, 
+            rgba(239, 68, 68, 0.9) 100%),
+            url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="hearts" patternUnits="userSpaceOnUse" width="20" height="20"><circle cx="10" cy="10" r="1" fill="rgba(255,255,255,0.1)"/></pattern></defs><rect width="100" height="100" fill="url(%23hearts)"/></svg>');
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .reception-hero::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200"><circle cx="50" cy="50" r="2" fill="rgba(255,255,255,0.1)"/><circle cx="150" cy="100" r="1" fill="rgba(255,255,255,0.05)"/><circle cx="100" cy="150" r="1.5" fill="rgba(255,255,255,0.08)"/></svg>');
+        animation: float 20s ease-in-out infinite;
+        z-index: 1;
+    }
+    
+    .reception-hero-content {
+        position: relative;
+        z-index: 2;
+        padding: 4rem 0;
+    }
+    
+    .celebration-badge {
+        display: inline-block;
+        background: rgba(255, 255, 255, 0.15);
+        backdrop-filter: blur(10px);
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        border-radius: 50px;
+        padding: 1rem 2rem;
+        margin-bottom: 2rem;
+        animation: glow 2s ease-in-out infinite alternate;
+    }
+    
+    .celebration-icon {
+        font-size: 2rem;
+        margin-bottom: 0.5rem;
+        animation: bounce 2s infinite;
+    }
+    
+    .luxury-names {
+        margin: 3rem 0;
+        position: relative;
+    }
+    
+    .luxury-names::before {
+        content: '';
+        position: absolute;
+        top: -20px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 100px;
+        height: 2px;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.8), transparent);
+    }
+    
+    .luxury-names::after {
+        content: '';
+        position: absolute;
+        bottom: -20px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 100px;
+        height: 2px;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.8), transparent);
+    }
+    
+    .elegant-name {
+        font-family: 'Great Vibes', cursive;
+        font-size: 4rem;
+        font-weight: 400;
+        letter-spacing: 2px;
+        margin: 0.5rem 0;
+        text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        animation: shimmer 3s ease-in-out infinite;
+    }
+    
+    .elegant-ampersand {
+        font-size: 3rem;
+        font-weight: 300;
+        margin: 1rem 0;
+        opacity: 0.9;
+        position: relative;
+    }
+    
+    .elegant-ampersand::before,
+    .elegant-ampersand::after {
+        content: '❋';
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 1.5rem;
+        opacity: 0.6;
+    }
+    
+    .elegant-ampersand::before {
+        left: -3rem;
+    }
+    
+    .elegant-ampersand::after {
+        right: -3rem;
+    }
+    
+    .invitation-title {
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+        border-radius: 20px;
+        padding: 2rem;
+        margin: 3rem auto;
+        max-width: 600px;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+    
+    .invitation-subtitle {
+        font-size: 1.5rem;
+        font-weight: 300;
+        margin-bottom: 1rem;
+        opacity: 0.9;
+    }
+    
+    .invitation-main {
+        font-size: 3.5rem;
+        font-weight: 700;
+        letter-spacing: 4px;
+        text-transform: uppercase;
+        background: linear-gradient(45deg, #fff, #f8fafc, #fff);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin: 1rem 0;
+        text-shadow: none;
+    }
+    
+    .elegant-date {
+        margin-top: 2rem;
+        font-size: 2.5rem;
+        font-weight: 600;
+        letter-spacing: 3px;
+        opacity: 0.95;
+    }
+    
+    @keyframes glow {
+        from { box-shadow: 0 0 20px rgba(255,255,255,0.3); }
+        to { box-shadow: 0 0 30px rgba(255,255,255,0.5); }
+    }
+    
+    @keyframes bounce {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-10px); }
+    }
+    
+    @keyframes shimmer {
+        0%, 100% { text-shadow: 2px 2px 4px rgba(0,0,0,0.3); }
+        50% { text-shadow: 2px 2px 8px rgba(0,0,0,0.5), 0 0 15px rgba(255,255,255,0.3); }
+    }
+    
+    @keyframes float {
+        0%, 100% { transform: translateY(0px) rotate(0deg); }
+        33% { transform: translateY(-10px) rotate(1deg); }
+        66% { transform: translateY(5px) rotate(-1deg); }
+    }
+    
+    .scroll-indicator {
+        position: absolute;
+        bottom: 2rem;
+        left: 50%;
+        transform: translateX(-50%);
+        animation: bounce 2s infinite;
+        color: rgba(255, 255, 255, 0.8);
+    }
+    
+    @media (max-width: 768px) {
+        .elegant-name {
+            font-size: 2.5rem;
+        }
+        
+        .invitation-main {
+            font-size: 2.5rem;
+            letter-spacing: 2px;
+        }
+        
+        .elegant-date {
+            font-size: 2rem;
+        }
+        
+        .elegant-ampersand::before,
+        .elegant-ampersand::after {
+            display: none;
+        }
+    }
+</style>
+{% endblock %}
+
 {% block content %}
-<!-- Hero Section - Convite de Recepção -->
-<section class="hero reception-hero">
+<!-- Hero Section - Convite de Recepção Elegante -->
+<section class="reception-hero">
     <div class="container">
-        <div class="hero-content text-center">
-            <div class="hero-announcement">
-                <h2 class="text-xl text-noivos spacing-bottom-sm">Parabéns!</h2>
-                <p class="text-large text-secondary">Você confirmou presença na cerimônia</p>
+        <div class="reception-hero-content text-center">
+            <div class="celebration-badge">
+                <div class="celebration-icon">🎉</div>
+                <h2 class="text-xl font-semibold">Parabéns!</h2>
+                <p class="text-base opacity-90">Você confirmou presença na cerimônia</p>
             </div>
             
-            <div class="hero-names">
-                <h1 class="bride-name text-noivos">{{ config.nome_noiva or 'Iara' }}</h1>
-                <div class="ampersand text-primary">&</div>
-                <h1 class="groom-name text-noivos">{{ config.nome_noivo or 'Samuel' }}</h1>
+            <div class="luxury-names">
+                <h1 class="elegant-name text-white">{{ config.nome_noiva or 'Iara' }}</h1>
+                <div class="elegant-ampersand text-white">&</div>
+                <h1 class="elegant-name text-white">{{ config.nome_noivo or 'Samuel' }}</h1>
             </div>
             
-            <div class="hero-subtitle">
-                <h2 class="heading-secondary text-center">Agora você está convidado(a) para nossa</h2>
-                <h1 class="heading-primary text-center text-accent">RECEPÇÃO</h1>
+            <div class="invitation-title">
+                <p class="invitation-subtitle text-white">Agora você está convidado(a) para nossa</p>
+                <h1 class="invitation-main">RECEPÇÃO</h1>
             </div>
             
-            <div class="hero-date">
-                <p class="text-2xl font-bold">
-                    {% if config.data_casamento %}
-                        {{ config.data_casamento.strftime('%d.%m.%Y') }}
-                    {% else %}
-                        08.11.2025
-                    {% endif %}
-                </p>
+            <div class="elegant-date text-white">
+                {% if config.data_casamento %}
+                    {{ config.data_casamento.strftime('%d.%m.%Y') }}
+                {% else %}
+                    15.12.2025
+                {% endif %}
+            </div>
+            
+            <div class="scroll-indicator">
+                <i class="fas fa-chevron-down fa-2x"></i>
             </div>
         </div>
     </div>
 </section>
 
-<!-- Reception Details Section -->
-<section class="reception-details-section" id="recepcao-details">
+<!-- Reception Details Section - Design Elegante -->
+<section class="reception-details-section" id="recepcao-details" style="padding: 6rem 0; background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 50%, #f1f5f9 100%); position: relative;">
     <div class="container">
-        <div class="section-header text-center">
-            <h2 class="heading-secondary text-title">Detalhes da Recepção</h2>
-            <p class="text-large text-secondary">Celebre conosco este momento especial</p>
+        <div class="section-header text-center" style="margin-bottom: 4rem;">
+            <div style="display: inline-block; background: linear-gradient(135deg, #b91c1c, #dc2626); color: white; padding: 0.5rem 2rem; border-radius: 50px; margin-bottom: 1rem; font-size: 0.9rem; letter-spacing: 1px; text-transform: uppercase;">Celebração</div>
+            <h2 style="font-size: 3rem; font-weight: 700; color: #1f2937; margin-bottom: 1rem; font-family: 'Great Vibes', cursive;">Detalhes da Recepção</h2>
+            <p style="font-size: 1.2rem; color: #6b7280; max-width: 600px; margin: 0 auto;">Um momento mágico para celebrarmos o início da nossa jornada juntos</p>
         </div>
         
-        <div class="reception-info">
-            <div class="reception-card">
-                <div class="reception-icon">
-                    <i class="fas fa-glass-cheers text-accent"></i>
+        <!-- Card Principal da Recepção -->
+        <div style="max-width: 800px; margin: 0 auto 4rem; background: white; border-radius: 24px; padding: 3rem; box-shadow: 0 25px 50px rgba(0,0,0,0.1); border: 1px solid rgba(0,0,0,0.05); position: relative; overflow: hidden;">
+            <!-- Decoração do Card -->
+            <div style="position: absolute; top: -50px; right: -50px; width: 100px; height: 100px; background: linear-gradient(135deg, rgba(185,28,28,0.1), rgba(220,38,38,0.05)); border-radius: 50%; z-index: 1;"></div>
+            <div style="position: absolute; bottom: -30px; left: -30px; width: 60px; height: 60px; background: linear-gradient(135deg, rgba(185,28,28,0.05), rgba(220,38,38,0.1)); border-radius: 50%; z-index: 1;"></div>
+            
+            <div style="position: relative; z-index: 2;">
+                <div style="text-align: center; margin-bottom: 2rem;">
+                    <div style="display: inline-block; background: linear-gradient(135deg, #b91c1c, #dc2626); width: 80px; height: 80px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-bottom: 1.5rem; box-shadow: 0 10px 25px rgba(185,28,28,0.3);">
+                        <i class="fas fa-glass-cheers" style="font-size: 2rem; color: white;"></i>
+                    </div>
+                    <h3 style="font-size: 2.5rem; font-weight: 700; color: #1f2937; margin-bottom: 0.5rem; font-family: 'Great Vibes', cursive;">Festa de Casamento</h3>
+                    <p style="color: #6b7280; font-size: 1.1rem;">Uma noite inesquecível de celebração</p>
                 </div>
-                <div class="reception-content">
-                    <h3 class="heading-tertiary text-title">Festa de Casamento</h3>
-                    <div class="reception-details">
-                        <div class="reception-detail">
-                            <i class="fas fa-clock text-highlight"></i>
-                            <span class="text-base font-semibold">
+                
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 2rem; margin-bottom: 2rem;">
+                    <div style="text-align: center; padding: 1.5rem; background: #f8fafc; border-radius: 16px; border-left: 4px solid #b91c1c;">
+                        <i class="fas fa-clock" style="font-size: 1.5rem; color: #b91c1c; margin-bottom: 1rem;"></i>
+                        <h4 style="font-weight: 600; color: #1f2937; margin-bottom: 0.5rem;">Horário</h4>
+                        <p style="font-size: 1.3rem; font-weight: 700; color: #b91c1c;">
+                            {% if config.horario_festa %}
+                                {{ config.horario_festa.strftime('%H:%M') }}
+                            {% else %}
+                                18:00
+                            {% endif %}
+                        </p>
+                    </div>
+                    
+                    <div style="text-align: center; padding: 1.5rem; background: #f8fafc; border-radius: 16px; border-left: 4px solid #b91c1c;">
+                        <i class="fas fa-map-marker-alt" style="font-size: 1.5rem; color: #b91c1c; margin-bottom: 1rem;"></i>
+                        <h4 style="font-weight: 600; color: #1f2937; margin-bottom: 0.5rem;">Local</h4>
+                        <p style="font-size: 1.1rem; font-weight: 600; color: #374151; margin-bottom: 0.5rem;">{{ config.local_festa or 'Salão de Festas Elegance' }}</p>
+                        <p style="font-size: 0.95rem; color: #6b7280;">{{ config.endereco_festa or 'Av. Principal, 456 - Jardim das Rosas' }}</p>
+                    </div>
+                </div>
+                
+                <div style="text-align: center;">
+                    <button onclick="openReceptionMap()" style="background: linear-gradient(135deg, #b91c1c, #dc2626); color: white; border: none; padding: 1rem 2.5rem; border-radius: 50px; font-weight: 600; font-size: 1.1rem; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 8px 20px rgba(185,28,28,0.3);" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 12px 25px rgba(185,28,28,0.4)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 8px 20px rgba(185,28,28,0.3)'">
+                        <i class="fas fa-directions" style="margin-right: 0.5rem;"></i>
+                        Ver Localização
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Cards de Informações Especiais -->
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 2rem; margin-bottom: 4rem;">
+            <div style="background: white; border-radius: 20px; padding: 2.5rem; text-align: center; box-shadow: 0 15px 35px rgba(0,0,0,0.08); border: 1px solid rgba(0,0,0,0.05); transition: all 0.3s ease; position: relative; overflow: hidden;" onmouseover="this.style.transform='translateY(-5px)'; this.style.boxShadow='0 20px 40px rgba(0,0,0,0.12)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 15px 35px rgba(0,0,0,0.08)'">
+                <div style="position: absolute; top: 0; left: 0; right: 0; height: 4px; background: linear-gradient(90deg, #b91c1c, #dc2626);"></div>
+                <div style="width: 70px; height: 70px; background: linear-gradient(135deg, #fef2f2, #fee2e2); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.5rem;">
+                    <i class="fas fa-utensils" style="font-size: 1.8rem; color: #b91c1c;"></i>
+                </div>
+                <h4 style="font-size: 1.4rem; font-weight: 700; color: #1f2937; margin-bottom: 1rem;">Jantar Especial</h4>
+                <p style="color: #6b7280; line-height: 1.6;">Menu gourmet cuidadosamente preparado para celebrar este momento único</p>
+            </div>
+            
+            <div style="background: white; border-radius: 20px; padding: 2.5rem; text-align: center; box-shadow: 0 15px 35px rgba(0,0,0,0.08); border: 1px solid rgba(0,0,0,0.05); transition: all 0.3s ease; position: relative; overflow: hidden;" onmouseover="this.style.transform='translateY(-5px)'; this.style.boxShadow='0 20px 40px rgba(0,0,0,0.12)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 15px 35px rgba(0,0,0,0.08)'">
+                <div style="position: absolute; top: 0; left: 0; right: 0; height: 4px; background: linear-gradient(90deg, #b91c1c, #dc2626);"></div>
+                <div style="width: 70px; height: 70px; background: linear-gradient(135deg, #fef2f2, #fee2e2); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.5rem;">
+                    <i class="fas fa-music" style="font-size: 1.8rem; color: #b91c1c;"></i>
+                </div>
+                <h4 style="font-size: 1.4rem; font-weight: 700; color: #1f2937; margin-bottom: 1rem;">Música & Dança</h4>
+                <p style="color: #6b7280; line-height: 1.6;">DJ profissional e pista de dança para celebrarmos juntos até altas horas</p>
+            </div>
+            
+            <div style="background: white; border-radius: 20px; padding: 2.5rem; text-align: center; box-shadow: 0 15px 35px rgba(0,0,0,0.08); border: 1px solid rgba(0,0,0,0.05); transition: all 0.3s ease; position: relative; overflow: hidden;" onmouseover="this.style.transform='translateY(-5px)'; this.style.boxShadow='0 20px 40px rgba(0,0,0,0.12)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 15px 35px rgba(0,0,0,0.08)'">
+                <div style="position: absolute; top: 0; left: 0; right: 0; height: 4px; background: linear-gradient(90deg, #b91c1c, #dc2626);"></div>
+                <div style="width: 70px; height: 70px; background: linear-gradient(135deg, #fef2f2, #fee2e2); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.5rem;">
+                    <i class="fas fa-camera" style="font-size: 1.8rem; color: #b91c1c;"></i>
+                </div>
+                <h4 style="font-size: 1.4rem; font-weight: 700; color: #1f2937; margin-bottom: 1rem;">Fotografia</h4>
+                <p style="color: #6b7280; line-height: 1.6;">Fotógrafo profissional registrará todos os momentos especiais da nossa festa</p>
+            </div>
+        </div>
+        
+        <!-- Dress Code Elegante -->
+        <div style="max-width: 600px; margin: 0 auto; background: white; border-radius: 20px; padding: 3rem; box-shadow: 0 20px 40px rgba(0,0,0,0.1); border: 1px solid rgba(0,0,0,0.05); text-align: center; position: relative; overflow: hidden;">
+            <div style="position: absolute; top: -20px; left: 50%; transform: translateX(-50%); width: 100px; height: 40px; background: linear-gradient(135deg, #b91c1c, #dc2626); clip-path: polygon(20% 0%, 80% 0%, 100% 100%, 0% 100%); display: flex; align-items: center; justify-content: center;">
+                <i class="fas fa-star" style="color: white; font-size: 0.9rem;"></i>
+            </div>
+            
+            <h3 style="font-size: 2.2rem; font-weight: 700; color: #1f2937; margin-bottom: 2rem; font-family: 'Great Vibes', cursive; margin-top: 1rem;">Dress Code</h3>
+            
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 2rem;">
+                <div style="padding: 1.5rem; background: #f8fafc; border-radius: 16px; border: 2px solid #e5e7eb;">
+                    <div style="width: 50px; height: 50px; background: linear-gradient(135deg, #b91c1c, #dc2626); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem;">
+                        <i class="fas fa-tshirt" style="color: white; font-size: 1.2rem;"></i>
+                    </div>
+                    <h4 style="font-weight: 700; color: #1f2937; margin-bottom: 0.5rem;">Esporte Fino</h4>
+                    <p style="color: #6b7280; font-size: 0.9rem;">Traje elegante e confortável para a festa</p>
+                </div>
+                
+                <div style="padding: 1.5rem; background: #f8fafc; border-radius: 16px; border: 2px solid #e5e7eb;">
+                    <div style="width: 50px; height: 50px; background: linear-gradient(135deg, #b91c1c, #dc2626); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem;">
+                        <i class="fas fa-palette" style="color: white; font-size: 1.2rem;"></i>
+                    </div>
+                    <h4 style="font-weight: 700; color: #1f2937; margin-bottom: 0.5rem;">Cores</h4>
+                    <p style="color: #6b7280; font-size: 0.9rem;">Evite branco e vermelho, por favor</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Timeline Section - Design Moderno -->
+<section class="timeline-section" style="padding: 6rem 0; background: linear-gradient(135deg, #1f2937 0%, #374151 50%, #1f2937 100%); position: relative; overflow: hidden;">
+    <!-- Decorações de Fundo -->
+    <div style="position: absolute; top: 10%; left: 5%; width: 200px; height: 200px; background: radial-gradient(circle, rgba(185,28,28,0.1) 0%, transparent 70%); border-radius: 50%;"></div>
+    <div style="position: absolute; bottom: 20%; right: 10%; width: 150px; height: 150px; background: radial-gradient(circle, rgba(185,28,28,0.08) 0%, transparent 70%); border-radius: 50%;"></div>
+    
+    <div class="container" style="position: relative; z-index: 2;">
+        <div class="section-header text-center" style="margin-bottom: 4rem;">
+            <div style="display: inline-block; background: rgba(185,28,28,0.2); backdrop-filter: blur(10px); color: white; padding: 0.5rem 2rem; border-radius: 50px; margin-bottom: 1rem; font-size: 0.9rem; letter-spacing: 1px; text-transform: uppercase; border: 1px solid rgba(185,28,28,0.3);">Programação</div>
+            <h2 style="font-size: 3rem; font-weight: 700; color: white; margin-bottom: 1rem; font-family: 'Great Vibes', cursive;">Cronograma do Dia</h2>
+            <p style="font-size: 1.2rem; color: rgba(255,255,255,0.8); max-width: 600px; margin: 0 auto;">A sequência perfeita para celebrarmos nossa união</p>
+        </div>
+        
+        <div style="max-width: 800px; margin: 0 auto; position: relative;">
+            <!-- Linha Central da Timeline -->
+            <div style="position: absolute; left: 50%; transform: translateX(-50%); top: 0; bottom: 0; width: 4px; background: linear-gradient(180deg, #b91c1c, #dc2626, #b91c1c); border-radius: 2px; z-index: 1;"></div>
+            
+            <!-- Timeline Items -->
+            <div style="display: flex; flex-direction: column; gap: 3rem; position: relative; z-index: 2;">
+                <!-- Item 1 -->
+                <div style="display: flex; align-items: center; position: relative;">
+                    <div style="flex: 1; text-align: right; padding-right: 3rem;">
+                        <div style="background: rgba(255,255,255,0.05); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; padding: 2rem; position: relative;">
+                            <div style="position: absolute; top: 50%; right: -12px; width: 0; height: 0; border-left: 12px solid rgba(255,255,255,0.05); border-top: 12px solid transparent; border-bottom: 12px solid transparent;"></div>
+                            <h4 style="font-size: 1.3rem; font-weight: 700; color: white; margin-bottom: 0.5rem;">Cerimônia Religiosa</h4>
+                            <p style="color: rgba(255,255,255,0.7); font-size: 0.95rem; margin-bottom: 0;">{{ config.local_cerimonia or 'Igreja Nossa Senhora das Graças' }}</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Timeline Point -->
+                    <div style="width: 80px; height: 80px; background: linear-gradient(135deg, #b91c1c, #dc2626); border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 0 6px rgba(255,255,255,0.1), 0 0 0 12px rgba(185,28,28,0.2); position: relative; z-index: 3;">
+                        <div style="text-align: center; color: white;">
+                            <div style="font-size: 1.1rem; font-weight: 700; line-height: 1;">
+                                {% if config.horario_cerimonia %}
+                                    {{ config.horario_cerimonia.strftime('%H:%M') }}
+                                {% else %}
+                                    16:00
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div style="flex: 1; padding-left: 3rem;"></div>
+                </div>
+                
+                <!-- Item 2 -->
+                <div style="display: flex; align-items: center; position: relative;">
+                    <div style="flex: 1; padding-right: 3rem;"></div>
+                    
+                    <!-- Timeline Point -->
+                    <div style="width: 80px; height: 80px; background: linear-gradient(135deg, #b91c1c, #dc2626); border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 0 6px rgba(255,255,255,0.1), 0 0 0 12px rgba(185,28,28,0.2); position: relative; z-index: 3;">
+                        <div style="text-align: center; color: white;">
+                            <div style="font-size: 1.1rem; font-weight: 700; line-height: 1;">
                                 {% if config.horario_festa %}
                                     {{ config.horario_festa.strftime('%H:%M') }}
                                 {% else %}
-                                    20:00
+                                    18:00
                                 {% endif %}
-                            </span>
-                        </div>
-                        <div class="reception-detail">
-                            <i class="fas fa-map-marker-alt text-highlight"></i>
-                            <span class="text-base font-semibold">{{ config.local_festa or 'Espaço Jardim Encantado' }}</span>
-                        </div>
-                        <div class="reception-address text-base text-secondary">
-                            {{ config.endereco_festa or 'Av. Paulista, 456 - Bela Vista, São Paulo - SP' }}
+                            </div>
                         </div>
                     </div>
-                    <a href="#" class="btn btn-primary" onclick="openReceptionMap()">
-                        <i class="fas fa-directions"></i>
-                        Ver no Mapa
+                    
+                    <div style="flex: 1; text-align: left; padding-left: 3rem;">
+                        <div style="background: rgba(255,255,255,0.05); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; padding: 2rem; position: relative;">
+                            <div style="position: absolute; top: 50%; left: -12px; width: 0; height: 0; border-right: 12px solid rgba(255,255,255,0.05); border-top: 12px solid transparent; border-bottom: 12px solid transparent;"></div>
+                            <h4 style="font-size: 1.3rem; font-weight: 700; color: white; margin-bottom: 0.5rem;">Chegada na Recepção</h4>
+                            <p style="color: rgba(255,255,255,0.7); font-size: 0.95rem; margin-bottom: 0;">Cocktail de boas-vindas e confraternização</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Item 3 -->
+                <div style="display: flex; align-items: center; position: relative;">
+                    <div style="flex: 1; text-align: right; padding-right: 3rem;">
+                        <div style="background: rgba(255,255,255,0.05); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; padding: 2rem; position: relative;">
+                            <div style="position: absolute; top: 50%; right: -12px; width: 0; height: 0; border-left: 12px solid rgba(255,255,255,0.05); border-top: 12px solid transparent; border-bottom: 12px solid transparent;"></div>
+                            <h4 style="font-size: 1.3rem; font-weight: 700; color: white; margin-bottom: 0.5rem;">Jantar Especial</h4>
+                            <p style="color: rgba(255,255,255,0.7); font-size: 0.95rem; margin-bottom: 0;">Menu gourmet para todos os convidados</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Timeline Point -->
+                    <div style="width: 80px; height: 80px; background: linear-gradient(135deg, #b91c1c, #dc2626); border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 0 6px rgba(255,255,255,0.1), 0 0 0 12px rgba(185,28,28,0.2); position: relative; z-index: 3;">
+                        <div style="text-align: center; color: white;">
+                            <div style="font-size: 1.1rem; font-weight: 700; line-height: 1;">19:00</div>
+                        </div>
+                    </div>
+                    
+                    <div style="flex: 1; padding-left: 3rem;"></div>
+                </div>
+                
+                <!-- Item 4 -->
+                <div style="display: flex; align-items: center; position: relative;">
+                    <div style="flex: 1; padding-right: 3rem;"></div>
+                    
+                    <!-- Timeline Point -->
+                    <div style="width: 80px; height: 80px; background: linear-gradient(135deg, #b91c1c, #dc2626); border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 0 6px rgba(255,255,255,0.1), 0 0 0 12px rgba(185,28,28,0.2); position: relative; z-index: 3;">
+                        <div style="text-align: center; color: white;">
+                            <div style="font-size: 1.1rem; font-weight: 700; line-height: 1;">21:00</div>
+                        </div>
+                    </div>
+                    
+                    <div style="flex: 1; text-align: left; padding-left: 3rem;">
+                        <div style="background: rgba(255,255,255,0.05); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; padding: 2rem; position: relative;">
+                            <div style="position: absolute; top: 50%; left: -12px; width: 0; height: 0; border-right: 12px solid rgba(255,255,255,0.05); border-top: 12px solid transparent; border-bottom: 12px solid transparent;"></div>
+                            <h4 style="font-size: 1.3rem; font-weight: 700; color: white; margin-bottom: 0.5rem;">Festa & Dança</h4>
+                            <p style="color: rgba(255,255,255,0.7); font-size: 0.95rem; margin-bottom: 0;">Música, dança e muita alegria até altas horas</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Mobile Timeline -->
+        <div style="display: none; max-width: 600px; margin: 0 auto;" class="mobile-timeline">
+            <div style="position: relative; padding-left: 3rem;">
+                <!-- Linha vertical mobile -->
+                <div style="position: absolute; left: 1rem; top: 0; bottom: 0; width: 2px; background: linear-gradient(180deg, #b91c1c, #dc2626, #b91c1c);"></div>
+                
+                <div style="display: flex; flex-direction: column; gap: 2rem;">
+                    <div style="position: relative;">
+                        <div style="position: absolute; left: -2.5rem; top: 1rem; width: 40px; height: 40px; background: linear-gradient(135deg, #b91c1c, #dc2626); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; font-size: 0.8rem; z-index: 2;">
+                            {% if config.horario_cerimonia %}
+                                {{ config.horario_cerimonia.strftime('%H:%M') }}
+                            {% else %}
+                                16:00
+                            {% endif %}
+                        </div>
+                        <div style="background: rgba(255,255,255,0.05); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; padding: 1.5rem;">
+                            <h4 style="color: white; font-weight: 700; margin-bottom: 0.5rem;">Cerimônia Religiosa</h4>
+                            <p style="color: rgba(255,255,255,0.7); font-size: 0.9rem; margin: 0;">{{ config.local_cerimonia or 'Igreja Nossa Senhora das Graças' }}</p>
+                        </div>
+                    </div>
+                    
+                    <div style="position: relative;">
+                        <div style="position: absolute; left: -2.5rem; top: 1rem; width: 40px; height: 40px; background: linear-gradient(135deg, #b91c1c, #dc2626); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; font-size: 0.8rem; z-index: 2;">
+                            {% if config.horario_festa %}
+                                {{ config.horario_festa.strftime('%H:%M') }}
+                            {% else %}
+                                18:00
+                            {% endif %}
+                        </div>
+                        <div style="background: rgba(255,255,255,0.05); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; padding: 1.5rem;">
+                            <h4 style="color: white; font-weight: 700; margin-bottom: 0.5rem;">Chegada na Recepção</h4>
+                            <p style="color: rgba(255,255,255,0.7); font-size: 0.9rem; margin: 0;">Cocktail de boas-vindas</p>
+                        </div>
+                    </div>
+                    
+                    <div style="position: relative;">
+                        <div style="position: absolute; left: -2.5rem; top: 1rem; width: 40px; height: 40px; background: linear-gradient(135deg, #b91c1c, #dc2626); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; font-size: 0.8rem; z-index: 2;">19:00</div>
+                        <div style="background: rgba(255,255,255,0.05); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; padding: 1.5rem;">
+                            <h4 style="color: white; font-weight: 700; margin-bottom: 0.5rem;">Jantar Especial</h4>
+                            <p style="color: rgba(255,255,255,0.7); font-size: 0.9rem; margin: 0;">Menu gourmet</p>
+                        </div>
+                    </div>
+                    
+                    <div style="position: relative;">
+                        <div style="position: absolute; left: -2.5rem; top: 1rem; width: 40px; height: 40px; background: linear-gradient(135deg, #b91c1c, #dc2626); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; font-size: 0.8rem; z-index: 2;">21:00</div>
+                        <div style="background: rgba(255,255,255,0.05); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; padding: 1.5rem;">
+                            <h4 style="color: white; font-weight: 700; margin-bottom: 0.5rem;">Festa & Dança</h4>
+                            <p style="color: rgba(255,255,255,0.7); font-size: 0.9rem; margin: 0;">Música e dança</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <style>
+        @media (max-width: 768px) {
+            .timeline-section > .container > div:first-child {
+                display: none !important;
+            }
+            .mobile-timeline {
+                display: block !important;
+            }
+        }
+    </style>
+</section>
+
+<!-- Actions Section - Design Elegante -->
+<section class="reception-actions-section" style="padding: 6rem 0; background: linear-gradient(135deg, #f8fafc 0%, #ffffff 50%, #f1f5f9 100%); position: relative; overflow: hidden;">
+    <!-- Decorações de Fundo -->
+    <div style="position: absolute; top: 20%; left: 10%; width: 300px; height: 300px; background: radial-gradient(circle, rgba(185,28,28,0.03) 0%, transparent 70%); border-radius: 50%;"></div>
+    <div style="position: absolute; bottom: 10%; right: 15%; width: 200px; height: 200px; background: radial-gradient(circle, rgba(185,28,28,0.05) 0%, transparent 70%); border-radius: 50%;"></div>
+    
+    <div class="container text-center" style="position: relative; z-index: 2;">
+        <div style="max-width: 700px; margin: 0 auto; background: white; border-radius: 30px; padding: 4rem 3rem; box-shadow: 0 30px 60px rgba(0,0,0,0.1); border: 1px solid rgba(0,0,0,0.05); position: relative; overflow: hidden;">
+            <!-- Decoração do Card -->
+            <div style="position: absolute; top: -100px; left: -100px; width: 200px; height: 200px; background: linear-gradient(135deg, rgba(185,28,28,0.05), rgba(220,38,38,0.03)); border-radius: 50%; z-index: 1;"></div>
+            <div style="position: absolute; bottom: -80px; right: -80px; width: 160px; height: 160px; background: linear-gradient(135deg, rgba(185,28,28,0.03), rgba(220,38,38,0.05)); border-radius: 50%; z-index: 1;"></div>
+            
+            <div style="position: relative; z-index: 2;">
+                <!-- Ícone de Celebração -->
+                <div style="width: 100px; height: 100px; background: linear-gradient(135deg, #b91c1c, #dc2626); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 2rem; box-shadow: 0 15px 30px rgba(185,28,28,0.3); position: relative;">
+                    <i class="fas fa-heart" style="font-size: 2.5rem; color: white; animation: heartbeat 2s ease-in-out infinite;"></i>
+                    <div style="position: absolute; inset: -10px; border: 3px solid rgba(185,28,28,0.2); border-radius: 50%; animation: pulse-ring 2s ease-out infinite;"></div>
+                </div>
+                
+                <h3 style="font-size: 2.8rem; font-weight: 700; color: #1f2937; margin-bottom: 1.5rem; font-family: 'Great Vibes', cursive;">Nos vemos lá!</h3>
+                
+                <p style="font-size: 1.3rem; color: #6b7280; line-height: 1.6; margin-bottom: 3rem;">
+                    Mal podemos esperar para celebrar este momento tão especial ao lado de pessoas queridas como vocês!
+                </p>
+                
+                <!-- Botões Elegantes -->
+                <div style="display: flex; gap: 1.5rem; justify-content: center; flex-wrap: wrap;">
+                    <a href="{{ url_for('main.index') }}" style="display: inline-flex; align-items: center; gap: 0.8rem; background: white; color: #1f2937; border: 2px solid #e5e7eb; padding: 1.2rem 2.5rem; border-radius: 50px; font-weight: 600; font-size: 1.1rem; text-decoration: none; transition: all 0.3s ease; box-shadow: 0 8px 25px rgba(0,0,0,0.08);" onmouseover="this.style.transform='translateY(-3px)'; this.style.boxShadow='0 15px 35px rgba(0,0,0,0.15)'; this.style.borderColor='#b91c1c'; this.style.color='#b91c1c'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 8px 25px rgba(0,0,0,0.08)'; this.style.borderColor='#e5e7eb'; this.style.color='#1f2937'">
+                        <i class="fas fa-arrow-left" style="font-size: 1rem;"></i>
+                        <span>Voltar ao Início</span>
+                    </a>
+                    
+                    <a href="{{ url_for('main.lista_presentes') }}" style="display: inline-flex; align-items: center; gap: 0.8rem; background: linear-gradient(135deg, #b91c1c, #dc2626); color: white; border: 2px solid transparent; padding: 1.2rem 2.5rem; border-radius: 50px; font-weight: 600; font-size: 1.1rem; text-decoration: none; transition: all 0.3s ease; box-shadow: 0 8px 25px rgba(185,28,28,0.3);" onmouseover="this.style.transform='translateY(-3px)'; this.style.boxShadow='0 15px 35px rgba(185,28,28,0.4)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 8px 25px rgba(185,28,28,0.3)'">
+                        <i class="fas fa-gift" style="font-size: 1rem;"></i>
+                        <span>Ver Lista de Presentes</span>
                     </a>
                 </div>
+                
+                <!-- Mensagem Adicional -->
+                <div style="margin-top: 3rem; padding-top: 2rem; border-top: 1px solid #e5e7eb;">
+                    <p style="font-size: 1rem; color: #9ca3af; font-style: italic;">
+                        "O amor é a única força capaz de transformar um inimigo em amigo." - Martin Luther King Jr.
+                    </p>
+                </div>
             </div>
         </div>
         
-        <!-- Informações Especiais da Recepção -->
-        <div class="reception-info-cards">
-            <div class="info-card">
-                <div class="info-icon">
-                    <i class="fas fa-utensils text-accent"></i>
+        <!-- Cards de Informações Adicionais -->
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 2rem; margin-top: 4rem; max-width: 800px; margin-left: auto; margin-right: auto;">
+            <div style="background: white; border-radius: 20px; padding: 2rem; text-align: center; box-shadow: 0 10px 25px rgba(0,0,0,0.08); border: 1px solid rgba(0,0,0,0.05); transition: all 0.3s ease;" onmouseover="this.style.transform='translateY(-5px)'; this.style.boxShadow='0 20px 40px rgba(0,0,0,0.12)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 10px 25px rgba(0,0,0,0.08)'">
+                <div style="width: 60px; height: 60px; background: linear-gradient(135deg, #fef2f2, #fee2e2); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem;">
+                    <i class="fas fa-phone" style="color: #b91c1c; font-size: 1.5rem;"></i>
                 </div>
-                <h4 class="heading-quaternary text-title">Jantar</h4>
-                <p class="text-base text-secondary">Menu especial será servido durante a recepção</p>
+                <h4 style="font-weight: 700; color: #1f2937; margin-bottom: 0.5rem;">Dúvidas?</h4>
+                <p style="color: #6b7280; font-size: 0.9rem;">Entre em contato conosco pelo WhatsApp</p>
             </div>
             
-            <div class="info-card">
-                <div class="info-icon">
-                    <i class="fas fa-music text-accent"></i>
+            <div style="background: white; border-radius: 20px; padding: 2rem; text-align: center; box-shadow: 0 10px 25px rgba(0,0,0,0.08); border: 1px solid rgba(0,0,0,0.05); transition: all 0.3s ease;" onmouseover="this.style.transform='translateY(-5px)'; this.style.boxShadow='0 20px 40px rgba(0,0,0,0.12)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 10px 25px rgba(0,0,0,0.08)'">
+                <div style="width: 60px; height: 60px; background: linear-gradient(135deg, #fef2f2, #fee2e2); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem;">
+                    <i class="fas fa-share-alt" style="color: #b91c1c; font-size: 1.5rem;"></i>
                 </div>
-                <h4 class="heading-quaternary text-title">Música</h4>
-                <p class="text-base text-secondary">DJ e pista de dança para celebrarmos juntos</p>
+                <h4 style="font-weight: 700; color: #1f2937; margin-bottom: 0.5rem;">Compartilhe</h4>
+                <p style="color: #6b7280; font-size: 0.9rem;">Divulgue nosso convite para outros amigos</p>
             </div>
             
-            <div class="info-card">
-                <div class="info-icon">
-                    <i class="fas fa-camera text-accent"></i>
+            <div style="background: white; border-radius: 20px; padding: 2rem; text-align: center; box-shadow: 0 10px 25px rgba(0,0,0,0.08); border: 1px solid rgba(0,0,0,0.05); transition: all 0.3s ease;" onmouseover="this.style.transform='translateY(-5px)'; this.style.boxShadow='0 20px 40px rgba(0,0,0,0.12)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 10px 25px rgba(0,0,0,0.08)'">
+                <div style="width: 60px; height: 60px; background: linear-gradient(135deg, #fef2f2, #fee2e2); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem;">
+                    <i class="fas fa-calendar-check" style="color: #b91c1c; font-size: 1.5rem;"></i>
                 </div>
-                <h4 class="heading-quaternary text-title">Fotos</h4>
-                <p class="text-base text-secondary">Fotógrafo profissional registrará nossos momentos</p>
-            </div>
-        </div>
-        
-        <!-- Dress Code -->
-        <div class="dress-code-section text-center">
-            <h3 class="heading-tertiary text-title spacing-bottom-medium">Dress Code</h3>
-            <div class="dress-code-cards">
-                <div class="dress-code-card">
-                    <i class="fas fa-tshirt text-accent"></i>
-                    <h4 class="text-base font-semibold">Esporte Fino</h4>
-                    <p class="text-small text-secondary">Traje elegante e confortável</p>
-                </div>
-                <div class="dress-code-card">
-                    <i class="fas fa-palette text-accent"></i>
-                    <h4 class="text-base font-semibold">Cores</h4>
-                    <p class="text-small text-secondary">Evite branco e vermelho</p>
-                </div>
+                <h4 style="font-weight: 700; color: #1f2937; margin-bottom: 0.5rem;">Agenda</h4>
+                <p style="color: #6b7280; font-size: 0.9rem;">Adicione a data na sua agenda</p>
             </div>
         </div>
     </div>
-</section>
-
-<!-- Timeline Section -->
-<section class="timeline-section">
-    <div class="container">
-        <div class="section-header text-center">
-            <h2 class="heading-secondary text-title">Cronograma do Dia</h2>
-            <p class="text-large text-secondary">Programação completa da nossa celebração</p>
-        </div>
+    
+    <style>
+        @keyframes heartbeat {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
         
-        <div class="timeline">
-            <div class="timeline-item">
-                <div class="timeline-time">
-                    <span class="text-base font-bold text-highlight">19:00</span>
-                </div>
-                <div class="timeline-content">
-                    <h4 class="text-base font-semibold">Cerimônia Religiosa</h4>
-                    <p class="text-small text-secondary">{{ config.local_cerimonia or 'Igreja Nossa Senhora das Graças' }}</p>
-                </div>
-            </div>
-            
-            <div class="timeline-item">
-                <div class="timeline-time">
-                    <span class="text-base font-bold text-highlight">20:00</span>
-                </div>
-                <div class="timeline-content">
-                    <h4 class="text-base font-semibold">Chegada na Recepção</h4>
-                    <p class="text-small text-secondary">Cocktail de boas-vindas</p>
-                </div>
-            </div>
-            
-            <div class="timeline-item">
-                <div class="timeline-time">
-                    <span class="text-base font-bold text-highlight">20:30</span>
-                </div>
-                <div class="timeline-content">
-                    <h4 class="text-base font-semibold">Jantar</h4>
-                    <p class="text-small text-secondary">Menu especial para todos os convidados</p>
-                </div>
-            </div>
-            
-            <div class="timeline-item">
-                <div class="timeline-time">
-                    <span class="text-base font-bold text-highlight">22:00</span>
-                </div>
-                <div class="timeline-content">
-                    <h4 class="text-base font-semibold">Festa e Dança</h4>
-                    <p class="text-small text-secondary">Momento de celebrar e dançar conosco</p>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- Actions Section -->
-<section class="reception-actions-section">
-    <div class="container text-center">
-        <h3 class="heading-tertiary text-title spacing-bottom-medium">Nos vemos lá!</h3>
-        <p class="text-base text-secondary spacing-bottom-medium">
-            Mal podemos esperar para celebrar este momento especial com você!
-        </p>
+        @keyframes pulse-ring {
+            0% { transform: scale(1); opacity: 0.8; }
+            100% { transform: scale(1.5); opacity: 0; }
+        }
         
-        <div class="reception-buttons">
-            <a href="{{ url_for('main.index') }}" class="btn btn-secondary btn-large">
-                <i class="fas fa-arrow-left"></i>
-                Voltar ao Início
-            </a>
-            <a href="{{ url_for('main.lista_presentes') }}" class="btn btn-primary btn-large">
-                <i class="fas fa-gift"></i>
-                Ver Lista de Presentes
-            </a>
-        </div>
-    </div>
+        @media (max-width: 768px) {
+            .reception-actions-section .container > div:first-child {
+                padding: 3rem 2rem !important;
+            }
+            
+            .reception-actions-section a {
+                padding: 1rem 2rem !important;
+                font-size: 1rem !important;
+            }
+            
+            .reception-actions-section h3 {
+                font-size: 2.2rem !important;
+            }
+            
+            .reception-actions-section > .container > div:last-child {
+                grid-template-columns: 1fr !important;
+                gap: 1.5rem !important;
+            }
+        }
+    </style>
 </section>
 {% endblock %}
 
@@ -202,32 +648,211 @@
 <script>
 // Função para abrir mapa da recepção
 function openReceptionMap() {
-    const address = '{{ config.endereco_festa or "Av. Paulista, 456 - Bela Vista, São Paulo - SP" }}';
+    const address = '{{ config.endereco_festa or "Av. Principal, 456 - Jardim das Rosas" }}';
     const encodedAddress = encodeURIComponent(address);
     const mapUrl = `https://www.google.com/maps/search/?api=1&query=${encodedAddress}`;
     window.open(mapUrl, '_blank');
 }
 
-// Animação de entrada
+// Função para adicionar evento ao calendário
+function addToCalendar() {
+    const eventDate = '{{ config.data_casamento.strftime("%Y%m%d") if config.data_casamento else "20251215" }}';
+    const startTime = '{{ config.horario_festa.strftime("%H%M%S") if config.horario_festa else "180000" }}';
+    const endTime = '{{ (config.horario_festa.strftime("%H") | int + 5) if config.horario_festa else "23" }}0000';
+    const title = encodeURIComponent('Casamento {{ config.nome_noiva or "Iara" }} & {{ config.nome_noivo or "Samuel" }} - Recepção');
+    const location = encodeURIComponent('{{ config.endereco_festa or "Av. Principal, 456 - Jardim das Rosas" }}');
+    const details = encodeURIComponent('Recepção do casamento de {{ config.nome_noiva or "Iara" }} e {{ config.nome_noivo or "Samuel" }}');
+    
+    const googleCalendarUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${title}&dates=${eventDate}T${startTime}/${eventDate}T${endTime}&details=${details}&location=${location}`;
+    window.open(googleCalendarUrl, '_blank');
+}
+
+// Função para compartilhar
+function shareInvitation() {
+    if (navigator.share) {
+        navigator.share({
+            title: 'Convite de Casamento - {{ config.nome_noiva or "Iara" }} & {{ config.nome_noivo or "Samuel" }}',
+            text: 'Você está convidado para nossa recepção de casamento!',
+            url: window.location.href
+        });
+    } else {
+        // Fallback para navegadores que não suportam Web Share API
+        const url = window.location.href;
+        navigator.clipboard.writeText(url).then(function() {
+            alert('Link copiado para a área de transferência!');
+        });
+    }
+}
+
+// Animações e interações
 document.addEventListener('DOMContentLoaded', function() {
-    // Adicionar animações suaves aos elementos
-    const elements = document.querySelectorAll('.timeline-item, .info-card, .dress-code-card');
+    // Smooth scroll para indicador
+    const scrollIndicator = document.querySelector('.scroll-indicator');
+    if (scrollIndicator) {
+        scrollIndicator.addEventListener('click', function() {
+            document.querySelector('#recepcao-details').scrollIntoView({
+                behavior: 'smooth'
+            });
+        });
+    }
+    
+    // Animação de entrada progressiva
+    const observerOptions = {
+        threshold: 0.1,
+        rootMargin: '0px 0px -50px 0px'
+    };
     
     const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
+        entries.forEach((entry, index) => {
             if (entry.isIntersecting) {
-                entry.target.style.opacity = '1';
-                entry.target.style.transform = 'translateY(0)';
+                setTimeout(() => {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }, index * 100);
             }
         });
-    });
+    }, observerOptions);
     
-    elements.forEach(el => {
+    // Aplicar animação aos elementos
+    const animatedElements = document.querySelectorAll(`
+        .reception-details-section > .container > div:not(.section-header),
+        .timeline-section .timeline-item,
+        .timeline-section .mobile-timeline > div > div > div,
+        .reception-actions-section > .container > div:last-child > div
+    `);
+    
+    animatedElements.forEach(el => {
         el.style.opacity = '0';
-        el.style.transform = 'translateY(20px)';
-        el.style.transition = 'all 0.6s ease';
+        el.style.transform = 'translateY(30px)';
+        el.style.transition = 'all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
         observer.observe(el);
     });
+    
+    // Animação especial para a hero section
+    const heroContent = document.querySelector('.reception-hero-content');
+    if (heroContent) {
+        heroContent.style.opacity = '0';
+        heroContent.style.transform = 'translateY(50px)';
+        
+        setTimeout(() => {
+            heroContent.style.transition = 'all 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
+            heroContent.style.opacity = '1';
+            heroContent.style.transform = 'translateY(0)';
+        }, 300);
+    }
+    
+    // Animação de paralaxe sutil
+    let ticking = false;
+    
+    function updateParallax() {
+        const scrolled = window.pageYOffset;
+        const parallaxElements = document.querySelectorAll('.reception-hero::before');
+        
+        parallaxElements.forEach(el => {
+            const speed = 0.5;
+            el.style.transform = `translateY(${scrolled * speed}px)`;
+        });
+        
+        ticking = false;
+    }
+    
+    function requestTick() {
+        if (!ticking) {
+            requestAnimationFrame(updateParallax);
+            ticking = true;
+        }
+    }
+    
+    window.addEventListener('scroll', requestTick);
+    
+    // Adicionar eventos aos cards de informação
+    const infoCards = document.querySelectorAll('.reception-actions-section > .container > div:last-child > div');
+    infoCards.forEach((card, index) => {
+        card.addEventListener('click', function() {
+            switch(index) {
+                case 0:
+                    // Dúvidas - pode adicionar WhatsApp ou telefone
+                    break;
+                case 1:
+                    shareInvitation();
+                    break;
+                case 2:
+                    addToCalendar();
+                    break;
+            }
+        });
+        
+        // Adicionar cursor pointer
+        card.style.cursor = 'pointer';
+    });
+    
+    // Efeito de typing para o título principal
+    const mainTitle = document.querySelector('.invitation-main');
+    if (mainTitle) {
+        const text = mainTitle.textContent;
+        mainTitle.textContent = '';
+        
+        setTimeout(() => {
+            let i = 0;
+            const typingInterval = setInterval(() => {
+                mainTitle.textContent += text[i];
+                i++;
+                
+                if (i >= text.length) {
+                    clearInterval(typingInterval);
+                }
+            }, 100);
+        }, 1500);
+    }
+    
+    // Loading suave para imagens
+    const images = document.querySelectorAll('img');
+    images.forEach(img => {
+        img.addEventListener('load', function() {
+            this.style.opacity = '1';
+        });
+        img.style.opacity = '0';
+        img.style.transition = 'opacity 0.5s ease';
+    });
 });
+
+// Adicionar CSS dinâmico para melhorar responsividade
+const dynamicCSS = `
+    @media (max-width: 480px) {
+        .luxury-names {
+            margin: 2rem 0 !important;
+        }
+        
+        .elegant-name {
+            font-size: 2rem !important;
+        }
+        
+        .invitation-title {
+            padding: 2rem 1.5rem !important;
+            margin: 2rem auto !important;
+        }
+        
+        .invitation-main {
+            font-size: 2rem !important;
+            letter-spacing: 1px !important;
+        }
+        
+        .elegant-date {
+            font-size: 1.5rem !important;
+        }
+    }
+    
+    @media (max-width: 640px) {
+        .reception-actions-section a {
+            width: 100% !important;
+            justify-content: center !important;
+        }
+    }
+`;
+
+// Inserir CSS dinâmico
+const styleSheet = document.createElement('style');
+styleSheet.textContent = dynamicCSS;
+document.head.appendChild(styleSheet);
 </script>
 {% endblock %}
