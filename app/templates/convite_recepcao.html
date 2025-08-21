@@ -7,9 +7,11 @@
     .reception-hero {
         background: linear-gradient(135deg, 
             rgba(185, 28, 28, 0.9) 0%, 
-            rgba(127, 29, 29, 0.95) 50%, 
-            rgba(239, 68, 68, 0.9) 100%),
-            url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="hearts" patternUnits="userSpaceOnUse" width="20" height="20"><circle cx="10" cy="10" r="1" fill="rgba(255,255,255,0.1)"/></pattern></defs><rect width="100" height="100" fill="url(%23hearts)"/></svg>');
+            rgba(127, 29, 29, 0.95) 25%,
+            rgba(239, 68, 68, 0.9) 50%,
+            rgba(220, 38, 38, 0.95) 75%,
+            rgba(185, 28, 28, 0.9) 100%),
+            url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="celebration" patternUnits="userSpaceOnUse" width="30" height="30"><circle cx="15" cy="15" r="2" fill="rgba(255,255,255,0.1)"/><path d="M5,5 L8,12 L5,19 L12,16 L19,19 L16,12 L19,5 L12,8 Z" fill="rgba(255,255,255,0.08)"/></pattern></defs><rect width="100" height="100" fill="url(%23celebration)"/></svg>');
         min-height: 100vh;
         display: flex;
         align-items: center;
@@ -17,16 +19,40 @@
         overflow: hidden;
     }
     
+    /* Confetes animados */
     .reception-hero::before {
+        content: '🎉 🎊 ✨ 🥳 🎈 💃 🕺 🎶 🎵 🎭 🎪 🌟 💫 ⭐ 🎯 🎨 🎀 🎁 💎 👑';
+        position: absolute;
+        top: -10%;
+        left: -10%;
+        width: 120%;
+        height: 120%;
+        font-size: 3rem;
+        line-height: 4rem;
+        word-spacing: 2rem;
+        opacity: 0.15;
+        animation: confetti-rain 15s linear infinite;
+        z-index: 1;
+        pointer-events: none;
+    }
+    
+    /* Efeito de brilho piscante */
+    .reception-hero::after {
         content: '';
         position: absolute;
-        top: -50%;
-        left: -50%;
-        width: 200%;
-        height: 200%;
-        background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200"><circle cx="50" cy="50" r="2" fill="rgba(255,255,255,0.1)"/><circle cx="150" cy="100" r="1" fill="rgba(255,255,255,0.05)"/><circle cx="100" cy="150" r="1.5" fill="rgba(255,255,255,0.08)"/></svg>');
-        animation: float 20s ease-in-out infinite;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: 
+            radial-gradient(circle at 20% 30%, rgba(255,215,0,0.3) 0%, transparent 25%),
+            radial-gradient(circle at 80% 20%, rgba(255,105,180,0.2) 0%, transparent 25%),
+            radial-gradient(circle at 60% 80%, rgba(0,255,255,0.2) 0%, transparent 25%),
+            radial-gradient(circle at 30% 70%, rgba(255,69,0,0.2) 0%, transparent 25%),
+            radial-gradient(circle at 90% 60%, rgba(255,215,0,0.25) 0%, transparent 25%);
+        animation: sparkle-dance 8s ease-in-out infinite;
         z-index: 1;
+        pointer-events: none;
     }
     
     .reception-hero-content {
@@ -37,141 +63,233 @@
     
     .celebration-badge {
         display: inline-block;
-        background: rgba(255, 255, 255, 0.15);
-        backdrop-filter: blur(10px);
-        border: 2px solid rgba(255, 255, 255, 0.3);
+        background: linear-gradient(135deg, rgba(255,215,0,0.3), rgba(255,105,180,0.3));
+        backdrop-filter: blur(15px);
+        border: 3px solid rgba(255, 255, 255, 0.4);
         border-radius: 50px;
-        padding: 1rem 2rem;
+        padding: 1.5rem 3rem;
         margin-bottom: 2rem;
-        animation: glow 2s ease-in-out infinite alternate;
+        animation: party-glow 3s ease-in-out infinite alternate;
+        box-shadow: 0 0 30px rgba(255,215,0,0.4);
     }
     
     .celebration-icon {
-        font-size: 2rem;
+        font-size: 3rem;
         margin-bottom: 0.5rem;
-        animation: bounce 2s infinite;
+        animation: party-bounce 1.5s infinite;
+        background: linear-gradient(45deg, #ff6b35, #f7931e, #ffd700, #ff69b4);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
     }
     
     .luxury-names {
         margin: 3rem 0;
         position: relative;
+        animation: name-celebration 4s ease-in-out infinite;
     }
     
     .luxury-names::before {
-        content: '';
+        content: '🌟 ✨ 🌟 ✨ 🌟';
         position: absolute;
-        top: -20px;
+        top: -30px;
         left: 50%;
         transform: translateX(-50%);
-        width: 100px;
-        height: 2px;
-        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.8), transparent);
+        font-size: 1.5rem;
+        animation: twinkle-top 2s ease-in-out infinite;
     }
     
     .luxury-names::after {
-        content: '';
+        content: '💫 ⭐ 💫 ⭐ 💫';
         position: absolute;
-        bottom: -20px;
+        bottom: -30px;
         left: 50%;
         transform: translateX(-50%);
-        width: 100px;
-        height: 2px;
-        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.8), transparent);
+        font-size: 1.5rem;
+        animation: twinkle-bottom 2s ease-in-out infinite 0.5s;
     }
     
     .elegant-name {
         font-family: 'Great Vibes', cursive;
-        font-size: 4rem;
+        font-size: 4.5rem;
         font-weight: 400;
-        letter-spacing: 2px;
-        margin: 0.5rem 0;
-        text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
-        animation: shimmer 3s ease-in-out infinite;
+        letter-spacing: 3px;
+        margin: 0.8rem 0;
+        background: linear-gradient(45deg, #fff, #ffd700, #fff, #ff69b4, #fff);
+        background-size: 300% 300%;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        animation: rainbow-text 6s ease-in-out infinite;
+        text-shadow: 0 0 20px rgba(255,255,255,0.5);
+        filter: drop-shadow(2px 2px 4px rgba(0,0,0,0.3));
     }
     
     .elegant-ampersand {
-        font-size: 3rem;
+        font-size: 4rem;
         font-weight: 300;
-        margin: 1rem 0;
-        opacity: 0.9;
+        margin: 1.5rem 0;
+        opacity: 0.95;
         position: relative;
+        animation: ampersand-dance 3s ease-in-out infinite;
     }
     
     .elegant-ampersand::before,
     .elegant-ampersand::after {
-        content: '❋';
+        content: '🎊';
         position: absolute;
         top: 50%;
         transform: translateY(-50%);
-        font-size: 1.5rem;
-        opacity: 0.6;
+        font-size: 2rem;
+        animation: confetti-spin 4s linear infinite;
     }
     
     .elegant-ampersand::before {
-        left: -3rem;
+        left: -4rem;
+        animation-delay: 0s;
     }
     
     .elegant-ampersand::after {
-        right: -3rem;
+        right: -4rem;
+        animation-delay: 2s;
     }
     
     .invitation-title {
-        background: rgba(255, 255, 255, 0.1);
-        backdrop-filter: blur(10px);
-        border-radius: 20px;
-        padding: 2rem;
+        background: linear-gradient(135deg, 
+            rgba(255, 255, 255, 0.2), 
+            rgba(255, 215, 0, 0.15), 
+            rgba(255, 105, 180, 0.15),
+            rgba(255, 255, 255, 0.2));
+        backdrop-filter: blur(20px);
+        border-radius: 30px;
+        padding: 3rem;
         margin: 3rem auto;
-        max-width: 600px;
-        border: 1px solid rgba(255, 255, 255, 0.2);
+        max-width: 700px;
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        box-shadow: 
+            0 0 40px rgba(255,215,0,0.3),
+            inset 0 0 20px rgba(255,255,255,0.1);
+        animation: invitation-pulse 4s ease-in-out infinite;
     }
     
     .invitation-subtitle {
-        font-size: 1.5rem;
-        font-weight: 300;
+        font-size: 1.8rem;
+        font-weight: 400;
         margin-bottom: 1rem;
-        opacity: 0.9;
+        opacity: 0.95;
+        animation: subtitle-float 3s ease-in-out infinite;
     }
     
     .invitation-main {
-        font-size: 3.5rem;
-        font-weight: 700;
-        letter-spacing: 4px;
+        font-size: 4rem;
+        font-weight: 800;
+        letter-spacing: 6px;
         text-transform: uppercase;
-        background: linear-gradient(45deg, #fff, #f8fafc, #fff);
+        background: linear-gradient(45deg, #fff, #ffd700, #ff69b4, #fff, #ffd700);
+        background-size: 400% 400%;
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         background-clip: text;
-        margin: 1rem 0;
-        text-shadow: none;
+        margin: 1.5rem 0;
+        animation: party-text 5s ease-in-out infinite;
+        filter: drop-shadow(0 0 10px rgba(255,215,0,0.5));
     }
     
     .elegant-date {
         margin-top: 2rem;
-        font-size: 2.5rem;
-        font-weight: 600;
-        letter-spacing: 3px;
-        opacity: 0.95;
+        font-size: 3rem;
+        font-weight: 700;
+        letter-spacing: 4px;
+        opacity: 0.98;
+        background: linear-gradient(45deg, #fff, #ffd700, #fff);
+        background-size: 200% 200%;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        animation: date-glow 3s ease-in-out infinite;
     }
     
-    @keyframes glow {
-        from { box-shadow: 0 0 20px rgba(255,255,255,0.3); }
-        to { box-shadow: 0 0 30px rgba(255,255,255,0.5); }
+    /* Animações festivas */
+    @keyframes confetti-rain {
+        0% { transform: translateY(-100vh) rotate(0deg); }
+        100% { transform: translateY(100vh) rotate(360deg); }
     }
     
-    @keyframes bounce {
+    @keyframes sparkle-dance {
+        0%, 100% { transform: scale(1) rotate(0deg); opacity: 0.6; }
+        25% { transform: scale(1.1) rotate(90deg); opacity: 0.8; }
+        50% { transform: scale(0.9) rotate(180deg); opacity: 0.4; }
+        75% { transform: scale(1.05) rotate(270deg); opacity: 0.9; }
+    }
+    
+    @keyframes party-glow {
+        from { 
+            box-shadow: 0 0 30px rgba(255,215,0,0.4), 0 0 60px rgba(255,105,180,0.2); 
+            transform: scale(1);
+        }
+        to { 
+            box-shadow: 0 0 50px rgba(255,215,0,0.6), 0 0 80px rgba(255,105,180,0.4); 
+            transform: scale(1.05);
+        }
+    }
+    
+    @keyframes party-bounce {
+        0%, 100% { transform: translateY(0) rotate(0deg) scale(1); }
+        25% { transform: translateY(-15px) rotate(5deg) scale(1.1); }
+        50% { transform: translateY(-8px) rotate(-3deg) scale(1.05); }
+        75% { transform: translateY(-12px) rotate(3deg) scale(1.08); }
+    }
+    
+    @keyframes name-celebration {
+        0%, 100% { transform: translateY(0) scale(1); }
+        50% { transform: translateY(-10px) scale(1.02); }
+    }
+    
+    @keyframes twinkle-top {
+        0%, 100% { opacity: 0.6; transform: translateX(-50%) scale(1); }
+        50% { opacity: 1; transform: translateX(-50%) scale(1.2); }
+    }
+    
+    @keyframes twinkle-bottom {
+        0%, 100% { opacity: 0.8; transform: translateX(-50%) scale(1); }
+        50% { opacity: 1; transform: translateX(-50%) scale(1.3); }
+    }
+    
+    @keyframes rainbow-text {
+        0%, 100% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+    }
+    
+    @keyframes ampersand-dance {
+        0%, 100% { transform: rotate(-5deg) scale(1); }
+        50% { transform: rotate(5deg) scale(1.1); }
+    }
+    
+    @keyframes confetti-spin {
+        0% { transform: translateY(-50%) rotate(0deg); }
+        100% { transform: translateY(-50%) rotate(360deg); }
+    }
+    
+    @keyframes invitation-pulse {
+        0%, 100% { transform: scale(1); box-shadow: 0 0 40px rgba(255,215,0,0.3); }
+        50% { transform: scale(1.02); box-shadow: 0 0 60px rgba(255,215,0,0.5), 0 0 80px rgba(255,105,180,0.3); }
+    }
+    
+    @keyframes subtitle-float {
         0%, 100% { transform: translateY(0); }
-        50% { transform: translateY(-10px); }
+        50% { transform: translateY(-5px); }
     }
     
-    @keyframes shimmer {
-        0%, 100% { text-shadow: 2px 2px 4px rgba(0,0,0,0.3); }
-        50% { text-shadow: 2px 2px 8px rgba(0,0,0,0.5), 0 0 15px rgba(255,255,255,0.3); }
+    @keyframes party-text {
+        0%, 100% { background-position: 0% 50%; transform: scale(1); }
+        25% { background-position: 25% 25%; transform: scale(1.02); }
+        50% { background-position: 100% 50%; transform: scale(1.05); }
+        75% { background-position: 75% 75%; transform: scale(1.03); }
     }
     
-    @keyframes float {
-        0%, 100% { transform: translateY(0px) rotate(0deg); }
-        33% { transform: translateY(-10px) rotate(1deg); }
-        66% { transform: translateY(5px) rotate(-1deg); }
+    @keyframes date-glow {
+        0%, 100% { background-position: 0% 50%; filter: drop-shadow(0 0 10px rgba(255,215,0,0.3)); }
+        50% { background-position: 100% 50%; filter: drop-shadow(0 0 20px rgba(255,215,0,0.6)); }
     }
     
     .scroll-indicator {
@@ -179,34 +297,51 @@
         bottom: 2rem;
         left: 50%;
         transform: translateX(-50%);
-        animation: bounce 2s infinite;
-        color: rgba(255, 255, 255, 0.8);
+        animation: festival-bounce 2s infinite;
+        color: rgba(255, 255, 255, 0.9);
+        background: rgba(255,215,0,0.2);
+        padding: 1rem;
+        border-radius: 50%;
+        border: 2px solid rgba(255,255,255,0.3);
+    }
+    
+    @keyframes festival-bounce {
+        0%, 100% { transform: translateX(-50%) translateY(0) scale(1); }
+        50% { transform: translateX(-50%) translateY(-15px) scale(1.1); }
     }
     
     @media (max-width: 768px) {
         .elegant-name {
-            font-size: 2.5rem;
+            font-size: 3rem;
         }
         
         .invitation-main {
-            font-size: 2.5rem;
-            letter-spacing: 2px;
+            font-size: 2.8rem;
+            letter-spacing: 3px;
         }
         
         .elegant-date {
-            font-size: 2rem;
+            font-size: 2.2rem;
         }
         
         .elegant-ampersand::before,
         .elegant-ampersand::after {
             display: none;
         }
+        
+        .celebration-badge {
+            padding: 1rem 2rem;
+        }
+        
+        .invitation-title {
+            padding: 2rem;
+        }
     }
 </style>
 {% endblock %}
 
 {% block content %}
-<!-- Hero Section - Convite de Recepção Elegante -->
+<!-- Hero Section - Convite de Recepção Super Festivo -->
 <section class="reception-hero">
     <div class="container">
         <div class="reception-hero-content text-center">
@@ -535,90 +670,149 @@
     </style>
 </section>
 
-<!-- Actions Section - Design Elegante -->
-<section class="reception-actions-section" style="padding: 6rem 0; background: linear-gradient(135deg, #f8fafc 0%, #ffffff 50%, #f1f5f9 100%); position: relative; overflow: hidden;">
-    <!-- Decorações de Fundo -->
-    <div style="position: absolute; top: 20%; left: 10%; width: 300px; height: 300px; background: radial-gradient(circle, rgba(185,28,28,0.03) 0%, transparent 70%); border-radius: 50%;"></div>
-    <div style="position: absolute; bottom: 10%; right: 15%; width: 200px; height: 200px; background: radial-gradient(circle, rgba(185,28,28,0.05) 0%, transparent 70%); border-radius: 50%;"></div>
+<!-- Actions Section - Design Super Festivo -->
+<section class="reception-actions-section" style="padding: 6rem 0; background: linear-gradient(135deg, #f8fafc 0%, #ffffff 30%, #fef7cd 60%, #fff7ed 100%); position: relative; overflow: hidden;">
+    <!-- Decorações de Fundo Festivas -->
+    <div style="position: absolute; top: 10%; left: 5%; width: 300px; height: 300px; background: radial-gradient(circle, rgba(255,215,0,0.1) 0%, transparent 70%); border-radius: 50%; animation: float-celebration 6s ease-in-out infinite;"></div>
+    <div style="position: absolute; bottom: 10%; right: 10%; width: 250px; height: 250px; background: radial-gradient(circle, rgba(255,105,180,0.08) 0%, transparent 70%); border-radius: 50%; animation: float-celebration 8s ease-in-out infinite reverse;"></div>
+    <div style="position: absolute; top: 50%; left: 80%; width: 200px; height: 200px; background: radial-gradient(circle, rgba(0,255,255,0.06) 0%, transparent 70%); border-radius: 50%; animation: float-celebration 7s ease-in-out infinite;"></div>
+    
+    <!-- Confetes flutuantes -->
+    <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; pointer-events: none; z-index: 1;">
+        <div style="position: absolute; top: 20%; left: 15%; font-size: 2rem; animation: confetti-float 12s linear infinite; animation-delay: 0s;">🎊</div>
+        <div style="position: absolute; top: 30%; right: 20%; font-size: 1.8rem; animation: confetti-float 15s linear infinite; animation-delay: 2s;">✨</div>
+        <div style="position: absolute; top: 60%; left: 10%; font-size: 2.2rem; animation: confetti-float 10s linear infinite; animation-delay: 4s;">🎉</div>
+        <div style="position: absolute; top: 40%; right: 15%; font-size: 1.5rem; animation: confetti-float 18s linear infinite; animation-delay: 1s;">🥳</div>
+        <div style="position: absolute; top: 70%; left: 70%; font-size: 2rem; animation: confetti-float 14s linear infinite; animation-delay: 3s;">🎈</div>
+        <div style="position: absolute; top: 15%; left: 60%; font-size: 1.7rem; animation: confetti-float 16s linear infinite; animation-delay: 5s;">🌟</div>
+    </div>
     
     <div class="container text-center" style="position: relative; z-index: 2;">
-        <div style="max-width: 700px; margin: 0 auto; background: white; border-radius: 30px; padding: 4rem 3rem; box-shadow: 0 30px 60px rgba(0,0,0,0.1); border: 1px solid rgba(0,0,0,0.05); position: relative; overflow: hidden;">
-            <!-- Decoração do Card -->
-            <div style="position: absolute; top: -100px; left: -100px; width: 200px; height: 200px; background: linear-gradient(135deg, rgba(185,28,28,0.05), rgba(220,38,38,0.03)); border-radius: 50%; z-index: 1;"></div>
-            <div style="position: absolute; bottom: -80px; right: -80px; width: 160px; height: 160px; background: linear-gradient(135deg, rgba(185,28,28,0.03), rgba(220,38,38,0.05)); border-radius: 50%; z-index: 1;"></div>
+        <div style="max-width: 700px; margin: 0 auto; background: white; border-radius: 30px; padding: 4rem 3rem; box-shadow: 0 30px 60px rgba(0,0,0,0.1), 0 0 40px rgba(255,215,0,0.2); border: 2px solid rgba(255,215,0,0.1); position: relative; overflow: hidden;">
+            <!-- Decoração do Card Festiva -->
+            <div style="position: absolute; top: -150px; left: -150px; width: 300px; height: 300px; background: linear-gradient(135deg, rgba(255,215,0,0.08), rgba(255,105,180,0.05)); border-radius: 50%; z-index: 1; animation: party-decoration 8s ease-in-out infinite;"></div>
+            <div style="position: absolute; bottom: -120px; right: -120px; width: 240px; height: 240px; background: linear-gradient(135deg, rgba(255,105,180,0.06), rgba(0,255,255,0.04)); border-radius: 50%; z-index: 1; animation: party-decoration 10s ease-in-out infinite reverse;"></div>
             
             <div style="position: relative; z-index: 2;">
-                <!-- Ícone de Celebração -->
-                <div style="width: 100px; height: 100px; background: linear-gradient(135deg, #b91c1c, #dc2626); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 2rem; box-shadow: 0 15px 30px rgba(185,28,28,0.3); position: relative;">
-                    <i class="fas fa-heart" style="font-size: 2.5rem; color: white; animation: heartbeat 2s ease-in-out infinite;"></i>
-                    <div style="position: absolute; inset: -10px; border: 3px solid rgba(185,28,28,0.2); border-radius: 50%; animation: pulse-ring 2s ease-out infinite;"></div>
+                <!-- Ícone de Celebração Super Festivo -->
+                <div style="width: 120px; height: 120px; background: linear-gradient(135deg, #ff6b35, #f7931e, #ffd700, #ff69b4); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 2rem; box-shadow: 0 20px 40px rgba(255,105,180,0.3), 0 0 60px rgba(255,215,0,0.2); position: relative; animation: super-celebration 3s ease-in-out infinite;">
+                    <i class="fas fa-glass-cheers" style="font-size: 3rem; color: white; animation: cheers-animation 2s ease-in-out infinite;"></i>
+                    <div style="position: absolute; inset: -15px; border: 4px solid rgba(255,215,0,0.3); border-radius: 50%; animation: mega-pulse-ring 3s ease-out infinite;"></div>
+                    <div style="position: absolute; inset: -25px; border: 2px solid rgba(255,105,180,0.2); border-radius: 50%; animation: mega-pulse-ring 3s ease-out infinite 0.5s;"></div>
                 </div>
                 
-                <h3 style="font-size: 2.8rem; font-weight: 700; color: #1f2937; margin-bottom: 1.5rem; font-family: 'Great Vibes', cursive;">Nos vemos lá!</h3>
+                <h3 style="font-size: 3.2rem; font-weight: 700; color: #1f2937; margin-bottom: 1.5rem; font-family: 'Great Vibes', cursive; background: linear-gradient(45deg, #b91c1c, #ff6b35, #ffd700, #ff69b4); background-size: 300% 300%; -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; animation: festive-text 4s ease-in-out infinite;">Vamos Celebrar!</h3>
                 
-                <p style="font-size: 1.3rem; color: #6b7280; line-height: 1.6; margin-bottom: 3rem;">
-                    Mal podemos esperar para celebrar este momento tão especial ao lado de pessoas queridas como vocês!
+                <p style="font-size: 1.4rem; color: #6b7280; line-height: 1.7; margin-bottom: 3rem; background: linear-gradient(135deg, rgba(255,215,0,0.1), rgba(255,255,255,0.8), rgba(255,105,180,0.1)); padding: 1.5rem; border-radius: 20px; border: 1px solid rgba(255,215,0,0.2);">
+                    🎊 Mal podemos esperar para celebrar este momento mágico ao lado de pessoas especiais como vocês! Preparem-se para uma festa inesquecível! 🥳
                 </p>
                 
-                <!-- Botões Elegantes -->
-                <div style="display: flex; gap: 1.5rem; justify-content: center; flex-wrap: wrap;">
-                    <a href="{{ url_for('main.index') }}" style="display: inline-flex; align-items: center; gap: 0.8rem; background: white; color: #1f2937; border: 2px solid #e5e7eb; padding: 1.2rem 2.5rem; border-radius: 50px; font-weight: 600; font-size: 1.1rem; text-decoration: none; transition: all 0.3s ease; box-shadow: 0 8px 25px rgba(0,0,0,0.08);" onmouseover="this.style.transform='translateY(-3px)'; this.style.boxShadow='0 15px 35px rgba(0,0,0,0.15)'; this.style.borderColor='#b91c1c'; this.style.color='#b91c1c'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 8px 25px rgba(0,0,0,0.08)'; this.style.borderColor='#e5e7eb'; this.style.color='#1f2937'">
-                        <i class="fas fa-arrow-left" style="font-size: 1rem;"></i>
+                <!-- Botões Super Festivos -->
+                <div style="display: flex; gap: 2rem; justify-content: center; flex-wrap: wrap;">
+                    <a href="{{ url_for('main.index') }}" style="display: inline-flex; align-items: center; gap: 1rem; background: linear-gradient(135deg, #ffffff, #fef7cd); color: #1f2937; border: 3px solid #ffd700; padding: 1.5rem 3rem; border-radius: 50px; font-weight: 700; font-size: 1.2rem; text-decoration: none; transition: all 0.4s ease; box-shadow: 0 10px 30px rgba(255,215,0,0.3); position: relative; overflow: hidden;" onmouseover="this.style.transform='translateY(-5px) scale(1.05)'; this.style.boxShadow='0 20px 40px rgba(255,215,0,0.4)'; this.style.background='linear-gradient(135deg, #ffd700, #fff7ed)'" onmouseout="this.style.transform='translateY(0) scale(1)'; this.style.boxShadow='0 10px 30px rgba(255,215,0,0.3)'; this.style.background='linear-gradient(135deg, #ffffff, #fef7cd)'">
+                        <i class="fas fa-home" style="font-size: 1.2rem; animation: home-bounce 2s ease-in-out infinite;"></i>
                         <span>Voltar ao Início</span>
+                        <div style="position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: linear-gradient(45deg, transparent, rgba(255,255,255,0.3), transparent); transform: rotate(45deg); transition: all 0.6s ease; opacity: 0;" class="shine-effect"></div>
                     </a>
                     
-                    <a href="{{ url_for('main.lista_presentes') }}" style="display: inline-flex; align-items: center; gap: 0.8rem; background: linear-gradient(135deg, #b91c1c, #dc2626); color: white; border: 2px solid transparent; padding: 1.2rem 2.5rem; border-radius: 50px; font-weight: 600; font-size: 1.1rem; text-decoration: none; transition: all 0.3s ease; box-shadow: 0 8px 25px rgba(185,28,28,0.3);" onmouseover="this.style.transform='translateY(-3px)'; this.style.boxShadow='0 15px 35px rgba(185,28,28,0.4)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 8px 25px rgba(185,28,28,0.3)'">
-                        <i class="fas fa-gift" style="font-size: 1rem;"></i>
-                        <span>Ver Lista de Presentes</span>
+                    <a href="{{ url_for('main.lista_presentes') }}" style="display: inline-flex; align-items: center; gap: 1rem; background: linear-gradient(135deg, #ff6b35, #f7931e, #ffd700); color: white; border: 3px solid rgba(255,255,255,0.3); padding: 1.5rem 3rem; border-radius: 50px; font-weight: 700; font-size: 1.2rem; text-decoration: none; transition: all 0.4s ease; box-shadow: 0 10px 30px rgba(255,107,53,0.4), 0 0 30px rgba(255,215,0,0.2); position: relative; overflow: hidden;" onmouseover="this.style.transform='translateY(-5px) scale(1.05)'; this.style.boxShadow='0 20px 40px rgba(255,107,53,0.5), 0 0 50px rgba(255,215,0,0.4)'" onmouseout="this.style.transform='translateY(0) scale(1)'; this.style.boxShadow='0 10px 30px rgba(255,107,53,0.4), 0 0 30px rgba(255,215,0,0.2)'">
+                        <i class="fas fa-gift" style="font-size: 1.2rem; animation: gift-wiggle 1.5s ease-in-out infinite;"></i>
+                        <span>Lista de Presentes</span>
+                        <div style="position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: linear-gradient(45deg, transparent, rgba(255,255,255,0.4), transparent); transform: rotate(45deg); transition: all 0.6s ease; opacity: 0;" class="shine-effect"></div>
                     </a>
                 </div>
                 
-                <!-- Mensagem Adicional -->
-                <div style="margin-top: 3rem; padding-top: 2rem; border-top: 1px solid #e5e7eb;">
-                    <p style="font-size: 1rem; color: #9ca3af; font-style: italic;">
-                        "O amor é a única força capaz de transformar um inimigo em amigo." - Martin Luther King Jr.
+                <!-- Cards de Informações Festivais (sem compartilhamento) -->
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 2rem; margin-top: 4rem;">
+                    <div style="background: linear-gradient(135deg, #fff7ed, #ffffff); border-radius: 25px; padding: 2.5rem; text-align: center; box-shadow: 0 15px 35px rgba(255,107,53,0.1); border: 2px solid rgba(255,215,0,0.2); transition: all 0.4s ease; position: relative; overflow: hidden;" onmouseover="this.style.transform='translateY(-8px) rotate(2deg)'; this.style.boxShadow='0 25px 50px rgba(255,107,53,0.2)'" onmouseout="this.style.transform='translateY(0) rotate(0deg)'; this.style.boxShadow='0 15px 35px rgba(255,107,53,0.1)'">
+                        <div style="width: 80px; height: 80px; background: linear-gradient(135deg, #ff6b35, #ffd700); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.5rem; animation: info-pulse 3s ease-in-out infinite;">
+                            <i class="fas fa-phone" style="color: white; font-size: 2rem;"></i>
+                        </div>
+                        <h4 style="font-weight: 700; color: #1f2937; margin-bottom: 1rem; font-size: 1.5rem;">Dúvidas? 🤔</h4>
+                        <p style="color: #6b7280; font-size: 1rem; line-height: 1.6;">Entre em contato conosco pelo WhatsApp para qualquer informação!</p>
+                    </div>
+                    
+                    <div style="background: linear-gradient(135deg, #fef7cd, #ffffff); border-radius: 25px; padding: 2.5rem; text-align: center; box-shadow: 0 15px 35px rgba(255,215,0,0.1); border: 2px solid rgba(255,105,180,0.2); transition: all 0.4s ease; position: relative; overflow: hidden;" onmouseover="this.style.transform='translateY(-8px) rotate(-2deg)'; this.style.boxShadow='0 25px 50px rgba(255,215,0,0.2)'" onmouseout="this.style.transform='translateY(0) rotate(0deg)'; this.style.boxShadow='0 15px 35px rgba(255,215,0,0.1)'">
+                        <div style="width: 80px; height: 80px; background: linear-gradient(135deg, #ffd700, #ff69b4); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.5rem; animation: info-pulse 3s ease-in-out infinite 0.5s;">
+                            <i class="fas fa-calendar-plus" style="color: white; font-size: 2rem;"></i>
+                        </div>
+                        <h4 style="font-weight: 700; color: #1f2937; margin-bottom: 1rem; font-size: 1.5rem;">Agenda 📅</h4>
+                        <p style="color: #6b7280; font-size: 1rem; line-height: 1.6;">Adicione nossa festa na sua agenda para não perder nada!</p>
+                    </div>
+                </div>
+                
+                <!-- Mensagem Especial -->
+                <div style="margin-top: 3rem; padding: 2rem; background: linear-gradient(135deg, rgba(255,215,0,0.1), rgba(255,105,180,0.05)); border-radius: 20px; border-left: 5px solid #ffd700;">
+                    <p style="font-size: 1.2rem; color: #374151; font-style: italic; margin: 0; line-height: 1.6;">
+                        ✨ "A felicidade é real quando compartilhada" ✨<br>
+                        <span style="font-size: 1rem; opacity: 0.8;">Obrigado por fazer parte da nossa história!</span>
                     </p>
                 </div>
-            </div>
-        </div>
-        
-        <!-- Cards de Informações Adicionais -->
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 2rem; margin-top: 4rem; max-width: 800px; margin-left: auto; margin-right: auto;">
-            <div style="background: white; border-radius: 20px; padding: 2rem; text-align: center; box-shadow: 0 10px 25px rgba(0,0,0,0.08); border: 1px solid rgba(0,0,0,0.05); transition: all 0.3s ease;" onmouseover="this.style.transform='translateY(-5px)'; this.style.boxShadow='0 20px 40px rgba(0,0,0,0.12)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 10px 25px rgba(0,0,0,0.08)'">
-                <div style="width: 60px; height: 60px; background: linear-gradient(135deg, #fef2f2, #fee2e2); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem;">
-                    <i class="fas fa-phone" style="color: #b91c1c; font-size: 1.5rem;"></i>
-                </div>
-                <h4 style="font-weight: 700; color: #1f2937; margin-bottom: 0.5rem;">Dúvidas?</h4>
-                <p style="color: #6b7280; font-size: 0.9rem;">Entre em contato conosco pelo WhatsApp</p>
-            </div>
-            
-            <div style="background: white; border-radius: 20px; padding: 2rem; text-align: center; box-shadow: 0 10px 25px rgba(0,0,0,0.08); border: 1px solid rgba(0,0,0,0.05); transition: all 0.3s ease;" onmouseover="this.style.transform='translateY(-5px)'; this.style.boxShadow='0 20px 40px rgba(0,0,0,0.12)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 10px 25px rgba(0,0,0,0.08)'">
-                <div style="width: 60px; height: 60px; background: linear-gradient(135deg, #fef2f2, #fee2e2); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem;">
-                    <i class="fas fa-share-alt" style="color: #b91c1c; font-size: 1.5rem;"></i>
-                </div>
-                <h4 style="font-weight: 700; color: #1f2937; margin-bottom: 0.5rem;">Compartilhe</h4>
-                <p style="color: #6b7280; font-size: 0.9rem;">Divulgue nosso convite para outros amigos</p>
-            </div>
-            
-            <div style="background: white; border-radius: 20px; padding: 2rem; text-align: center; box-shadow: 0 10px 25px rgba(0,0,0,0.08); border: 1px solid rgba(0,0,0,0.05); transition: all 0.3s ease;" onmouseover="this.style.transform='translateY(-5px)'; this.style.boxShadow='0 20px 40px rgba(0,0,0,0.12)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 10px 25px rgba(0,0,0,0.08)'">
-                <div style="width: 60px; height: 60px; background: linear-gradient(135deg, #fef2f2, #fee2e2); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem;">
-                    <i class="fas fa-calendar-check" style="color: #b91c1c; font-size: 1.5rem;"></i>
-                </div>
-                <h4 style="font-weight: 700; color: #1f2937; margin-bottom: 0.5rem;">Agenda</h4>
-                <p style="color: #6b7280; font-size: 0.9rem;">Adicione a data na sua agenda</p>
             </div>
         </div>
     </div>
     
     <style>
-        @keyframes heartbeat {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.1); }
+        @keyframes float-celebration {
+            0%, 100% { transform: translateY(0) scale(1); }
+            50% { transform: translateY(-20px) scale(1.1); }
         }
         
-        @keyframes pulse-ring {
+        @keyframes confetti-float {
+            0% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { transform: translateY(-100vh) rotate(360deg); opacity: 0; }
+        }
+        
+        @keyframes party-decoration {
+            0%, 100% { transform: rotate(0deg) scale(1); }
+            50% { transform: rotate(180deg) scale(1.2); }
+        }
+        
+        @keyframes super-celebration {
+            0%, 100% { transform: scale(1) rotate(0deg); }
+            25% { transform: scale(1.1) rotate(5deg); }
+            50% { transform: scale(1.15) rotate(0deg); }
+            75% { transform: scale(1.1) rotate(-5deg); }
+        }
+        
+        @keyframes cheers-animation {
+            0%, 100% { transform: rotate(0deg); }
+            25% { transform: rotate(10deg); }
+            75% { transform: rotate(-10deg); }
+        }
+        
+        @keyframes mega-pulse-ring {
             0% { transform: scale(1); opacity: 0.8; }
-            100% { transform: scale(1.5); opacity: 0; }
+            100% { transform: scale(1.8); opacity: 0; }
+        }
+        
+        @keyframes festive-text {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+        
+        @keyframes home-bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-3px); }
+        }
+        
+        @keyframes gift-wiggle {
+            0%, 100% { transform: rotate(0deg); }
+            25% { transform: rotate(5deg); }
+            75% { transform: rotate(-5deg); }
+        }
+        
+        @keyframes info-pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        
+        /* Efeito shine nos botões */
+        a:hover .shine-effect {
+            opacity: 1 !important;
+            left: 100% !important;
         }
         
         @media (max-width: 768px) {
@@ -627,15 +821,15 @@
             }
             
             .reception-actions-section a {
-                padding: 1rem 2rem !important;
+                padding: 1.2rem 2rem !important;
                 font-size: 1rem !important;
             }
             
             .reception-actions-section h3 {
-                font-size: 2.2rem !important;
+                font-size: 2.5rem !important;
             }
             
-            .reception-actions-section > .container > div:last-child {
+            .reception-actions-section > .container > div:first-child > div:last-child {
                 grid-template-columns: 1fr !important;
                 gap: 1.5rem !important;
             }
@@ -667,36 +861,89 @@ function addToCalendar() {
     window.open(googleCalendarUrl, '_blank');
 }
 
-// Função para compartilhar
-function shareInvitation() {
-    if (navigator.share) {
-        navigator.share({
-            title: 'Convite de Casamento - {{ config.nome_noiva or "Iara" }} & {{ config.nome_noivo or "Samuel" }}',
-            text: 'Você está convidado para nossa recepção de casamento!',
-            url: window.location.href
-        });
-    } else {
-        // Fallback para navegadores que não suportam Web Share API
-        const url = window.location.href;
-        navigator.clipboard.writeText(url).then(function() {
-            alert('Link copiado para a área de transferência!');
-        });
+// Função para criar confetes interativos
+function createInteractiveConfetti() {
+    const confettiContainer = document.createElement('div');
+    confettiContainer.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        z-index: 9999;
+    `;
+    document.body.appendChild(confettiContainer);
+    
+    const confettiEmojis = ['🎉', '🎊', '✨', '🥳', '🎈', '🌟', '💫', '⭐', '🎭', '🎪'];
+    
+    for (let i = 0; i < 20; i++) {
+        setTimeout(() => {
+            const confetti = document.createElement('div');
+            confetti.textContent = confettiEmojis[Math.floor(Math.random() * confettiEmojis.length)];
+            confetti.style.cssText = `
+                position: absolute;
+                font-size: ${Math.random() * 20 + 15}px;
+                left: ${Math.random() * 100}%;
+                top: -50px;
+                animation: confetti-fall ${Math.random() * 3 + 2}s linear forwards;
+                transform: rotate(${Math.random() * 360}deg);
+            `;
+            confettiContainer.appendChild(confetti);
+            
+            setTimeout(() => {
+                confetti.remove();
+            }, 5000);
+        }, i * 100);
     }
+    
+    setTimeout(() => {
+        confettiContainer.remove();
+    }, 6000);
 }
 
-// Animações e interações
+// Função para efeito de festa nos botões
+function addPartyEffect(element) {
+    element.style.transform = 'scale(1.1) rotate(5deg)';
+    element.style.boxShadow = '0 0 30px rgba(255,215,0,0.8)';
+    
+    // Criar efeito de brilho
+    const sparkles = document.createElement('div');
+    sparkles.innerHTML = '✨💫⭐🌟';
+    sparkles.style.cssText = `
+        position: absolute;
+        top: -20px;
+        left: 50%;
+        transform: translateX(-50%);
+        font-size: 20px;
+        animation: sparkle-burst 1s ease-out forwards;
+        pointer-events: none;
+        z-index: 10;
+    `;
+    element.style.position = 'relative';
+    element.appendChild(sparkles);
+    
+    setTimeout(() => {
+        element.style.transform = '';
+        element.style.boxShadow = '';
+        sparkles.remove();
+    }, 1000);
+}
+
+// Animações e interações festivas
 document.addEventListener('DOMContentLoaded', function() {
     // Smooth scroll para indicador
     const scrollIndicator = document.querySelector('.scroll-indicator');
     if (scrollIndicator) {
         scrollIndicator.addEventListener('click', function() {
+            createInteractiveConfetti();
             document.querySelector('#recepcao-details').scrollIntoView({
                 behavior: 'smooth'
             });
         });
     }
     
-    // Animação de entrada progressiva
+    // Animação de entrada progressiva com efeito festivo
     const observerOptions = {
         threshold: 0.1,
         rootMargin: '0px 0px -50px 0px'
@@ -707,8 +954,14 @@ document.addEventListener('DOMContentLoaded', function() {
             if (entry.isIntersecting) {
                 setTimeout(() => {
                     entry.target.style.opacity = '1';
-                    entry.target.style.transform = 'translateY(0)';
-                }, index * 100);
+                    entry.target.style.transform = 'translateY(0) scale(1)';
+                    
+                    // Adicionar efeito de brilho quando aparece
+                    if (entry.target.classList.contains('info-card') || 
+                        entry.target.querySelector('.info-icon')) {
+                        entry.target.style.animation = 'celebration-entrance 0.8s ease-out';
+                    }
+                }, index * 150);
             }
         });
     }, observerOptions);
@@ -723,12 +976,12 @@ document.addEventListener('DOMContentLoaded', function() {
     
     animatedElements.forEach(el => {
         el.style.opacity = '0';
-        el.style.transform = 'translateY(30px)';
+        el.style.transform = 'translateY(30px) scale(0.9)';
         el.style.transition = 'all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
         observer.observe(el);
     });
     
-    // Animação especial para a hero section
+    // Animação especial para a hero section com confetes
     const heroContent = document.querySelector('.reception-hero-content');
     if (heroContent) {
         heroContent.style.opacity = '0';
@@ -738,52 +991,54 @@ document.addEventListener('DOMContentLoaded', function() {
             heroContent.style.transition = 'all 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
             heroContent.style.opacity = '1';
             heroContent.style.transform = 'translateY(0)';
+            
+            // Confetes na entrada
+            setTimeout(() => {
+                createInteractiveConfetti();
+            }, 800);
         }, 300);
     }
     
-    // Animação de paralaxe sutil
-    let ticking = false;
-    
-    function updateParallax() {
-        const scrolled = window.pageYOffset;
-        const parallaxElements = document.querySelectorAll('.reception-hero::before');
-        
-        parallaxElements.forEach(el => {
-            const speed = 0.5;
-            el.style.transform = `translateY(${scrolled * speed}px)`;
+    // Efeito de festa nos botões principais
+    const actionButtons = document.querySelectorAll('.reception-actions-section a');
+    actionButtons.forEach(button => {
+        button.addEventListener('mouseenter', function() {
+            if (Math.random() > 0.7) { // 30% de chance de confetes
+                createMiniConfetti(this);
+            }
         });
         
-        ticking = false;
-    }
-    
-    function requestTick() {
-        if (!ticking) {
-            requestAnimationFrame(updateParallax);
-            ticking = true;
-        }
-    }
-    
-    window.addEventListener('scroll', requestTick);
+        button.addEventListener('click', function() {
+            addPartyEffect(this);
+        });
+    });
     
     // Adicionar eventos aos cards de informação
-    const infoCards = document.querySelectorAll('.reception-actions-section > .container > div:last-child > div');
+    const infoCards = document.querySelectorAll('.reception-actions-section > .container > div:first-child > div:last-child > div');
     infoCards.forEach((card, index) => {
         card.addEventListener('click', function() {
+            addPartyEffect(this);
             switch(index) {
                 case 0:
                     // Dúvidas - pode adicionar WhatsApp ou telefone
+                    setTimeout(() => {
+                        alert('📞 Entre em contato conosco pelo WhatsApp para qualquer dúvida!');
+                    }, 500);
                     break;
                 case 1:
-                    shareInvitation();
-                    break;
-                case 2:
                     addToCalendar();
                     break;
             }
         });
         
-        // Adicionar cursor pointer
+        // Adicionar cursor pointer e efeito hover
         card.style.cursor = 'pointer';
+        card.addEventListener('mouseenter', function() {
+            this.style.transform = 'translateY(-8px) rotate(2deg) scale(1.02)';
+        });
+        card.addEventListener('mouseleave', function() {
+            this.style.transform = 'translateY(0) rotate(0deg) scale(1)';
+        });
     });
     
     // Efeito de typing para o título principal
@@ -800,31 +1055,161 @@ document.addEventListener('DOMContentLoaded', function() {
                 
                 if (i >= text.length) {
                     clearInterval(typingInterval);
+                    // Confetes quando termina de digitar
+                    setTimeout(() => {
+                        createInteractiveConfetti();
+                    }, 500);
                 }
-            }, 100);
-        }, 1500);
+            }, 120);
+        }, 2000);
     }
     
-    // Loading suave para imagens
+    // Animação de festa contínua nos nomes
+    const names = document.querySelectorAll('.elegant-name');
+    names.forEach((name, index) => {
+        name.addEventListener('mouseenter', function() {
+            this.style.animation = 'rainbow-celebration 2s ease-in-out infinite';
+        });
+        name.addEventListener('mouseleave', function() {
+            this.style.animation = 'rainbow-text 6s ease-in-out infinite';
+        });
+    });
+    
+    // Loading suave para imagens com efeito festivo
     const images = document.querySelectorAll('img');
     images.forEach(img => {
         img.addEventListener('load', function() {
             this.style.opacity = '1';
+            this.style.transform = 'scale(1)';
         });
         img.style.opacity = '0';
-        img.style.transition = 'opacity 0.5s ease';
+        img.style.transform = 'scale(0.8)';
+        img.style.transition = 'all 0.6s ease';
     });
+    
+    // Efeito de partículas no background
+    setInterval(() => {
+        if (Math.random() > 0.95) { // 5% de chance a cada segundo
+            createFloatingEmoji();
+        }
+    }, 1000);
 });
 
-// Adicionar CSS dinâmico para melhorar responsividade
+// Função para criar mini confetes nos botões
+function createMiniConfetti(element) {
+    const rect = element.getBoundingClientRect();
+    const confettiContainer = document.createElement('div');
+    confettiContainer.style.cssText = `
+        position: fixed;
+        top: ${rect.top}px;
+        left: ${rect.left}px;
+        width: ${rect.width}px;
+        height: ${rect.height}px;
+        pointer-events: none;
+        z-index: 1000;
+    `;
+    document.body.appendChild(confettiContainer);
+    
+    for (let i = 0; i < 5; i++) {
+        const confetti = document.createElement('div');
+        confetti.textContent = ['✨', '🌟', '💫'][Math.floor(Math.random() * 3)];
+        confetti.style.cssText = `
+            position: absolute;
+            font-size: 12px;
+            left: ${Math.random() * 100}%;
+            top: ${Math.random() * 100}%;
+            animation: mini-confetti-burst 1s ease-out forwards;
+        `;
+        confettiContainer.appendChild(confetti);
+    }
+    
+    setTimeout(() => {
+        confettiContainer.remove();
+    }, 1000);
+}
+
+// Função para emojis flutuantes
+function createFloatingEmoji() {
+    const emoji = document.createElement('div');
+    const emojis = ['🎉', '✨', '🌟', '💫', '🎊'];
+    emoji.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+    emoji.style.cssText = `
+        position: fixed;
+        font-size: 25px;
+        left: ${Math.random() * 100}%;
+        top: 100%;
+        pointer-events: none;
+        z-index: 100;
+        animation: float-up 8s linear forwards;
+        opacity: 0.7;
+    `;
+    document.body.appendChild(emoji);
+    
+    setTimeout(() => {
+        emoji.remove();
+    }, 8000);
+}
+
+// Adicionar CSS dinâmico para animações festivas
 const dynamicCSS = `
+    @keyframes confetti-fall {
+        to {
+            transform: translateY(calc(100vh + 50px)) rotate(720deg);
+            opacity: 0;
+        }
+    }
+    
+    @keyframes sparkle-burst {
+        0% { transform: translateX(-50%) scale(0); opacity: 1; }
+        50% { transform: translateX(-50%) scale(1.5); opacity: 0.8; }
+        100% { transform: translateX(-50%) scale(0); opacity: 0; }
+    }
+    
+    @keyframes celebration-entrance {
+        0% { transform: scale(0.8); filter: brightness(1); }
+        50% { transform: scale(1.1); filter: brightness(1.3); }
+        100% { transform: scale(1); filter: brightness(1); }
+    }
+    
+    @keyframes mini-confetti-burst {
+        0% { transform: scale(0) translateY(0); opacity: 1; }
+        50% { transform: scale(1) translateY(-20px); opacity: 0.8; }
+        100% { transform: scale(0) translateY(-40px); opacity: 0; }
+    }
+    
+    @keyframes float-up {
+        0% { transform: translateY(0) rotate(0deg); opacity: 0.7; }
+        10% { opacity: 1; }
+        90% { opacity: 0.3; }
+        100% { transform: translateY(-100vh) rotate(360deg); opacity: 0; }
+    }
+    
+    @keyframes rainbow-celebration {
+        0%, 100% { 
+            background-position: 0% 50%; 
+            filter: drop-shadow(0 0 10px rgba(255,215,0,0.5)); 
+        }
+        25% { 
+            background-position: 25% 25%; 
+            filter: drop-shadow(0 0 15px rgba(255,105,180,0.5)); 
+        }
+        50% { 
+            background-position: 100% 50%; 
+            filter: drop-shadow(0 0 20px rgba(0,255,255,0.5)); 
+        }
+        75% { 
+            background-position: 75% 75%; 
+            filter: drop-shadow(0 0 15px rgba(255,69,0,0.5)); 
+        }
+    }
+    
     @media (max-width: 480px) {
         .luxury-names {
             margin: 2rem 0 !important;
         }
         
         .elegant-name {
-            font-size: 2rem !important;
+            font-size: 2.5rem !important;
         }
         
         .invitation-title {
@@ -833,12 +1218,12 @@ const dynamicCSS = `
         }
         
         .invitation-main {
-            font-size: 2rem !important;
-            letter-spacing: 1px !important;
+            font-size: 2.2rem !important;
+            letter-spacing: 2px !important;
         }
         
         .elegant-date {
-            font-size: 1.5rem !important;
+            font-size: 1.8rem !important;
         }
     }
     
