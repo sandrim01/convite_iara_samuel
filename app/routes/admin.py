@@ -477,6 +477,52 @@ def teste_upload_foto():
 
 # ===== ROTAS PARA GERENCIAMENTO DE CONVIDADOS =====
 
+@admin.route('/api/convidados')
+@login_required
+def api_convidados():
+    """API para carregar convidados no modal"""
+    try:
+        # Buscar todos os convidados
+        convidados = Convidado.query.order_by(Convidado.created_at.desc()).all()
+        
+        # Calcular estatísticas
+        total = len(convidados)
+        confirmados = len([c for c in convidados if c.confirmacao])
+        pendentes = total - confirmados
+        liberados = len([c for c in convidados if c.liberado_recepcao])
+        
+        # Converter para formato JSON
+        convidados_data = []
+        for convidado in convidados:
+            convidados_data.append({
+                'id': convidado.id,
+                'nome': convidado.nome,
+                'email': convidado.email,
+                'telefone': convidado.telefone,
+                'token': convidado.token,
+                'confirmacao': convidado.confirmacao,
+                'numero_acompanhantes': convidado.numero_acompanhantes or 0,
+                'liberado_recepcao': convidado.liberado_recepcao,
+                'data_confirmacao': convidado.data_confirmacao.isoformat() if convidado.data_confirmacao else None
+            })
+        
+        return jsonify({
+            'success': True,
+            'convidados': convidados_data,
+            'stats': {
+                'total': total,
+                'confirmados': confirmados,
+                'pendentes': pendentes,
+                'liberados': liberados
+            }
+        })
+        
+    except Exception as e:
+        return jsonify({
+            'success': False,
+            'message': f'Erro ao carregar convidados: {str(e)}'
+        })
+
 @admin.route('/convidados/<int:id>/toggle-recepcao', methods=['POST'])
 @login_required
 def toggle_recepcao_convidado(id):

@@ -104,7 +104,7 @@
         </div>
         
         <div class="quick-actions-grid">
-            <a href="{{ url_for('admin.convidados') }}" class="quick-action-card">
+            <button onclick="openGuestsModal()" class="quick-action-card action-button">
                 <div class="action-icon">
                     <i class="fas fa-users"></i>
                 </div>
@@ -115,7 +115,7 @@
                 <div class="action-arrow">
                     <i class="fas fa-arrow-right"></i>
                 </div>
-            </a>
+            </button>
             
             <a href="{{ url_for('admin.presentes') }}" class="quick-action-card">
                 <div class="action-icon">
@@ -171,7 +171,7 @@
                         <i class="fas fa-calendar-check"></i>
                         Confirmações Recentes
                     </h3>
-                    <a href="{{ url_for('admin.convidados') }}" class="card-link">Ver todos</a>
+                    <button onclick="openGuestsModal()" class="card-link link-button">Ver todos</button>
                 </div>
                 
                 <div class="card-content">
@@ -1292,5 +1292,558 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 });
+
+// ===== MODAL DE GERENCIAMENTO DE CONVIDADOS =====
+
+function openGuestsModal() {
+    const modal = document.getElementById('guestsModal');
+    modal.style.display = 'flex';
+    loadGuests();
+}
+
+function closeGuestsModal() {
+    const modal = document.getElementById('guestsModal');
+    modal.style.display = 'none';
+}
+
+function loadGuests() {
+    fetch('/admin/api/convidados')
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            displayGuests(data.convidados);
+            updateGuestStats(data.stats);
+        }
+    })
+    .catch(error => console.error('Erro ao carregar convidados:', error));
+}
+
+function displayGuests(guests) {
+    const tbody = document.getElementById('guestsTableBody');
+    tbody.innerHTML = '';
+    
+    guests.forEach(guest => {
+        const row = document.createElement('tr');
+        row.className = 'guest-row';
+        row.innerHTML = `
+            <td class="guest-name">
+                <strong>${guest.nome}</strong>
+                <small>${guest.token.substring(0, 8)}...</small>
+            </td>
+            <td class="guest-contact">
+                ${guest.email ? `<div><i class="fas fa-envelope"></i> ${guest.email}</div>` : ''}
+                ${guest.telefone ? `<div><i class="fas fa-phone"></i> ${guest.telefone}</div>` : ''}
+            </td>
+            <td class="guest-status">
+                <span class="status-badge ${guest.confirmacao ? 'confirmed' : 'pending'}">
+                    <i class="fas fa-${guest.confirmacao ? 'check-circle' : 'clock'}"></i>
+                    ${guest.confirmacao ? 'Confirmado' : 'Pendente'}
+                </span>
+            </td>
+            <td class="guest-companions">${guest.numero_acompanhantes || 0}</td>
+            <td class="guest-reception">
+                <label class="toggle-switch">
+                    <input type="checkbox" ${guest.liberado_recepcao ? 'checked' : ''} 
+                           onchange="toggleReception(${guest.id}, this.checked)">
+                    <span class="toggle-slider"></span>
+                </label>
+            </td>
+            <td class="guest-actions">
+                <button onclick="editGuest(${guest.id})" class="btn-action btn-edit" title="Editar">
+                    <i class="fas fa-edit"></i>
+                </button>
+                <button onclick="copyGuestLink('${guest.token}')" class="btn-action btn-link" title="Copiar Link">
+                    <i class="fas fa-link"></i>
+                </button>
+                <button onclick="deleteGuest(${guest.id}, '${guest.nome}')" class="btn-action btn-delete" title="Excluir">
+                    <i class="fas fa-trash"></i>
+                </button>
+            </td>
+        `;
+        tbody.appendChild(row);
+    });
+}
+
+function updateGuestStats(stats) {
+    document.getElementById('totalGuests').textContent = stats.total;
+    document.getElementById('confirmedGuests').textContent = stats.confirmados;
+    document.getElementById('pendingGuests').textContent = stats.pendentes;
+    document.getElementById('receptionGuests').textContent = stats.liberados;
+}
+
+function toggleReception(guestId, enabled) {
+    fetch(`/admin/convidados/${guestId}/toggle-recepcao`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ enabled: enabled })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            showNotification(data.message, 'success');
+        } else {
+            showNotification(data.message || 'Erro ao atualizar', 'error');
+        }
+    });
+}
+
+function editGuest(guestId) {
+    // Fechar modal atual e abrir formulário de edição
+    closeGuestsModal();
+    window.location.href = `/admin/convidados/${guestId}/editar`;
+}
+
+function copyGuestLink(token) {
+    const link = `${window.location.origin}/convite/${token}`;
+    navigator.clipboard.writeText(link).then(() => {
+        showNotification('Link copiado!', 'success');
+    });
+}
+
+function deleteGuest(guestId, guestName) {
+    if (confirm(`Tem certeza que deseja excluir o convidado "${guestName}"?`)) {
+        fetch(`/admin/convidados/${guestId}/excluir`, { method: 'DELETE' })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                showNotification(data.message, 'success');
+                loadGuests(); // Recarregar lista
+            } else {
+                showNotification(data.message || 'Erro ao excluir', 'error');
+            }
+        });
+    }
+}
+
+function filterGuests() {
+    const searchTerm = document.getElementById('guestSearch').value.toLowerCase();
+    const rows = document.querySelectorAll('.guest-row');
+    
+    rows.forEach(row => {
+        const name = row.querySelector('.guest-name strong').textContent.toLowerCase();
+        if (name.includes(searchTerm)) {
+            row.style.display = '';
+        } else {
+            row.style.display = 'none';
+        }
+    });
+}
+
+function showNotification(message, type) {
+    const notification = document.createElement('div');
+    notification.className = `notification ${type}`;
+    notification.textContent = message;
+    notification.style.cssText = `
+        position: fixed; top: 20px; right: 20px; padding: 12px 20px;
+        border-radius: 6px; color: white; font-weight: 500; z-index: 9999;
+        ${type === 'success' ? 'background: #4caf50;' : 'background: #f44336;'}
+    `;
+    document.body.appendChild(notification);
+    setTimeout(() => notification.remove(), 3000);
+}
 </script>
+
+<!-- Modal de Gerenciamento de Convidados -->
+<div id="guestsModal" class="guests-modal" style="display: none;">
+    <div class="modal-content-large">
+        <div class="modal-header">
+            <h2>
+                <i class="fas fa-users"></i>
+                Gerenciar Convidados
+            </h2>
+            <button onclick="closeGuestsModal()" class="modal-close">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        
+        <!-- Estatísticas -->
+        <div class="guest-stats">
+            <div class="stat-item">
+                <span class="stat-number" id="totalGuests">0</span>
+                <span class="stat-label">Total</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-number" id="confirmedGuests">0</span>
+                <span class="stat-label">Confirmados</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-number" id="pendingGuests">0</span>
+                <span class="stat-label">Pendentes</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-number" id="receptionGuests">0</span>
+                <span class="stat-label">Recepção</span>
+            </div>
+        </div>
+        
+        <!-- Controles -->
+        <div class="guest-controls">
+            <div class="search-container">
+                <i class="fas fa-search"></i>
+                <input type="text" id="guestSearch" placeholder="Buscar convidados..." onkeyup="filterGuests()">
+            </div>
+            <a href="/admin/convidados/adicionar" class="btn btn-primary">
+                <i class="fas fa-plus"></i>
+                Adicionar Convidado
+            </a>
+        </div>
+        
+        <!-- Tabela de Convidados -->
+        <div class="guests-table-container">
+            <table class="guests-table">
+                <thead>
+                    <tr>
+                        <th>Nome</th>
+                        <th>Contato</th>
+                        <th>Status</th>
+                        <th>Acompanhantes</th>
+                        <th>Recepção</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody id="guestsTableBody">
+                    <!-- Conteúdo carregado via JavaScript -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<style>
+/* Estilos para botões como links */
+.action-button, .link-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font: inherit;
+    color: inherit;
+    text-decoration: none;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    width: 100%;
+    text-align: left;
+}
+
+.action-button {
+    padding: 1.5rem;
+    border-radius: 12px;
+    transition: all 0.3s ease;
+}
+
+.action-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+.link-button {
+    color: var(--primary);
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+.link-button:hover {
+    color: var(--primary-dark);
+}
+
+/* Modal Styles */
+.guests-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-content-large {
+    background: white;
+    border-radius: 12px;
+    max-width: 1200px;
+    max-height: 90vh;
+    width: 95%;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.modal-header {
+    padding: 20px 30px;
+    border-bottom: 1px solid #e5e7eb;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #f9fafb;
+}
+
+.modal-header h2 {
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #111827;
+}
+
+.modal-close {
+    background: none;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+    color: #6b7280;
+    padding: 4px;
+}
+
+.guest-stats {
+    display: flex;
+    padding: 20px 30px;
+    gap: 30px;
+    background: #f9fafb;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.stat-item {
+    text-align: center;
+}
+
+.stat-number {
+    display: block;
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--primary);
+}
+
+.stat-label {
+    font-size: 12px;
+    color: #6b7280;
+    text-transform: uppercase;
+    font-weight: 500;
+}
+
+.guest-controls {
+    padding: 20px 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.search-container {
+    position: relative;
+    flex: 1;
+    max-width: 300px;
+}
+
+.search-container i {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #9ca3af;
+}
+
+.search-container input {
+    width: 100%;
+    padding: 10px 10px 10px 35px;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    font-size: 14px;
+}
+
+.guests-table-container {
+    flex: 1;
+    overflow: auto;
+    padding: 0 30px 30px;
+}
+
+.guests-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+.guests-table th {
+    background: #f9fafb;
+    padding: 12px;
+    text-align: left;
+    font-weight: 600;
+    color: #374151;
+    border-bottom: 2px solid #e5e7eb;
+    font-size: 14px;
+}
+
+.guests-table td {
+    padding: 12px;
+    border-bottom: 1px solid #e5e7eb;
+    vertical-align: middle;
+}
+
+.guest-row:hover {
+    background: #f9fafb;
+}
+
+.guest-name strong {
+    display: block;
+    color: #111827;
+    font-weight: 600;
+}
+
+.guest-name small {
+    color: #9ca3af;
+    font-size: 11px;
+    font-family: monospace;
+}
+
+.guest-contact div {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 2px;
+    font-size: 12px;
+    color: #6b7280;
+}
+
+.status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.status-badge.confirmed {
+    background: #d1fae5;
+    color: #065f46;
+}
+
+.status-badge.pending {
+    background: #fef3c7;
+    color: #92400e;
+}
+
+.guest-companions {
+    text-align: center;
+    font-weight: 600;
+    color: #374151;
+}
+
+.toggle-switch {
+    position: relative;
+    display: inline-block;
+    width: 40px;
+    height: 20px;
+}
+
+.toggle-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.toggle-slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    transition: 0.3s;
+    border-radius: 20px;
+}
+
+.toggle-slider:before {
+    position: absolute;
+    content: "";
+    height: 14px;
+    width: 14px;
+    left: 3px;
+    bottom: 3px;
+    background-color: white;
+    transition: 0.3s;
+    border-radius: 50%;
+}
+
+.toggle-switch input:checked + .toggle-slider {
+    background-color: var(--primary);
+}
+
+.toggle-switch input:checked + .toggle-slider:before {
+    transform: translateX(20px);
+}
+
+.guest-actions {
+    display: flex;
+    gap: 4px;
+}
+
+.btn-action {
+    width: 28px;
+    height: 28px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    transition: all 0.2s ease;
+}
+
+.btn-edit {
+    background: #fef3c7;
+    color: #d97706;
+}
+
+.btn-link {
+    background: #d1fae5;
+    color: #059669;
+}
+
+.btn-delete {
+    background: #fee2e2;
+    color: #dc2626;
+}
+
+.btn-action:hover {
+    transform: scale(1.1);
+}
+
+/* Responsivo */
+@media (max-width: 768px) {
+    .modal-content-large {
+        width: 98%;
+        max-height: 95vh;
+    }
+    
+    .guest-controls {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .search-container {
+        max-width: none;
+    }
+    
+    .guests-table-container {
+        padding: 0 15px 20px;
+    }
+    
+    .guests-table {
+        font-size: 12px;
+    }
+    
+    .guests-table th,
+    .guests-table td {
+        padding: 8px 4px;
+    }
+}
+</style>
 {% endblock %}
