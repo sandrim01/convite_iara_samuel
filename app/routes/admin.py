@@ -287,8 +287,8 @@ def processar_configuracoes():
         db.session.commit()
         
         flash('Configurações atualizadas com sucesso!', 'success')
-        return redirect(url_for('admin.configuracoes'))
+        return redirect(url_for('admin.dashboard'))
         
     except Exception as e:
         flash('Erro ao atualizar configurações. Tente novamente.', 'error')
-        return redirect(url_for('admin.configuracoes'))
+        return redirect(url_for('admin.dashboard'))

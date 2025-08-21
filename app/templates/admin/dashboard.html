@@ -143,7 +143,7 @@
                 </div>
             </a>
             
-            <a href="{{ url_for('admin.configuracoes') }}" class="quick-action-card">
+            <button onclick="openConfigModal()" class="quick-action-card">
                 <div class="action-icon">
                     <i class="fas fa-cog"></i>
                 </div>
@@ -154,7 +154,7 @@
                 <div class="action-arrow">
                     <i class="fas fa-arrow-right"></i>
                 </div>
-            </a>
+            </button>
             
         </div>
     </div>
@@ -792,5 +792,306 @@ setInterval(updateStats, 60000);
         grid-template-columns: 1fr;
     }
 }
+
+/* Modal de Configurações */
+.config-modal {
+    max-width: 800px;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+.config-section {
+    margin-bottom: 2rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.config-section:last-child {
+    border-bottom: none;
+    margin-bottom: 1rem;
+}
+
+.section-title {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 1.1rem;
+    color: var(--highlight-color);
+    margin-bottom: 1rem;
+    font-weight: 600;
+}
+
+.config-modal .form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.config-modal .form-group {
+    margin-bottom: 1rem;
+}
+
+.config-modal .form-group label {
+    display: block;
+    font-weight: 600;
+    color: var(--text-dark);
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+}
+
+.config-modal input,
+.config-modal textarea {
+    width: 100%;
+    padding: 0.7rem;
+    border: 2px solid var(--border-color);
+    border-radius: 6px;
+    font-size: 0.95rem;
+    transition: border-color 0.3s ease;
+    font-family: var(--font-main);
+}
+
+.config-modal input:focus,
+.config-modal textarea:focus {
+    outline: none;
+    border-color: var(--highlight-color);
+}
+
+.config-modal input[type="color"] {
+    height: 40px;
+    padding: 2px;
+    cursor: pointer;
+}
+
+.config-modal .form-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border-color);
+    margin-top: 1.5rem;
+}
+
+.quick-action-card {
+    background: none;
+    border: none;
+    width: 100%;
+    text-align: left;
+    cursor: pointer;
+}
+
+@media (max-width: 768px) {
+    .config-modal .form-row {
+        grid-template-columns: 1fr;
+    }
+    
+    .config-modal {
+        max-width: 95%;
+        margin: 1rem;
+    }
+    
+    .config-modal .form-actions {
+        flex-direction: column;
+    }
+}
 </style>
+
+<!-- Modal de Configurações -->
+<div class="modal-overlay" id="configModal">
+    <div class="modal-container config-modal">
+        <div class="modal-header">
+            <h3 class="modal-title">
+                <i class="fas fa-cog"></i>
+                Configurações do Site
+            </h3>
+            <button class="modal-close" onclick="closeConfigModal()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+
+        <div class="modal-body">
+            <form id="configForm" method="POST" action="{{ url_for('admin.processar_configuracoes') }}">
+                <!-- Informações dos Noivos -->
+                <div class="config-section">
+                    <h4 class="section-title">
+                        <i class="fas fa-heart"></i>
+                        Informações dos Noivos
+                    </h4>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="nome_noiva">Nome da Noiva *</label>
+                            <input type="text" id="nome_noiva" name="nome_noiva" 
+                                   value="{{ config.nome_noiva or 'Iara' }}" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="nome_noivo">Nome do Noivo *</label>
+                            <input type="text" id="nome_noivo" name="nome_noivo" 
+                                   value="{{ config.nome_noivo or 'Samuel' }}" required>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Informações do Evento -->
+                <div class="config-section">
+                    <h4 class="section-title">
+                        <i class="fas fa-calendar-alt"></i>
+                        Informações do Evento
+                    </h4>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="data_casamento">Data do Casamento</label>
+                            <input type="date" id="data_casamento" name="data_casamento" 
+                                   value="{{ config.data_casamento.strftime('%Y-%m-%d') if config.data_casamento else '2025-11-08' }}">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="horario_cerimonia">Horário da Cerimônia</label>
+                            <input type="time" id="horario_cerimonia" name="horario_cerimonia" 
+                                   value="{{ config.horario_cerimonia.strftime('%H:%M') if config.horario_cerimonia else '19:00' }}">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Local da Cerimônia -->
+                <div class="config-section">
+                    <h4 class="section-title">
+                        <i class="fas fa-church"></i>
+                        Local da Cerimônia
+                    </h4>
+                    
+                    <div class="form-group">
+                        <label for="local_cerimonia">Nome do Local</label>
+                        <input type="text" id="local_cerimonia" name="local_cerimonia" 
+                               value="{{ config.local_cerimonia or 'Igreja Nossa Senhora das Graças' }}">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="endereco_cerimonia">Endereço Completo</label>
+                        <textarea id="endereco_cerimonia" name="endereco_cerimonia" rows="2">{{ config.endereco_cerimonia or 'Rua Domingos Alcíno Dadalto, 114, Jardim Itapemirim, Cachoeiro de Itapemirim - ES' }}</textarea>
+                    </div>
+                </div>
+
+                <!-- Local da Festa -->
+                <div class="config-section">
+                    <h4 class="section-title">
+                        <i class="fas fa-glass-cheers"></i>
+                        Local da Festa/Recepção
+                    </h4>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="local_festa">Nome do Local</label>
+                            <input type="text" id="local_festa" name="local_festa" 
+                                   value="{{ config.local_festa or 'Salão de Festas' }}">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="horario_festa">Horário da Festa</label>
+                            <input type="time" id="horario_festa" name="horario_festa" 
+                                   value="{{ config.horario_festa.strftime('%H:%M') if config.horario_festa else '20:30' }}">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="endereco_festa">Endereço Completo</label>
+                        <textarea id="endereco_festa" name="endereco_festa" rows="2">{{ config.endereco_festa or 'Endereço da festa/recepção' }}</textarea>
+                    </div>
+                </div>
+
+                <!-- Personalização -->
+                <div class="config-section">
+                    <h4 class="section-title">
+                        <i class="fas fa-palette"></i>
+                        Personalização
+                    </h4>
+                    
+                    <div class="form-group">
+                        <label for="mensagem_principal">Mensagem Principal do Site</label>
+                        <textarea id="mensagem_principal" name="mensagem_principal" rows="3">{{ config.mensagem_principal or 'Criamos esse site para compartilhar com vocês os detalhes da organização do nosso casamento. ♥' }}</textarea>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="cor_tema">Cor do Tema</label>
+                            <input type="color" id="cor_tema" name="cor_tema" 
+                                   value="{{ config.cor_tema or '#B91C1C' }}">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="foto_casal">URL da Foto do Casal</label>
+                            <input type="url" id="foto_casal" name="foto_casal" 
+                                   value="{{ config.foto_casal or '' }}" placeholder="https://exemplo.com/foto.jpg">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Botões de Ação -->
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-confirm">
+                        <i class="fas fa-save"></i>
+                        Salvar Configurações
+                    </button>
+                    <button type="button" class="btn btn-secondary" onclick="closeConfigModal()">
+                        Cancelar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+// Funções do modal de configurações
+function openConfigModal() {
+    document.getElementById('configModal').classList.add('active');
+    document.body.style.overflow = 'hidden';
+}
+
+function closeConfigModal() {
+    document.getElementById('configModal').classList.remove('active');
+    document.body.style.overflow = '';
+}
+
+// Event listeners
+document.addEventListener('DOMContentLoaded', function() {
+    const modal = document.getElementById('configModal');
+    
+    // Fechar ao clicar na overlay
+    modal.addEventListener('click', function(e) {
+        if (e.target === modal) {
+            closeConfigModal();
+        }
+    });
+    
+    // Fechar com ESC
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && modal.classList.contains('active')) {
+            closeConfigModal();
+        }
+    });
+    
+    // Validação do formulário
+    document.getElementById('configForm').addEventListener('submit', function(e) {
+        const required = this.querySelectorAll('input[required]');
+        let valid = true;
+        
+        required.forEach(input => {
+            if (!input.value.trim()) {
+                input.style.borderColor = '#f44336';
+                valid = false;
+            } else {
+                input.style.borderColor = '';
+            }
+        });
+        
+        if (!valid) {
+            e.preventDefault();
+            alert('Por favor, preencha todos os campos obrigatórios.');
+        }
+    });
+});
+</script>
 {% endblock %}
