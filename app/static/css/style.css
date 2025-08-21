@@ -1337,15 +1337,26 @@ body.nav-open {
     border-radius: 50%;
     background: var(--rose-100);
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
     margin: 0 auto;
     border: 3px solid var(--rose-200);
+    text-align: center;
+    padding: 1rem;
 }
 
 .photo-placeholder i {
-    font-size: 3rem;
+    font-size: 2.5rem;
     color: var(--highlight-color);
+    margin-bottom: 0.5rem;
+}
+
+.photo-placeholder .error-message {
+    font-size: 0.7rem;
+    color: #666;
+    margin-top: 0.5rem;
+    line-height: 1.2;
 }
 
 .couple-name {
@@ -4839,4 +4850,27 @@ body.nav-open {
         padding: 1.5rem;
         margin: 2rem 0;
     }
+}
+
+/* Form Help Messages */
+.form-help {
+    display: block;
+    margin-top: 0.5rem;
+    font-size: 0.85rem;
+    color: #666;
+    line-height: 1.4;
+}
+
+.form-help i {
+    color: #007bff;
+    margin-right: 0.25rem;
+}
+
+.form-help a {
+    color: #007bff;
+    text-decoration: none;
+}
+
+.form-help a:hover {
+    text-decoration: underline;
 }

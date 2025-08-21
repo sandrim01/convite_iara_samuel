@@ -229,6 +229,27 @@ document.addEventListener('DOMContentLoaded', function() {
         
         observer.observe(coupleSection);
     }
+    
+    // Verificar imagens quebradas e substituir por placeholder
+    const coupleImages = document.querySelectorAll('.couple-img');
+    coupleImages.forEach(img => {
+        img.addEventListener('error', function() {
+            console.log('Erro ao carregar imagem:', this.src);
+            
+            // Criar placeholder
+            const placeholder = document.createElement('div');
+            placeholder.className = 'photo-placeholder';
+            placeholder.innerHTML = '<i class="fas fa-heart"></i><div class="error-message">Link de imagem inválido</div>';
+            
+            // Substituir imagem pelo placeholder
+            this.parentNode.replaceChild(placeholder, this);
+        });
+        
+        // Verificar se a imagem carregou corretamente
+        img.addEventListener('load', function() {
+            console.log('Imagem carregada com sucesso:', this.src);
+        });
+    });
 });
 </script>
 {% endblock %}

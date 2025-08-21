@@ -1023,7 +1023,13 @@ setInterval(updateStats, 60000);
                         <div class="form-group">
                             <label for="foto_casal">URL da Foto do Casal</label>
                             <input type="url" id="foto_casal" name="foto_casal" 
-                                   value="{{ config.foto_casal or '' }}" placeholder="https://exemplo.com/foto.jpg">
+                                   value="{{ config.foto_casal or '' }}" placeholder="https://i.imgur.com/exemplo.jpg">
+                            <small class="form-help">
+                                <i class="fas fa-info-circle"></i>
+                                <strong>Importante:</strong> Use apenas links diretos para imagens (terminam em .jpg, .png, .gif). 
+                                Links do Instagram, Facebook ou Google Photos não funcionam. 
+                                Recomendamos usar <a href="https://imgur.com" target="_blank">Imgur</a> para hospedar suas fotos.
+                            </small>
                         </div>
                     </div>
                 </div>
@@ -1064,7 +1070,11 @@ setInterval(updateStats, 60000);
                         <div class="form-group">
                             <label for="foto_noiva">URL da Foto da Noiva</label>
                             <input type="url" id="foto_noiva" name="foto_noiva" 
-                                   value="{{ config.foto_noiva or '' }}" placeholder="https://exemplo.com/noiva.jpg">
+                                   value="{{ config.foto_noiva or '' }}" placeholder="https://i.imgur.com/noiva.jpg">
+                            <small class="form-help">
+                                <i class="fas fa-info-circle"></i>
+                                Use apenas links diretos para imagens. Evite links do Instagram ou Google Photos.
+                            </small>
                         </div>
                     </div>
                 </div>
@@ -1105,7 +1115,11 @@ setInterval(updateStats, 60000);
                         <div class="form-group">
                             <label for="foto_noivo">URL da Foto do Noivo</label>
                             <input type="url" id="foto_noivo" name="foto_noivo" 
-                                   value="{{ config.foto_noivo or '' }}" placeholder="https://exemplo.com/noivo.jpg">
+                                   value="{{ config.foto_noivo or '' }}" placeholder="https://i.imgur.com/noivo.jpg">
+                            <small class="form-help">
+                                <i class="fas fa-info-circle"></i>
+                                Use apenas links diretos para imagens. Evite links do Instagram ou Google Photos.
+                            </small>
                         </div>
                     </div>
                 </div>
