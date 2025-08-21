@@ -7,257 +7,1292 @@
     <div class="admin-header-content">
         <h1 class="admin-title">
             <i class="fas fa-cog"></i>
-            Configurações do Site
+            Configurações Completas do Convite
         </h1>
-        <p class="admin-subtitle">Edite as informações principais do convite de casamento</p>
+        <p class="admin-subtitle">Configure todos os aspectos do convite de casamento e recepção</p>
     </div>
 </div>
 
 <div class="admin-content">
     <div class="config-container">
+        <!-- Navegação por abas -->
+        <div class="config-tabs">
+            <button type="button" class="tab-button active" data-tab="basicas">
+                <i class="fas fa-heart"></i> Informações Básicas
+            </button>
+            <button type="button" class="tab-button" data-tab="casal">
+                <i class="fas fa-users"></i> Sobre o Casal
+            </button>
+            <button type="button" class="tab-button" data-tab="historia">
+                <i class="fas fa-book-open"></i> Nossa História
+            </button>
+            <button type="button" class="tab-button" data-tab="fotos">
+                <i class="fas fa-camera"></i> Fotos
+            </button>
+            <button type="button" class="tab-button" data-tab="visual">
+                <i class="fas fa-palette"></i> Visual & Tema
+            </button>
+        </div>
+
         <form method="POST" class="config-form">
-            <!-- Informações dos Noivos -->
-            <div class="config-section">
-                <h2 class="section-title">
-                    <i class="fas fa-heart"></i>
-                    Informações dos Noivos
-                </h2>
-                
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="nome_noiva">Nome da Noiva *</label>
-                        <input type="text" id="nome_noiva" name="nome_noiva" 
-                               value="{{ config.nome_noiva or 'Iara' }}" required class="form-control">
-                    </div>
+            <!-- ABA 1: Informações Básicas -->
+            <div class="tab-content active" id="tab-basicas">
+                <div class="config-section">
+                    <h2 class="section-title">
+                        <i class="fas fa-heart"></i>
+                        Informações dos Noivos
+                    </h2>
                     
-                    <div class="form-group">
-                        <label for="nome_noivo">Nome do Noivo *</label>
-                        <input type="text" id="nome_noivo" name="nome_noivo" 
-                               value="{{ config.nome_noivo or 'Samuel' }}" required class="form-control">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="nome_noiva">Nome da Noiva *</label>
+                            <input type="text" id="nome_noiva" name="nome_noiva" 
+                                   value="{{ config.nome_noiva or 'Iara' }}" required class="form-control">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="nome_noivo">Nome do Noivo *</label>
+                            <input type="text" id="nome_noivo" name="nome_noivo" 
+                                   value="{{ config.nome_noivo or 'Samuel' }}" required class="form-control">
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            <!-- Informações do Evento -->
-            <div class="config-section">
-                <h2 class="section-title">
-                    <i class="fas fa-calendar-alt"></i>
-                    Informações do Evento
-                </h2>
-                
-                <div class="form-row">
+                <div class="config-section">
+                    <h2 class="section-title">
+                        <i class="fas fa-calendar-alt"></i>
+                        Data e Horários
+                    </h2>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="data_casamento">Data do Casamento</label>
+                            <input type="date" id="data_casamento" name="data_casamento" 
+                                   value="{{ config.data_casamento.strftime('%Y-%m-%d') if config.data_casamento else '2025-12-15' }}" 
+                                   class="form-control">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="horario_cerimonia">Horário da Cerimônia</label>
+                            <input type="time" id="horario_cerimonia" name="horario_cerimonia" 
+                                   value="{{ config.horario_cerimonia.strftime('%H:%M') if config.horario_cerimonia else '16:00' }}" 
+                                   class="form-control">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="horario_festa">Horário da Festa</label>
+                            <input type="time" id="horario_festa" name="horario_festa" 
+                                   value="{{ config.horario_festa.strftime('%H:%M') if config.horario_festa else '18:00' }}" 
+                                   class="form-control">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="config-section">
+                    <h2 class="section-title">
+                        <i class="fas fa-church"></i>
+                        Local da Cerimônia
+                    </h2>
+                    
                     <div class="form-group">
-                        <label for="data_casamento">Data do Casamento</label>
-                        <input type="date" id="data_casamento" name="data_casamento" 
-                               value="{{ config.data_casamento.strftime('%Y-%m-%d') if config.data_casamento else '2025-11-08' }}" 
+                        <label for="local_cerimonia">Nome do Local</label>
+                        <input type="text" id="local_cerimonia" name="local_cerimonia" 
+                               value="{{ config.local_cerimonia or 'Igreja São José' }}" 
                                class="form-control">
                     </div>
                     
                     <div class="form-group">
-                        <label for="horario_cerimonia">Horário da Cerimônia</label>
-                        <input type="time" id="horario_cerimonia" name="horario_cerimonia" 
-                               value="{{ config.horario_cerimonia.strftime('%H:%M') if config.horario_cerimonia else '19:00' }}" 
-                               class="form-control">
+                        <label for="endereco_cerimonia">Endereço Completo</label>
+                        <textarea id="endereco_cerimonia" name="endereco_cerimonia" rows="2" class="form-control">{{ config.endereco_cerimonia or 'Rua das Flores, 123 - Centro' }}</textarea>
                     </div>
                 </div>
-            </div>
 
-            <!-- Local da Cerimônia -->
-            <div class="config-section">
-                <h2 class="section-title">
-                    <i class="fas fa-church"></i>
-                    Local da Cerimônia
-                </h2>
-                
-                <div class="form-group">
-                    <label for="local_cerimonia">Nome do Local</label>
-                    <input type="text" id="local_cerimonia" name="local_cerimonia" 
-                           value="{{ config.local_cerimonia or 'Igreja Nossa Senhora das Graças' }}" 
-                           class="form-control">
-                </div>
-                
-                <div class="form-group">
-                    <label for="endereco_cerimonia">Endereço Completo</label>
-                    <textarea id="endereco_cerimonia" name="endereco_cerimonia" rows="2" class="form-control">{{ config.endereco_cerimonia or 'Rua Domingos Alcíno Dadalto, 114, Jardim Itapemirim, Cachoeiro de Itapemirim - ES' }}</textarea>
-                </div>
-            </div>
-
-            <!-- Local da Festa -->
-            <div class="config-section">
-                <h2 class="section-title">
-                    <i class="fas fa-glass-cheers"></i>
-                    Local da Festa/Recepção
-                </h2>
-                
-                <div class="form-row">
+                <div class="config-section">
+                    <h2 class="section-title">
+                        <i class="fas fa-glass-cheers"></i>
+                        Local da Festa/Recepção
+                    </h2>
+                    
                     <div class="form-group">
                         <label for="local_festa">Nome do Local</label>
                         <input type="text" id="local_festa" name="local_festa" 
-                               value="{{ config.local_festa or 'Salão de Festas' }}" 
+                               value="{{ config.local_festa or 'Salão de Festas Elegance' }}" 
                                class="form-control">
                     </div>
                     
                     <div class="form-group">
-                        <label for="horario_festa">Horário da Festa</label>
-                        <input type="time" id="horario_festa" name="horario_festa" 
-                               value="{{ config.horario_festa.strftime('%H:%M') if config.horario_festa else '20:30' }}" 
-                               class="form-control">
+                        <label for="endereco_festa">Endereço Completo</label>
+                        <textarea id="endereco_festa" name="endereco_festa" rows="2" class="form-control">{{ config.endereco_festa or 'Av. Principal, 456 - Jardim das Rosas' }}</textarea>
                     </div>
                 </div>
-                
-                <div class="form-group">
-                    <label for="endereco_festa">Endereço Completo</label>
-                    <textarea id="endereco_festa" name="endereco_festa" rows="2" class="form-control">{{ config.endereco_festa or 'Endereço da festa/recepção' }}</textarea>
-                </div>
-            </div>
 
-            <!-- Personalização -->
-            <div class="config-section">
-                <h2 class="section-title">
-                    <i class="fas fa-palette"></i>
-                    Personalização
-                </h2>
-                
-                <div class="form-group">
-                    <label for="mensagem_principal">Mensagem Principal do Site</label>
-                    <textarea id="mensagem_principal" name="mensagem_principal" rows="3" class="form-control">{{ config.mensagem_principal or 'Criamos esse site para compartilhar com vocês os detalhes da organização do nosso casamento. ♥' }}</textarea>
-                    <small class="form-text">Esta mensagem aparece na página inicial do convite</small>
-                </div>
-                
-                <div class="form-group">
-                    <label for="cor_tema">Cor do Tema</label>
-                    <div class="color-input-group">
-                        <input type="color" id="cor_tema" name="cor_tema" 
-                               value="{{ config.cor_tema or '#B91C1C' }}" 
-                               class="form-control color-picker">
-                        <input type="text" id="cor_tema_text" 
-                               value="{{ config.cor_tema or '#B91C1C' }}" 
-                               class="form-control color-text" readonly>
-                    </div>
-                    <small class="form-text">Cor principal usada nos destaques do site</small>
-                </div>
-            </div>
-
-            <!-- Fotos dos Noivos -->
-            <div class="config-section">
-                <h2 class="section-title">
-                    <i class="fas fa-camera"></i>
-                    Fotos dos Noivos
-                </h2>
-                <p class="section-description">Faça upload das fotos que aparecerão no site</p>
-                
-                <div class="photos-grid">
-                    <!-- Foto do Casal -->
-                    <div class="photo-upload-card">
-                        <h3>Foto do Casal</h3>
-                        <div class="photo-preview">
-                            {% if config.has_foto('casal') %}
-                                <img src="{{ config.get_foto_url('casal') }}" alt="Foto do Casal" class="current-photo">
-                                <div class="photo-overlay">
-                                    <button type="button" class="btn-change-photo" onclick="changePhoto('casal')">
-                                        <i class="fas fa-camera"></i>
-                                        Trocar Foto
-                                    </button>
-                                </div>
-                            {% else %}
-                                <div class="photo-placeholder" onclick="changePhoto('casal')">
-                                    <i class="fas fa-heart"></i>
-                                    <span>Clique para adicionar</span>
-                                </div>
-                            {% endif %}
-                        </div>
-                        <input type="file" id="upload-casal" accept="image/*" style="display: none;" onchange="handleFileSelect(this, 'casal')">
-                    </div>
-
-                    <!-- Foto da Noiva -->
-                    <div class="photo-upload-card">
-                        <h3>Foto da Noiva</h3>
-                        <div class="photo-preview">
-                            {% if config.has_foto('noiva') %}
-                                <img src="{{ config.get_foto_url('noiva') }}" alt="Foto da Noiva" class="current-photo">
-                                <div class="photo-overlay">
-                                    <button type="button" class="btn-change-photo" onclick="changePhoto('noiva')">
-                                        <i class="fas fa-camera"></i>
-                                        Trocar Foto
-                                    </button>
-                                </div>
-                            {% else %}
-                                <div class="photo-placeholder" onclick="changePhoto('noiva')">
-                                    <i class="fas fa-user"></i>
-                                    <span>Clique para adicionar</span>
-                                </div>
-                            {% endif %}
-                        </div>
-                        <input type="file" id="upload-noiva" accept="image/*" style="display: none;" onchange="handleFileSelect(this, 'noiva')">
-                    </div>
-
-                    <!-- Foto do Noivo -->
-                    <div class="photo-upload-card">
-                        <h3>Foto do Noivo</h3>
-                        <div class="photo-preview">
-                            {% if config.has_foto('noivo') %}
-                                <img src="{{ config.get_foto_url('noivo') }}" alt="Foto do Noivo" class="current-photo">
-                                <div class="photo-overlay">
-                                    <button type="button" class="btn-change-photo" onclick="changePhoto('noivo')">
-                                        <i class="fas fa-camera"></i>
-                                        Trocar Foto
-                                    </button>
-                                </div>
-                            {% else %}
-                                <div class="photo-placeholder" onclick="changePhoto('noivo')">
-                                    <i class="fas fa-user"></i>
-                                    <span>Clique para adicionar</span>
-                                </div>
-                            {% endif %}
-                        </div>
-                        <input type="file" id="upload-noivo" accept="image/*" style="display: none;" onchange="handleFileSelect(this, 'noivo')">
+                <div class="config-section">
+                    <h2 class="section-title">
+                        <i class="fas fa-comment-dots"></i>
+                        Mensagem Principal
+                    </h2>
+                    
+                    <div class="form-group">
+                        <label for="mensagem_principal">Mensagem de Boas-vindas</label>
+                        <textarea id="mensagem_principal" name="mensagem_principal" rows="3" class="form-control">{{ config.mensagem_principal or 'Criamos esse site para compartilhar com vocês os detalhes da organização do nosso casamento.' }}</textarea>
+                        <small class="form-text">Esta mensagem aparece na página inicial do convite</small>
                     </div>
                 </div>
             </div>
 
-            <!-- Botões de Ação -->
-            <div class="config-actions">
-                <button type="submit" class="btn btn-primary btn-large">
-                    <i class="fas fa-save"></i>
-                    Salvar Configurações
-                </button>
-                
-                <a href="{{ url_for('admin.dashboard') }}" class="btn btn-secondary">
-                    <i class="fas fa-arrow-left"></i>
-                    Voltar ao Dashboard
-                </a>
+            </div>
+
+            <!-- ABA 2: Sobre o Casal -->
+            <div class="tab-content" id="tab-casal">
+                <div class="config-section">
+                    <h2 class="section-title">
+                        <i class="fas fa-female"></i>
+                        Informações da Noiva
+                    </h2>
+                    
+                    <div class="form-group">
+                        <label for="descricao_noiva">Descrição/Biografia da Noiva</label>
+                        <textarea id="descricao_noiva" name="descricao_noiva" rows="3" class="form-control" placeholder="Conte um pouco sobre a noiva...">{{ config.descricao_noiva or '' }}</textarea>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="aniversario_noiva">Data de Aniversário</label>
+                            <input type="text" id="aniversario_noiva" name="aniversario_noiva" 
+                                   value="{{ config.aniversario_noiva or '' }}" 
+                                   class="form-control" placeholder="Ex: 15 de março">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="paixoes_noiva">Paixões e Hobbies</label>
+                            <input type="text" id="paixoes_noiva" name="paixoes_noiva" 
+                                   value="{{ config.paixoes_noiva or '' }}" 
+                                   class="form-control" placeholder="Ex: Dança, culinária, leitura">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="frase_noiva">Frase Especial da Noiva</label>
+                        <input type="text" id="frase_noiva" name="frase_noiva" 
+                               value="{{ config.frase_noiva or '' }}" 
+                               class="form-control" placeholder="Uma frase que a representa">
+                    </div>
+                </div>
+
+                <div class="config-section">
+                    <h2 class="section-title">
+                        <i class="fas fa-male"></i>
+                        Informações do Noivo
+                    </h2>
+                    
+                    <div class="form-group">
+                        <label for="descricao_noivo">Descrição/Biografia do Noivo</label>
+                        <textarea id="descricao_noivo" name="descricao_noivo" rows="3" class="form-control" placeholder="Conte um pouco sobre o noivo...">{{ config.descricao_noivo or '' }}</textarea>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="aniversario_noivo">Data de Aniversário</label>
+                            <input type="text" id="aniversario_noivo" name="aniversario_noivo" 
+                                   value="{{ config.aniversario_noivo or '' }}" 
+                                   class="form-control" placeholder="Ex: 22 de setembro">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="paixoes_noivo">Paixões e Hobbies</label>
+                            <input type="text" id="paixoes_noivo" name="paixoes_noivo" 
+                                   value="{{ config.paixoes_noivo or '' }}" 
+                                   class="form-control" placeholder="Ex: Futebol, tecnologia, música">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="frase_noivo">Frase Especial do Noivo</label>
+                        <input type="text" id="frase_noivo" name="frase_noivo" 
+                               value="{{ config.frase_noivo or '' }}" 
+                               class="form-control" placeholder="Uma frase que o representa">
+                    </div>
+                </div>
+            </div>
+
+            <!-- ABA 3: Nossa História -->
+            <div class="tab-content" id="tab-historia">
+                <div class="config-section">
+                    <h2 class="section-title">
+                        <i class="fas fa-toggle-on"></i>
+                        Configuração da História
+                    </h2>
+                    
+                    <div class="form-group">
+                        <div class="checkbox-group">
+                            <input type="checkbox" id="mostrar_historia" name="mostrar_historia" 
+                                   {{ 'checked' if config.mostrar_historia else '' }} class="form-checkbox">
+                            <label for="mostrar_historia" class="checkbox-label">
+                                Mostrar seção "Nossa História" no site
+                            </label>
+                        </div>
+                        <small class="form-text">Desmarque se não quiser exibir a timeline da história de amor</small>
+                    </div>
+                </div>
+
+                <div class="historia-timeline" id="historia-fields">
+                    <div class="config-section">
+                        <h2 class="section-title">
+                            <i class="fas fa-heart"></i>
+                            Primeiro Encontro
+                        </h2>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="primeiro_encontro_ano">Ano</label>
+                                <input type="text" id="primeiro_encontro_ano" name="primeiro_encontro_ano" 
+                                       value="{{ config.primeiro_encontro_ano or '2020' }}" 
+                                       class="form-control" placeholder="2020">
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="primeiro_encontro_texto">História do Primeiro Encontro</label>
+                            <textarea id="primeiro_encontro_texto" name="primeiro_encontro_texto" rows="3" class="form-control" placeholder="Conte como foi o primeiro encontro...">{{ config.primeiro_encontro_texto or 'Foi em uma tarde de domingo, na igreja, que nossos olhares se cruzaram pela primeira vez.' }}</textarea>
+                        </div>
+                    </div>
+
+                    <div class="config-section">
+                        <h2 class="section-title">
+                            <i class="fas fa-heart"></i>
+                            Início do Namoro
+                        </h2>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="namoro_ano">Ano</label>
+                                <input type="text" id="namoro_ano" name="namoro_ano" 
+                                       value="{{ config.namoro_ano or '2022' }}" 
+                                       class="form-control" placeholder="2022">
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="namoro_texto">História do Namoro</label>
+                            <textarea id="namoro_texto" name="namoro_texto" rows="3" class="form-control" placeholder="Conte como começou o namoro...">{{ config.namoro_texto or 'Depois de dois anos de amizade, decidimos dar o próximo passo.' }}</textarea>
+                        </div>
+                    </div>
+
+                    <div class="config-section">
+                        <h2 class="section-title">
+                            <i class="fas fa-ring"></i>
+                            Pedido de Casamento
+                        </h2>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="pedido_ano">Ano</label>
+                                <input type="text" id="pedido_ano" name="pedido_ano" 
+                                       value="{{ config.pedido_ano or '2024' }}" 
+                                       class="form-control" placeholder="2024">
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="pedido_texto">História do Pedido</label>
+                            <textarea id="pedido_texto" name="pedido_texto" rows="3" class="form-control" placeholder="Conte como foi o pedido de casamento...">{{ config.pedido_texto or 'Em uma noite estrelada, com o coração cheio de amor e certeza, veio o pedido de casamento.' }}</textarea>
+                        </div>
+                    </div>
+
+                    <div class="config-section">
+                        <h2 class="section-title">
+                            <i class="fas fa-calendar-check"></i>
+                            O Grande Dia
+                        </h2>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="grande_dia_ano">Ano</label>
+                                <input type="text" id="grande_dia_ano" name="grande_dia_ano" 
+                                       value="{{ config.grande_dia_ano or '2025' }}" 
+                                       class="form-control" placeholder="2025">
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="grande_dia_texto">Mensagem sobre o Casamento</label>
+                            <textarea id="grande_dia_texto" name="grande_dia_texto" rows="3" class="form-control" placeholder="Mensagem sobre o grande dia...">{{ config.grande_dia_texto or 'E agora chegou o momento de unirmos nossas vidas para sempre.' }}</textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            </div>
+
+            <!-- ABA 4: Fotos -->
+            <div class="tab-content" id="tab-fotos">
+                <div class="config-section">
+                    <h2 class="section-title">
+                        <i class="fas fa-camera"></i>
+                        Fotos dos Noivos
+                    </h2>
+                    <p class="section-description">Faça upload das fotos que aparecerão no site</p>
+                    
+                    <div class="photos-grid">
+                        <!-- Foto do Casal -->
+                        <div class="photo-upload-card">
+                            <h3>Foto do Casal</h3>
+                            <div class="photo-preview">
+                                {% if config.has_foto('casal') %}
+                                    <img src="{{ config.get_foto_url('casal') }}" alt="Foto do Casal" class="current-photo">
+                                    <div class="photo-actions">
+                                        <button type="button" class="btn-change-photo" onclick="openUploadModal('casal')">
+                                            <i class="fas fa-edit"></i> Alterar
+                                        </button>
+                                    </div>
+                                {% else %}
+                                    <div class="no-photo">
+                                        <i class="fas fa-camera"></i>
+                                        <p>Nenhuma foto</p>
+                                        <button type="button" class="btn-upload" onclick="openUploadModal('casal')">
+                                            <i class="fas fa-upload"></i> Enviar Foto
+                                        </button>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <!-- Foto da Noiva -->
+                        <div class="photo-upload-card">
+                            <h3>Foto da Noiva</h3>
+                            <div class="photo-preview">
+                                {% if config.has_foto('noiva') %}
+                                    <img src="{{ config.get_foto_url('noiva') }}" alt="Foto da Noiva" class="current-photo">
+                                    <div class="photo-actions">
+                                        <button type="button" class="btn-change-photo" onclick="openUploadModal('noiva')">
+                                            <i class="fas fa-edit"></i> Alterar
+                                        </button>
+                                    </div>
+                                {% else %}
+                                    <div class="no-photo">
+                                        <i class="fas fa-camera"></i>
+                                        <p>Nenhuma foto</p>
+                                        <button type="button" class="btn-upload" onclick="openUploadModal('noiva')">
+                                            <i class="fas fa-upload"></i> Enviar Foto
+                                        </button>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <!-- Foto do Noivo -->
+                        <div class="photo-upload-card">
+                            <h3>Foto do Noivo</h3>
+                            <div class="photo-preview">
+                                {% if config.has_foto('noivo') %}
+                                    <img src="{{ config.get_foto_url('noivo') }}" alt="Foto do Noivo" class="current-photo">
+                                    <div class="photo-actions">
+                                        <button type="button" class="btn-change-photo" onclick="openUploadModal('noivo')">
+                                            <i class="fas fa-edit"></i> Alterar
+                                        </button>
+                                    </div>
+                                {% else %}
+                                    <div class="no-photo">
+                                        <i class="fas fa-camera"></i>
+                                        <p>Nenhuma foto</p>
+                                        <button type="button" class="btn-upload" onclick="openUploadModal('noivo')">
+                                            <i class="fas fa-upload"></i> Enviar Foto
+                                        </button>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ABA 5: Visual & Tema -->
+            <div class="tab-content" id="tab-visual">
+                <div class="config-section">
+                    <h2 class="section-title">
+                        <i class="fas fa-palette"></i>
+                        Personalização Visual
+                    </h2>
+                    
+                    <div class="form-group">
+                        <label for="cor_tema">Cor do Tema</label>
+                        <div class="color-input-group">
+                            <input type="color" id="cor_tema" name="cor_tema" 
+                                   value="{{ config.cor_tema or '#B91C1C' }}" 
+                                   class="form-control color-picker">
+                            <input type="text" id="cor_tema_text" 
+                                   value="{{ config.cor_tema or '#B91C1C' }}" 
+                                   class="form-control color-text" readonly>
+                        </div>
+                        <small class="form-text">Cor principal usada nos destaques do site</small>
+                    </div>
+
+                    <div class="color-presets">
+                        <h3>Cores Pré-definidas</h3>
+                        <div class="preset-colors">
+                            <button type="button" class="color-preset" data-color="#B91C1C" style="background-color: #B91C1C;" title="Vermelho Elegante"></button>
+                            <button type="button" class="color-preset" data-color="#D4A574" style="background-color: #D4A574;" title="Dourado Clássico"></button>
+                            <button type="button" class="color-preset" data-color="#8B5A96" style="background-color: #8B5A96;" title="Roxo Romântico"></button>
+                            <button type="button" class="color-preset" data-color="#2563EB" style="background-color: #2563EB;" title="Azul Royal"></button>
+                            <button type="button" class="color-preset" data-color="#059669" style="background-color: #059669;" title="Verde Esmeralda"></button>
+                            <button type="button" class="color-preset" data-color="#DC2626" style="background-color: #DC2626;" title="Vermelho Paixão"></button>
+                            <button type="button" class="color-preset" data-color="#7C3AED" style="background-color: #7C3AED;" title="Violeta"></button>
+                            <button type="button" class="color-preset" data-color="#EA580C" style="background-color: #EA580C;" title="Laranja Vibrante"></button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="config-section">
+                    <h2 class="section-title">
+                        <i class="fas fa-eye"></i>
+                        Pré-visualização
+                    </h2>
+                    
+                    <div class="theme-preview">
+                        <div class="preview-card">
+                            <div class="preview-header" id="preview-header">
+                                <h3 id="preview-names">{{ config.nome_noiva or 'Iara' }} & {{ config.nome_noivo or 'Samuel' }}</h3>
+                                <p id="preview-date">{{ config.data_casamento.strftime('%d de %B de %Y') if config.data_casamento else '15 de dezembro de 2025' }}</p>
+                            </div>
+                            <div class="preview-content">
+                                <div class="preview-message" id="preview-message">
+                                    {{ config.mensagem_principal or 'Criamos esse site para compartilhar com vocês os detalhes da organização do nosso casamento.' }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             </div>
         </form>
     </div>
 </div>
 
-<!-- Preview Section -->
-<div class="config-preview">
-    <h3 class="preview-title">
-        <i class="fas fa-eye"></i>
-        Prévia das Alterações
-    </h3>
-    
-    <div class="preview-content">
-        <div class="preview-names" id="preview-names">
-            <span id="preview-noiva">{{ config.nome_noiva or 'Iara' }}</span> & 
-            <span id="preview-noivo">{{ config.nome_noivo or 'Samuel' }}</span>
-        </div>
-        
-        <div class="preview-date" id="preview-date">
-            {{ config.data_casamento.strftime('%d de %B de %Y') if config.data_casamento else '08 de Novembro de 2025' }}
-        </div>
-        
-        <div class="preview-message" id="preview-message">
-            {{ config.mensagem_principal or 'Criamos esse site para compartilhar com vocês os detalhes da organização do nosso casamento. ♥' }}
+<!-- Modal de Upload de Fotos -->
+<div class="modal fade" id="uploadModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="fas fa-upload"></i>
+                    <span id="modal-title">Enviar Foto</span>
+                </h5>
+                <button type="button" class="close" data-dismiss="modal">
+                    <span>&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="upload-area" id="upload-area">
+                    <div class="upload-content">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                        <h4>Arraste uma imagem aqui</h4>
+                        <p>ou clique para selecionar</p>
+                        <input type="file" id="photo-input" accept="image/*" hidden>
+                        <button type="button" class="btn-upload-select" onclick="document.getElementById('photo-input').click()">
+                            Selecionar Arquivo
+                        </button>
+                    </div>
+                </div>
+                <div class="upload-preview" id="upload-preview" style="display: none;">
+                    <img id="preview-image" alt="Preview">
+                    <div class="upload-info">
+                        <p><strong id="file-name"></strong></p>
+                        <p class="file-size" id="file-size"></p>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-primary" id="btn-upload" onclick="uploadPhoto()" disabled>
+                    <i class="fas fa-upload"></i>
+                    Enviar Foto
+                </button>
+            </div>
         </div>
     </div>
 </div>
+
 {% endblock %}
 
 {% block extra_scripts %}
 <style>
+/* Estilos para as abas */
+.config-tabs {
+    display: flex;
+    background: #f8f9fa;
+    border-radius: 8px;
+    padding: 5px;
+    margin-bottom: 30px;
+    overflow-x: auto;
+}
+
+.tab-button {
+    flex: 1;
+    min-width: 150px;
+    padding: 12px 16px;
+    background: none;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 500;
+    color: #6b7280;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    white-space: nowrap;
+}
+
+.tab-button:hover {
+    background: #e5e7eb;
+    color: #374151;
+}
+
+.tab-button.active {
+    background: var(--primary-color, #B91C1C);
+    color: white;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.tab-content {
+    display: none;
+}
+
+.tab-content.active {
+    display: block;
+}
+
 /* Estilos para upload de fotos */
+.photos-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 25px;
+    margin-top: 20px;
+}
+
+.photo-upload-card {
+    border: 2px dashed #ddd;
+    border-radius: 12px;
+    padding: 20px;
+    text-align: center;
+    background: #f9f9f9;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.photo-upload-card:hover {
+    border-color: var(--primary-color, #B91C1C);
+    background: #fff;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.photo-upload-card h3 {
+    margin: 0 0 15px 0;
+    color: #333;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.photo-preview {
+    position: relative;
+    width: 100%;
+    height: 200px;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #f0f0f0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.current-photo {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.no-photo {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    color: #6b7280;
+}
+
+.no-photo i {
+    font-size: 3rem;
+    margin-bottom: 10px;
+    opacity: 0.5;
+}
+
+.no-photo p {
+    margin: 10px 0;
+    font-size: 14px;
+}
+
+.btn-upload, .btn-change-photo {
+    background: var(--primary-color, #B91C1C);
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn-upload:hover, .btn-change-photo:hover {
+    background: #991b1b;
+    transform: translateY(-1px);
+}
+
+.photo-actions {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.photo-upload-card:hover .photo-actions {
+    opacity: 1;
+}
+
+/* Estilos para o modal de upload */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5);
+    z-index: 1050;
+    display: none;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal.show {
+    display: flex;
+}
+
+.modal-dialog {
+    max-width: 500px;
+    width: 90%;
+}
+
+.modal-content {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+}
+
+.modal-header {
+    padding: 20px;
+    border-bottom: 1px solid #e5e7eb;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.modal-title {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 600;
+    color: #333;
+}
+
+.close {
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    color: #6b7280;
+}
+
+.modal-body {
+    padding: 20px;
+}
+
+.upload-area {
+    border: 3px dashed #d1d5db;
+    border-radius: 8px;
+    padding: 40px 20px;
+    text-align: center;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.upload-area:hover {
+    border-color: var(--primary-color, #B91C1C);
+    background: #f9f9f9;
+}
+
+.upload-area.dragover {
+    border-color: var(--primary-color, #B91C1C);
+    background: #fef2f2;
+}
+
+.upload-content i {
+    font-size: 3rem;
+    color: var(--primary-color, #B91C1C);
+    margin-bottom: 15px;
+}
+
+.upload-content h4 {
+    margin: 0 0 5px 0;
+    color: #333;
+}
+
+.upload-content p {
+    margin: 0 0 20px 0;
+    color: #6b7280;
+}
+
+.btn-upload-select {
+    background: var(--primary-color, #B91C1C);
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 500;
+}
+
+.upload-preview {
+    text-align: center;
+}
+
+.upload-preview img {
+    max-width: 100%;
+    max-height: 200px;
+    border-radius: 8px;
+    margin-bottom: 15px;
+}
+
+.upload-info {
+    background: #f3f4f6;
+    padding: 15px;
+    border-radius: 6px;
+}
+
+.modal-footer {
+    padding: 20px;
+    border-top: 1px solid #e5e7eb;
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+}
+
+/* Estilos para cores pré-definidas */
+.color-presets {
+    margin-top: 20px;
+}
+
+.color-presets h3 {
+    margin: 0 0 15px 0;
+    font-size: 16px;
+    color: #333;
+}
+
+.preset-colors {
+    display: grid;
+    grid-template-columns: repeat(8, 1fr);
+    gap: 10px;
+}
+
+.color-preset {
+    width: 40px;
+    height: 40px;
+    border: 3px solid #fff;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.color-preset:hover {
+    transform: scale(1.1);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+
+.color-preset.active {
+    border-color: #333;
+    transform: scale(1.1);
+}
+
+/* Estilos para a pré-visualização do tema */
+.theme-preview {
+    margin-top: 20px;
+}
+
+.preview-card {
+    background: linear-gradient(135deg, var(--primary-color, #B91C1C) 0%, rgba(185, 28, 28, 0.8) 100%);
+    color: white;
+    padding: 30px;
+    border-radius: 12px;
+    text-align: center;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.preview-header h3 {
+    margin: 0 0 10px 0;
+    font-size: 24px;
+    font-weight: 600;
+}
+
+.preview-header p {
+    margin: 0 0 20px 0;
+    opacity: 0.9;
+    font-size: 16px;
+}
+
+.preview-message {
+    background: rgba(255,255,255,0.1);
+    padding: 20px;
+    border-radius: 8px;
+    font-style: italic;
+    backdrop-filter: blur(10px);
+}
+
+/* Estilos para campos de história */
+.historia-timeline {
+    opacity: 1;
+    transition: opacity 0.3s ease;
+}
+
+.historia-timeline.disabled {
+    opacity: 0.5;
+    pointer-events: none;
+}
+
+.checkbox-group {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.form-checkbox {
+    width: 18px;
+    height: 18px;
+    accent-color: var(--primary-color, #B91C1C);
+}
+
+.checkbox-label {
+    font-weight: 500;
+    color: #333;
+    margin: 0;
+    cursor: pointer;
+}
+
+/* Estilos para botões de ação */
+.form-actions {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+    margin-top: 40px;
+    padding-top: 30px;
+    border-top: 1px solid #e5e7eb;
+}
+
+.btn-primary, .btn-secondary {
+    padding: 12px 24px;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.3s ease;
+    text-decoration: none;
+}
+
+.btn-primary {
+    background: var(--primary-color, #B91C1C);
+    color: white;
+}
+
+.btn-primary:hover {
+    background: #991b1b;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(185, 28, 28, 0.3);
+}
+
+.btn-secondary {
+    background: #6b7280;
+    color: white;
+}
+
+.btn-secondary:hover {
+    background: #4b5563;
+    transform: translateY(-1px);
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+    .config-tabs {
+        flex-direction: column;
+    }
+    
+    .tab-button {
+        min-width: auto;
+        justify-content: flex-start;
+    }
+    
+    .photos-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .preset-colors {
+        grid-template-columns: repeat(4, 1fr);
+    }
+    
+    .form-actions {
+        flex-direction: column;
+    }
+}
+</style>
+
+<script>
+// Variáveis globais
+let currentPhotoType = null;
+let selectedFile = null;
+
+// Inicialização
+document.addEventListener('DOMContentLoaded', function() {
+    initializeTabs();
+    initializeColorPicker();
+    initializeHistoryToggle();
+    initializeFormUpdates();
+    initializeModal();
+});
+
+// Sistema de abas
+function initializeTabs() {
+    const tabButtons = document.querySelectorAll('.tab-button');
+    const tabContents = document.querySelectorAll('.tab-content');
+    
+    tabButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const targetTab = this.dataset.tab;
+            
+            // Remove active class from all buttons and contents
+            tabButtons.forEach(btn => btn.classList.remove('active'));
+            tabContents.forEach(content => content.classList.remove('active'));
+            
+            // Add active class to clicked button and corresponding content
+            this.classList.add('active');
+            document.getElementById('tab-' + targetTab).classList.add('active');
+        });
+    });
+}
+
+// Seletor de cores
+function initializeColorPicker() {
+    const colorPicker = document.getElementById('cor_tema');
+    const colorText = document.getElementById('cor_tema_text');
+    const presetButtons = document.querySelectorAll('.color-preset');
+    
+    if (colorPicker && colorText) {
+        colorPicker.addEventListener('input', function() {
+            const color = this.value;
+            colorText.value = color;
+            updateThemePreview(color);
+            document.documentElement.style.setProperty('--primary-color', color);
+        });
+    }
+    
+    presetButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const color = this.dataset.color;
+            
+            // Update inputs
+            if (colorPicker) colorPicker.value = color;
+            if (colorText) colorText.value = color;
+            
+            // Update preview
+            updateThemePreview(color);
+            document.documentElement.style.setProperty('--primary-color', color);
+            
+            // Update active state
+            presetButtons.forEach(btn => btn.classList.remove('active'));
+            this.classList.add('active');
+        });
+    });
+}
+
+// Toggle da história
+function initializeHistoryToggle() {
+    const historyToggle = document.getElementById('mostrar_historia');
+    const historyFields = document.getElementById('historia-fields');
+    
+    if (historyToggle && historyFields) {
+        historyToggle.addEventListener('change', function() {
+            if (this.checked) {
+                historyFields.classList.remove('disabled');
+            } else {
+                historyFields.classList.add('disabled');
+            }
+        });
+    }
+}
+
+// Atualizações do formulário em tempo real
+function initializeFormUpdates() {
+    const fields = {
+        'nome_noiva': updatePreviewNames,
+        'nome_noivo': updatePreviewNames,
+        'data_casamento': updatePreviewDate,
+        'mensagem_principal': updatePreviewMessage
+    };
+    
+    Object.keys(fields).forEach(fieldId => {
+        const field = document.getElementById(fieldId);
+        if (field) {
+            field.addEventListener('input', fields[fieldId]);
+        }
+    });
+}
+
+// Atualizar prévia dos nomes
+function updatePreviewNames() {
+    const noiva = document.getElementById('nome_noiva').value || 'Iara';
+    const noivo = document.getElementById('nome_noivo').value || 'Samuel';
+    const previewElement = document.getElementById('preview-names');
+    
+    if (previewElement) {
+        previewElement.textContent = `${noiva} & ${noivo}`;
+    }
+}
+
+// Atualizar prévia da data
+function updatePreviewDate() {
+    const dataInput = document.getElementById('data_casamento');
+    const previewElement = document.getElementById('preview-date');
+    
+    if (dataInput && previewElement && dataInput.value) {
+        const date = new Date(dataInput.value + 'T00:00:00');
+        const options = { day: 'numeric', month: 'long', year: 'numeric' };
+        const formattedDate = date.toLocaleDateString('pt-BR', options);
+        previewElement.textContent = formattedDate;
+    }
+}
+
+// Atualizar prévia da mensagem
+function updatePreviewMessage() {
+    const mensagem = document.getElementById('mensagem_principal').value || 'Criamos esse site para compartilhar com vocês os detalhes da organização do nosso casamento.';
+    const previewElement = document.getElementById('preview-message');
+    
+    if (previewElement) {
+        previewElement.textContent = mensagem;
+    }
+}
+
+// Atualizar tema da prévia
+function updateThemePreview(color) {
+    const previewHeader = document.getElementById('preview-header');
+    if (previewHeader) {
+        previewHeader.style.background = `linear-gradient(135deg, ${color} 0%, ${color}CC 100%)`;
+    }
+}
+
+// Sistema de upload de fotos
+function initializeModal() {
+    const modal = document.getElementById('uploadModal');
+    const uploadArea = document.getElementById('upload-area');
+    const photoInput = document.getElementById('photo-input');
+    
+    if (uploadArea && photoInput) {
+        // Drag and drop
+        uploadArea.addEventListener('dragover', function(e) {
+            e.preventDefault();
+            this.classList.add('dragover');
+        });
+        
+        uploadArea.addEventListener('dragleave', function(e) {
+            e.preventDefault();
+            this.classList.remove('dragover');
+        });
+        
+        uploadArea.addEventListener('drop', function(e) {
+            e.preventDefault();
+            this.classList.remove('dragover');
+            
+            const files = e.dataTransfer.files;
+            if (files.length > 0 && files[0].type.startsWith('image/')) {
+                handleFileSelection(files[0]);
+            }
+        });
+        
+        // Click to upload
+        uploadArea.addEventListener('click', function() {
+            photoInput.click();
+        });
+        
+        // File input change
+        photoInput.addEventListener('change', function() {
+            if (this.files.length > 0) {
+                handleFileSelection(this.files[0]);
+            }
+        });
+    }
+}
+
+// Abrir modal de upload
+function openUploadModal(photoType) {
+    currentPhotoType = photoType;
+    const modal = document.getElementById('uploadModal');
+    const modalTitle = document.getElementById('modal-title');
+    
+    const titles = {
+        'casal': 'Enviar Foto do Casal',
+        'noiva': 'Enviar Foto da Noiva',
+        'noivo': 'Enviar Foto do Noivo'
+    };
+    
+    if (modalTitle) {
+        modalTitle.textContent = titles[photoType] || 'Enviar Foto';
+    }
+    
+    // Reset modal state
+    resetModalState();
+    
+    if (modal) {
+        modal.classList.add('show');
+    }
+}
+
+// Fechar modal
+function closeModal() {
+    const modal = document.getElementById('uploadModal');
+    if (modal) {
+        modal.classList.remove('show');
+    }
+    resetModalState();
+}
+
+// Reset do estado do modal
+function resetModalState() {
+    selectedFile = null;
+    const uploadArea = document.getElementById('upload-area');
+    const uploadPreview = document.getElementById('upload-preview');
+    const btnUpload = document.getElementById('btn-upload');
+    const photoInput = document.getElementById('photo-input');
+    
+    if (uploadArea) uploadArea.style.display = 'block';
+    if (uploadPreview) uploadPreview.style.display = 'none';
+    if (btnUpload) btnUpload.disabled = true;
+    if (photoInput) photoInput.value = '';
+}
+
+// Processar seleção de arquivo
+function handleFileSelection(file) {
+    if (!file.type.startsWith('image/')) {
+        alert('Por favor, selecione apenas arquivos de imagem.');
+        return;
+    }
+    
+    if (file.size > 5 * 1024 * 1024) { // 5MB
+        alert('O arquivo deve ter no máximo 5MB.');
+        return;
+    }
+    
+    selectedFile = file;
+    
+    // Mostrar preview
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        const uploadArea = document.getElementById('upload-area');
+        const uploadPreview = document.getElementById('upload-preview');
+        const previewImage = document.getElementById('preview-image');
+        const fileName = document.getElementById('file-name');
+        const fileSize = document.getElementById('file-size');
+        const btnUpload = document.getElementById('btn-upload');
+        
+        if (uploadArea) uploadArea.style.display = 'none';
+        if (uploadPreview) uploadPreview.style.display = 'block';
+        if (previewImage) previewImage.src = e.target.result;
+        if (fileName) fileName.textContent = file.name;
+        if (fileSize) fileSize.textContent = formatFileSize(file.size);
+        if (btnUpload) btnUpload.disabled = false;
+    };
+    
+    reader.readAsDataURL(file);
+}
+
+// Upload da foto
+function uploadPhoto() {
+    if (!selectedFile || !currentPhotoType) {
+        return;
+    }
+    
+    const btnUpload = document.getElementById('btn-upload');
+    if (btnUpload) {
+        btnUpload.disabled = true;
+        btnUpload.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Enviando...';
+    }
+    
+    const formData = new FormData();
+    formData.append('foto', selectedFile);
+    formData.append('tipo', currentPhotoType);
+    
+    fetch('/admin/teste-upload-foto', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Atualizar a interface
+            location.reload(); // Recarregar para mostrar a nova foto
+        } else {
+            alert('Erro ao enviar foto: ' + (data.message || 'Erro desconhecido'));
+        }
+    })
+    .catch(error => {
+        console.error('Erro:', error);
+        alert('Erro ao enviar foto. Tente novamente.');
+    })
+    .finally(() => {
+        closeModal();
+    });
+}
+
+// Formatação do tamanho do arquivo
+function formatFileSize(bytes) {
+    if (bytes === 0) return '0 Bytes';
+    
+    const k = 1024;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+}
+
+// Pré-visualizar site
+function previewSite() {
+    window.open('/', '_blank');
+}
+
+// Event listeners para fechar modal
+document.addEventListener('click', function(e) {
+    const modal = document.getElementById('uploadModal');
+    if (e.target === modal) {
+        closeModal();
+    }
+    
+    if (e.target.classList.contains('close') || e.target.dataset.dismiss === 'modal') {
+        closeModal();
+    }
+});
+
+});
+</script>
+{% endblock %}
 .photos-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
