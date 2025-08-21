@@ -266,12 +266,22 @@ def processar_configuracoes():
         if data_str:
             config.data_casamento = datetime.strptime(data_str, '%Y-%m-%d').date()
         
+        # Converter horários
+        horario_cerimonia_str = request.form.get('horario_cerimonia')
+        if horario_cerimonia_str:
+            config.horario_cerimonia = datetime.strptime(horario_cerimonia_str, '%H:%M').time()
+            
+        horario_festa_str = request.form.get('horario_festa')
+        if horario_festa_str:
+            config.horario_festa = datetime.strptime(horario_festa_str, '%H:%M').time()
+        
         config.local_cerimonia = request.form.get('local_cerimonia')
         config.endereco_cerimonia = request.form.get('endereco_cerimonia')
         config.local_festa = request.form.get('local_festa')
         config.endereco_festa = request.form.get('endereco_festa')
         config.mensagem_principal = request.form.get('mensagem_principal')
         config.cor_tema = request.form.get('cor_tema')
+        config.foto_casal = request.form.get('foto_casal')
         
         db.session.add(config)
         db.session.commit()

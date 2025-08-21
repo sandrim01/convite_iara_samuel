@@ -1,0 +1,273 @@
+{% extends "admin/base.html" %}
+
+{% block title %}Configurações - Admin{% endblock %}
+
+{% block content %}
+<div class="admin-header">
+    <div class="admin-header-content">
+        <h1 class="admin-title">
+            <i class="fas fa-cog"></i>
+            Configurações do Site
+        </h1>
+        <p class="admin-subtitle">Edite as informações principais do convite de casamento</p>
+    </div>
+</div>
+
+<div class="admin-content">
+    <div class="config-container">
+        <form method="POST" class="config-form">
+            <!-- Informações dos Noivos -->
+            <div class="config-section">
+                <h2 class="section-title">
+                    <i class="fas fa-heart"></i>
+                    Informações dos Noivos
+                </h2>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="nome_noiva">Nome da Noiva *</label>
+                        <input type="text" id="nome_noiva" name="nome_noiva" 
+                               value="{{ config.nome_noiva or 'Iara' }}" required class="form-control">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="nome_noivo">Nome do Noivo *</label>
+                        <input type="text" id="nome_noivo" name="nome_noivo" 
+                               value="{{ config.nome_noivo or 'Samuel' }}" required class="form-control">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Informações do Evento -->
+            <div class="config-section">
+                <h2 class="section-title">
+                    <i class="fas fa-calendar-alt"></i>
+                    Informações do Evento
+                </h2>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="data_casamento">Data do Casamento</label>
+                        <input type="date" id="data_casamento" name="data_casamento" 
+                               value="{{ config.data_casamento.strftime('%Y-%m-%d') if config.data_casamento else '2025-11-08' }}" 
+                               class="form-control">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="horario_cerimonia">Horário da Cerimônia</label>
+                        <input type="time" id="horario_cerimonia" name="horario_cerimonia" 
+                               value="{{ config.horario_cerimonia.strftime('%H:%M') if config.horario_cerimonia else '19:00' }}" 
+                               class="form-control">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Local da Cerimônia -->
+            <div class="config-section">
+                <h2 class="section-title">
+                    <i class="fas fa-church"></i>
+                    Local da Cerimônia
+                </h2>
+                
+                <div class="form-group">
+                    <label for="local_cerimonia">Nome do Local</label>
+                    <input type="text" id="local_cerimonia" name="local_cerimonia" 
+                           value="{{ config.local_cerimonia or 'Igreja Nossa Senhora das Graças' }}" 
+                           class="form-control">
+                </div>
+                
+                <div class="form-group">
+                    <label for="endereco_cerimonia">Endereço Completo</label>
+                    <textarea id="endereco_cerimonia" name="endereco_cerimonia" rows="2" class="form-control">{{ config.endereco_cerimonia or 'Rua Domingos Alcíno Dadalto, 114, Jardim Itapemirim, Cachoeiro de Itapemirim - ES' }}</textarea>
+                </div>
+            </div>
+
+            <!-- Local da Festa -->
+            <div class="config-section">
+                <h2 class="section-title">
+                    <i class="fas fa-glass-cheers"></i>
+                    Local da Festa/Recepção
+                </h2>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="local_festa">Nome do Local</label>
+                        <input type="text" id="local_festa" name="local_festa" 
+                               value="{{ config.local_festa or 'Salão de Festas' }}" 
+                               class="form-control">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="horario_festa">Horário da Festa</label>
+                        <input type="time" id="horario_festa" name="horario_festa" 
+                               value="{{ config.horario_festa.strftime('%H:%M') if config.horario_festa else '20:30' }}" 
+                               class="form-control">
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="endereco_festa">Endereço Completo</label>
+                    <textarea id="endereco_festa" name="endereco_festa" rows="2" class="form-control">{{ config.endereco_festa or 'Endereço da festa/recepção' }}</textarea>
+                </div>
+            </div>
+
+            <!-- Personalização -->
+            <div class="config-section">
+                <h2 class="section-title">
+                    <i class="fas fa-palette"></i>
+                    Personalização
+                </h2>
+                
+                <div class="form-group">
+                    <label for="mensagem_principal">Mensagem Principal do Site</label>
+                    <textarea id="mensagem_principal" name="mensagem_principal" rows="3" class="form-control">{{ config.mensagem_principal or 'Criamos esse site para compartilhar com vocês os detalhes da organização do nosso casamento. ♥' }}</textarea>
+                    <small class="form-text">Esta mensagem aparece na página inicial do convite</small>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="cor_tema">Cor do Tema</label>
+                        <div class="color-input-group">
+                            <input type="color" id="cor_tema" name="cor_tema" 
+                                   value="{{ config.cor_tema or '#B91C1C' }}" 
+                                   class="form-control color-picker">
+                            <input type="text" id="cor_tema_text" 
+                                   value="{{ config.cor_tema or '#B91C1C' }}" 
+                                   class="form-control color-text" readonly>
+                        </div>
+                        <small class="form-text">Cor principal usada nos destaques do site</small>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="foto_casal">URL da Foto do Casal</label>
+                        <input type="url" id="foto_casal" name="foto_casal" 
+                               value="{{ config.foto_casal or '' }}" 
+                               class="form-control" placeholder="https://exemplo.com/foto.jpg">
+                        <small class="form-text">Link para a foto principal do casal</small>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Botões de Ação -->
+            <div class="config-actions">
+                <button type="submit" class="btn btn-primary btn-large">
+                    <i class="fas fa-save"></i>
+                    Salvar Configurações
+                </button>
+                
+                <a href="{{ url_for('admin.dashboard') }}" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left"></i>
+                    Voltar ao Dashboard
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Preview Section -->
+<div class="config-preview">
+    <h3 class="preview-title">
+        <i class="fas fa-eye"></i>
+        Prévia das Alterações
+    </h3>
+    
+    <div class="preview-content">
+        <div class="preview-names" id="preview-names">
+            <span id="preview-noiva">{{ config.nome_noiva or 'Iara' }}</span> & 
+            <span id="preview-noivo">{{ config.nome_noivo or 'Samuel' }}</span>
+        </div>
+        
+        <div class="preview-date" id="preview-date">
+            {{ config.data_casamento.strftime('%d de %B de %Y') if config.data_casamento else '08 de Novembro de 2025' }}
+        </div>
+        
+        <div class="preview-message" id="preview-message">
+            {{ config.mensagem_principal or 'Criamos esse site para compartilhar com vocês os detalhes da organização do nosso casamento. ♥' }}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+// Atualizar prévia em tempo real
+document.addEventListener('DOMContentLoaded', function() {
+    const nomeNoiva = document.getElementById('nome_noiva');
+    const nomeNoivo = document.getElementById('nome_noivo');
+    const dataInput = document.getElementById('data_casamento');
+    const mensagemInput = document.getElementById('mensagem_principal');
+    const corTema = document.getElementById('cor_tema');
+    const corTexto = document.getElementById('cor_tema_text');
+    
+    // Atualizar prévia dos nomes
+    function updatePreviewNames() {
+        document.getElementById('preview-noiva').textContent = nomeNoiva.value || 'Iara';
+        document.getElementById('preview-noivo').textContent = nomeNoivo.value || 'Samuel';
+    }
+    
+    // Atualizar prévia da data
+    function updatePreviewDate() {
+        if (dataInput.value) {
+            const date = new Date(dataInput.value + 'T00:00:00');
+            const options = { year: 'numeric', month: 'long', day: 'numeric' };
+            document.getElementById('preview-date').textContent = 
+                date.toLocaleDateString('pt-BR', options);
+        }
+    }
+    
+    // Atualizar prévia da mensagem
+    function updatePreviewMessage() {
+        document.getElementById('preview-message').textContent = 
+            mensagemInput.value || 'Criamos esse site para compartilhar com vocês os detalhes da organização do nosso casamento. ♥';
+    }
+    
+    // Atualizar cor
+    function updateColor() {
+        const color = corTema.value;
+        corTexto.value = color;
+        document.getElementById('preview-names').style.color = color;
+        
+        // Aplicar cor aos elementos de destaque
+        document.documentElement.style.setProperty('--preview-color', color);
+    }
+    
+    // Event listeners
+    nomeNoiva.addEventListener('input', updatePreviewNames);
+    nomeNoivo.addEventListener('input', updatePreviewNames);
+    dataInput.addEventListener('change', updatePreviewDate);
+    mensagemInput.addEventListener('input', updatePreviewMessage);
+    corTema.addEventListener('input', updateColor);
+    
+    // Sincronizar color picker com texto
+    corTema.addEventListener('input', function() {
+        corTexto.value = this.value;
+    });
+    
+    // Validação do formulário
+    document.querySelector('.config-form').addEventListener('submit', function(e) {
+        const required = this.querySelectorAll('input[required]');
+        let valid = true;
+        
+        required.forEach(input => {
+            if (!input.value.trim()) {
+                input.classList.add('error');
+                valid = false;
+            } else {
+                input.classList.remove('error');
+            }
+        });
+        
+        if (!valid) {
+            e.preventDefault();
+            alert('Por favor, preencha todos os campos obrigatórios.');
+        }
+    });
+    
+    // Inicializar previsualizações
+    updatePreviewNames();
+    updatePreviewDate();
+    updatePreviewMessage();
+    updateColor();
+});
+</script>
+{% endblock %}
