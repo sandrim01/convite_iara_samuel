@@ -380,9 +380,9 @@ section {
 .nav-names {
     font-family: var(--font-script);
     font-size: 2rem;
-    color: var(--primary-color);
+    color: var(--accent-color);
     font-weight: 700;
-    text-shadow: 0 2px 4px rgba(212, 165, 116, 0.1);
+    text-shadow: 0 2px 4px rgba(185, 28, 28, 0.1);
     position: relative;
 }
 
