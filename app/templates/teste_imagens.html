@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teste de Imagens</title>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            margin: 40px; 
+            background: #f5f5f5;
+        }
+        .test-container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .test-image {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid #ccc;
+            margin: 10px;
+            display: block;
+        }
+        .test-placeholder {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            background: #f0f0f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 3px solid #ccc;
+            margin: 10px;
+        }
+        .error-msg {
+            color: red;
+            font-weight: bold;
+        }
+        .success-msg {
+            color: green;
+            font-weight: bold;
+        }
+        .info-box {
+            background: #e7f3ff;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>🧪 Teste de Sistema de Imagens</h1>
+        
+        <div class="info-box">
+            <h3>Configurações Atuais:</h3>
+            <p><strong>Foto Casal:</strong> {{ config.foto_casal or '(vazio)' }}</p>
+            <p><strong>Foto Noiva:</strong> {{ config.foto_noiva or '(vazio)' }}</p>
+            <p><strong>Foto Noivo:</strong> {{ config.foto_noivo or '(vazio)' }}</p>
+        </div>
+
+        <h2>Teste 1: Imagem do Noivo</h2>
+        {% if config.foto_noivo %}
+            <img src="{{ config.foto_noivo }}" 
+                 alt="Foto do Noivo" 
+                 class="test-image"
+                 onload="document.getElementById('noivo-status').innerHTML = '✅ Imagem carregada com sucesso!'; document.getElementById('noivo-status').className = 'success-msg';"
+                 onerror="document.getElementById('noivo-status').innerHTML = '❌ Erro ao carregar imagem'; document.getElementById('noivo-status').className = 'error-msg';">
+            <div id="noivo-status">⏳ Carregando...</div>
+        {% else %}
+            <div class="test-placeholder">
+                <span>💜 Placeholder Noivo</span>
+            </div>
+            <div class="success-msg">✅ Placeholder funcionando</div>
+        {% endif %}
+
+        <h2>Teste 2: Imagem da Noiva</h2>
+        {% if config.foto_noiva %}
+            <img src="{{ config.foto_noiva }}" 
+                 alt="Foto da Noiva" 
+                 class="test-image"
+                 onload="document.getElementById('noiva-status').innerHTML = '✅ Imagem carregada com sucesso!'; document.getElementById('noiva-status').className = 'success-msg';"
+                 onerror="document.getElementById('noiva-status').innerHTML = '❌ Erro ao carregar imagem'; document.getElementById('noiva-status').className = 'error-msg';">
+            <div id="noiva-status">⏳ Carregando...</div>
+        {% else %}
+            <div class="test-placeholder">
+                <span>💕 Placeholder Noiva</span>
+            </div>
+            <div class="success-msg">✅ Placeholder funcionando</div>
+        {% endif %}
+
+        <h2>Teste 3: Imagem do Casal</h2>
+        {% if config.foto_casal %}
+            <img src="{{ config.foto_casal }}" 
+                 alt="Foto do Casal" 
+                 class="test-image"
+                 onload="document.getElementById('casal-status').innerHTML = '✅ Imagem carregada com sucesso!'; document.getElementById('casal-status').className = 'success-msg';"
+                 onerror="document.getElementById('casal-status').innerHTML = '❌ Erro ao carregar imagem'; document.getElementById('casal-status').className = 'error-msg';">
+            <div id="casal-status">⏳ Carregando...</div>
+        {% else %}
+            <div class="test-placeholder">
+                <span>💑 Placeholder Casal</span>
+            </div>
+            <div class="success-msg">✅ Placeholder funcionando</div>
+        {% endif %}
+
+        <div class="info-box">
+            <h3>📋 Como testar:</h3>
+            <ol>
+                <li>Vá para <a href="/admin/dashboard">/admin/dashboard</a></li>
+                <li>Configure uma foto com link direto (ex: https://picsum.photos/300/300)</li>
+                <li>Salve as configurações</li>
+                <li>Recarregue esta página</li>
+                <li>Veja se a imagem aparece</li>
+            </ol>
+        </div>
+
+        <p><a href="/o-casal">← Voltar para página O Casal</a></p>
+        <p><a href="/">← Voltar para página inicial</a></p>
+    </div>
+</body>
+</html>

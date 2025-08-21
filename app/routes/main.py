@@ -46,6 +46,18 @@ def o_casal():
     
     return render_template('o_casal.html', config=config)
 
+@main.route('/teste-imagens')
+def teste_imagens():
+    """Página de teste para verificar se as imagens estão funcionando"""
+    config = ConfiguracaoSite.query.first()
+    if not config:
+        config = ConfiguracaoSite(
+            nome_noiva='Iara',
+            nome_noivo='Samuel'
+        )
+    
+    return render_template('teste_imagens.html', config=config)
+
 @main.route('/local')
 @main.route('/local-teste')  # Rota adicional para teste
 def local():
