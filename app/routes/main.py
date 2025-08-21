@@ -77,6 +77,86 @@ def o_casal():
     
     return render_template('o_casal.html', config=config)
 
+@main.route('/teste-upload')
+def teste_upload():
+    """Página de teste para upload de imagens"""
+    return '''
+    <!DOCTYPE html>
+    <html lang="pt-BR">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Teste Upload</title>
+        <style>
+            body { font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; }
+            .upload-area { border: 2px dashed #ccc; padding: 30px; text-align: center; margin: 20px 0; }
+            .upload-area:hover { border-color: #B91C1C; }
+            .btn { background: #B91C1C; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; }
+            .result { margin: 20px 0; padding: 15px; border-radius: 5px; display: none; }
+            .success { background: #d4edda; color: #155724; }
+            .error { background: #f8d7da; color: #721c24; }
+        </style>
+    </head>
+    <body>
+        <h1>🧪 Teste de Upload</h1>
+        <form id="uploadForm">
+            <div class="upload-area">
+                <input type="file" id="foto" name="foto" accept="image/*" required>
+                <select id="tipo" name="tipo">
+                    <option value="casal">Casal</option>
+                    <option value="noiva">Noiva</option>
+                    <option value="noivo">Noivo</option>
+                </select>
+                <br><br>
+                <button type="submit" class="btn">Upload</button>
+            </div>
+        </form>
+        <div id="result" class="result"></div>
+        
+        <script>
+            document.getElementById('uploadForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const formData = new FormData();
+                const foto = document.getElementById('foto').files[0];
+                const tipo = document.getElementById('tipo').value;
+                
+                if (!foto) {
+                    showResult('Selecione uma imagem', 'error');
+                    return;
+                }
+                
+                formData.append('foto', foto);
+                formData.append('tipo', tipo);
+                
+                fetch('/admin/teste-upload-foto', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        showResult('Upload realizado com sucesso! URL: ' + data.url, 'success');
+                    } else {
+                        showResult('Erro: ' + data.error, 'error');
+                    }
+                })
+                .catch(error => {
+                    showResult('Erro de conexão: ' + error.message, 'error');
+                });
+            });
+            
+            function showResult(message, type) {
+                const result = document.getElementById('result');
+                result.innerHTML = message;
+                result.className = 'result ' + type;
+                result.style.display = 'block';
+            }
+        </script>
+    </body>
+    </html>
+    '''
+
 @main.route('/teste-imagens')
 def teste_imagens():
     """Página de teste para verificar se as imagens estão funcionando"""

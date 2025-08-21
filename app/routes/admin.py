@@ -5,9 +5,43 @@ from app import login_manager
 from datetime import datetime
 import os
 from werkzeug.utils import secure_filename
-from app.routes.main import process_image, allowed_file
+from PIL import Image
+from io import BytesIO
 
 admin = Blueprint('admin', __name__)
+
+# Configurações para upload de imagens
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'webp'}
+
+def allowed_file(filename):
+    """Verifica se o arquivo tem uma extensão permitida"""
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+def process_image(file):
+    """Processa a imagem para otimização"""
+    try:
+        # Abrir imagem
+        image = Image.open(file.stream)
+        
+        # Converter para RGB se necessário
+        if image.mode in ('RGBA', 'P'):
+            image = image.convert('RGB')
+        
+        # Redimensionar se muito grande
+        max_size = (800, 600)
+        if image.size[0] > max_size[0] or image.size[1] > max_size[1]:
+            image.thumbnail(max_size, Image.Resampling.LANCZOS)
+        
+        # Salvar em buffer
+        buffer = BytesIO()
+        image.save(buffer, format='JPEG', quality=85, optimize=True)
+        buffer.seek(0)
+        
+        return buffer
+        
+    except Exception as e:
+        raise ValueError(f"Erro ao processar imagem: {str(e)}")
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -377,6 +411,62 @@ def upload_foto():
                 'success': True,
                 'url': image_url,
                 'message': 'Foto enviada com sucesso!'
+            })
+            
+        except Exception as e:
+            return jsonify({'success': False, 'error': f'Erro ao processar imagem: {str(e)}'})
+    
+    except Exception as e:
+        return jsonify({'success': False, 'error': f'Erro interno: {str(e)}'})
+
+@admin.route('/teste-upload-foto', methods=['POST'])
+def teste_upload_foto():
+    """Versão de teste do upload (sem autenticação)"""
+    try:
+        if 'foto' not in request.files:
+            return jsonify({'success': False, 'error': 'Nenhum arquivo enviado'})
+        
+        file = request.files['foto']
+        tipo = request.form.get('tipo')  # casal, noiva, noivo
+        
+        if file.filename == '':
+            return jsonify({'success': False, 'error': 'Nenhum arquivo selecionado'})
+        
+        if not allowed_file(file.filename):
+            return jsonify({'success': False, 'error': 'Tipo de arquivo não permitido'})
+        
+        if not tipo or tipo not in ['casal', 'noiva', 'noivo']:
+            return jsonify({'success': False, 'error': 'Tipo de foto inválido'})
+        
+        # Processar a imagem
+        try:
+            processed_image = process_image(file)
+            filename = secure_filename(file.filename)
+            
+            # Salvar no banco de dados
+            config = ConfiguracaoSite.query.first()
+            if not config:
+                config = ConfiguracaoSite()
+                db.session.add(config)
+            
+            # Determinar qual campo atualizar
+            blob_field = f'foto_{tipo}_blob'
+            filename_field = f'foto_{tipo}_filename'
+            mimetype_field = f'foto_{tipo}_mimetype'
+            
+            setattr(config, blob_field, processed_image.getvalue())
+            setattr(config, filename_field, filename)
+            setattr(config, mimetype_field, file.mimetype)
+            
+            db.session.commit()
+            
+            # Retornar URL da imagem
+            image_url = url_for('main.serve_image', tipo=tipo, id=config.id)
+            
+            return jsonify({
+                'success': True,
+                'url': image_url,
+                'message': 'Foto enviada com sucesso! (modo teste)'
             })
             
         except Exception as e:

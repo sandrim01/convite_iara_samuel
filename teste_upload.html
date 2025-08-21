@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teste de Upload de Imagens</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        
+        .test-container {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .upload-area {
+            border: 3px dashed #ddd;
+            border-radius: 12px;
+            padding: 40px;
+            text-align: center;
+            margin: 20px 0;
+            transition: all 0.3s ease;
+        }
+        
+        .upload-area:hover {
+            border-color: #B91C1C;
+            background: #fafafa;
+        }
+        
+        .upload-area.dragover {
+            border-color: #B91C1C;
+            background: #fff5f5;
+        }
+        
+        .file-input {
+            display: none;
+        }
+        
+        .upload-button {
+            background: #B91C1C;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px;
+        }
+        
+        .upload-button:hover {
+            background: #950f0f;
+        }
+        
+        .result {
+            margin: 20px 0;
+            padding: 15px;
+            border-radius: 8px;
+            display: none;
+        }
+        
+        .success {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+        }
+        
+        .error {
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+        }
+        
+        .preview {
+            margin: 20px 0;
+            text-align: center;
+        }
+        
+        .preview img {
+            max-width: 300px;
+            max-height: 300px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        }
+        
+        .loading {
+            display: none;
+            text-align: center;
+            margin: 20px 0;
+        }
+        
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid #f0f0f0;
+            border-top: 4px solid #B91C1C;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 10px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>🧪 Teste de Upload de Imagens</h1>
+        <p>Use esta página para testar o sistema de upload de imagens do convite.</p>
+        
+        <div class="upload-area" id="uploadArea">
+            <h3>📷 Arraste uma imagem aqui ou clique para selecionar</h3>
+            <p>Formatos aceitos: JPEG, PNG, GIF, WebP (máximo 5MB)</p>
+            <button type="button" class="upload-button" onclick="document.getElementById('fileInput').click()">
+                Selecionar Arquivo
+            </button>
+            <input type="file" id="fileInput" class="file-input" accept="image/*" onchange="handleFileSelect(this.files[0])">
+        </div>
+        
+        <div>
+            <label for="tipoSelect">Tipo de foto:</label>
+            <select id="tipoSelect" style="padding: 8px; margin: 10px; border-radius: 4px; border: 1px solid #ddd;">
+                <option value="casal">Foto do Casal</option>
+                <option value="noiva">Foto da Noiva</option>
+                <option value="noivo">Foto do Noivo</option>
+            </select>
+        </div>
+        
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <p>Enviando imagem...</p>
+        </div>
+        
+        <div class="result" id="result"></div>
+        
+        <div class="preview" id="preview"></div>
+        
+        <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #eee;">
+            <h3>📋 Status do Sistema</h3>
+            <div id="systemStatus">Verificando...</div>
+        </div>
+    </div>
+
+    <script>
+        // Verificar status do sistema
+        function checkSystemStatus() {
+            const statusDiv = document.getElementById('systemStatus');
+            
+            // Testar se a rota de upload existe
+            fetch('/admin/upload-foto', {
+                method: 'GET'
+            })
+            .then(response => {
+                if (response.status === 405) {
+                    statusDiv.innerHTML = '✅ Sistema funcionando (rota upload existe)';
+                    statusDiv.style.color = 'green';
+                } else if (response.status === 302) {
+                    statusDiv.innerHTML = '✅ Sistema funcionando (redirecionamento para login)';
+                    statusDiv.style.color = 'green';
+                } else {
+                    statusDiv.innerHTML = `⚠️ Status inesperado: ${response.status}`;
+                    statusDiv.style.color = 'orange';
+                }
+            })
+            .catch(error => {
+                statusDiv.innerHTML = '❌ Erro ao conectar com servidor';
+                statusDiv.style.color = 'red';
+            });
+        }
+        
+        // Drag and drop
+        const uploadArea = document.getElementById('uploadArea');
+        
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.classList.add('dragover');
+        });
+        
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.classList.remove('dragover');
+        });
+        
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.classList.remove('dragover');
+            
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                handleFileSelect(files[0]);
+            }
+        });
+        
+        function handleFileSelect(file) {
+            if (!file) return;
+            
+            // Validações
+            const maxSize = 5 * 1024 * 1024; // 5MB
+            const allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+            
+            if (file.size > maxSize) {
+                showResult('Arquivo muito grande! Máximo 5MB.', 'error');
+                return;
+            }
+            
+            if (!allowedTypes.includes(file.type)) {
+                showResult('Tipo de arquivo não suportado!', 'error');
+                return;
+            }
+            
+            // Preview local
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                document.getElementById('preview').innerHTML = 
+                    `<h4>Preview:</h4><img src="${e.target.result}" alt="Preview">`;
+            };
+            reader.readAsDataURL(file);
+            
+            // Upload
+            uploadFile(file);
+        }
+        
+        function uploadFile(file) {
+            const loading = document.getElementById('loading');
+            const result = document.getElementById('result');
+            const tipo = document.getElementById('tipoSelect').value;
+            
+            loading.style.display = 'block';
+            result.style.display = 'none';
+            
+            const formData = new FormData();
+            formData.append('foto', file);
+            formData.append('tipo', tipo);
+            
+            fetch('/admin/upload-foto', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                loading.style.display = 'none';
+                
+                if (data.success) {
+                    showResult(`✅ Upload realizado com sucesso!<br>URL: ${data.url}`, 'success');
+                    
+                    // Mostrar imagem salva
+                    setTimeout(() => {
+                        document.getElementById('preview').innerHTML += 
+                            `<h4>Imagem Salva:</h4><img src="${data.url}" alt="Imagem salva">`;
+                    }, 1000);
+                } else {
+                    showResult(`❌ Erro: ${data.error}`, 'error');
+                }
+            })
+            .catch(error => {
+                loading.style.display = 'none';
+                showResult(`❌ Erro de conexão: ${error.message}`, 'error');
+            });
+        }
+        
+        function showResult(message, type) {
+            const result = document.getElementById('result');
+            result.innerHTML = message;
+            result.className = `result ${type}`;
+            result.style.display = 'block';
+        }
+        
+        // Verificar status na inicialização
+        checkSystemStatus();
+    </script>
+</body>
+</html>
