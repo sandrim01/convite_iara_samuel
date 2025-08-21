@@ -92,6 +92,37 @@
                     <div class="stat-label">Presentes Escolhidos</div>
                 </div>
             </div>
+            
+            <!-- Novos cards de pessoas -->
+            <div class="stat-card">
+                <div class="stat-icon total-people">
+                    <i class="fas fa-user-friends"></i>
+                </div>
+                <div class="stat-content">
+                    <div class="stat-number">{{ stats.total_pessoas }}</div>
+                    <div class="stat-label">Total de Pessoas</div>
+                </div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-icon ceremony">
+                    <i class="fas fa-church"></i>
+                </div>
+                <div class="stat-content">
+                    <div class="stat-number">{{ stats.pessoas_cerimonia }}</div>
+                    <div class="stat-label">Pessoas na Cerimônia</div>
+                </div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-icon reception-people">
+                    <i class="fas fa-cocktail"></i>
+                </div>
+                <div class="stat-content">
+                    <div class="stat-number">{{ stats.pessoas_recepcao }}</div>
+                    <div class="stat-label">Pessoas na Recepção</div>
+                </div>
+            </div>
         </div>
     </div>
 </section>
@@ -371,10 +402,9 @@ setInterval(function() {
     location.reload();
 }, 300000);
 
-// Real-time stats update (disabled - admin.api_stats route not implemented)
-/*
+// Real-time stats update
 function updateStats() {
-    fetch('/admin/api_stats') // URL hardcoded instead of url_for
+    fetch('/admin/api/stats')
         .then(response => response.json())
         .then(data => {
             // Update stat numbers
@@ -382,21 +412,26 @@ function updateStats() {
                 switch(index) {
                     case 0: el.textContent = data.total_convidados; break;
                     case 1: el.textContent = data.confirmados; break;
-                    case 2: el.textContent = data.nao_confirmados; break;
-                    case 3: el.textContent = data.presentes_escolhidos; break;
+                    case 2: el.textContent = data.liberados_recepcao; break;
+                    case 3: el.textContent = data.nao_confirmados; break;
+                    case 4: el.textContent = data.presentes_escolhidos; break;
+                    case 5: el.textContent = data.total_pessoas; break;
+                    case 6: el.textContent = data.pessoas_cerimonia; break;
+                    case 7: el.textContent = data.pessoas_recepcao; break;
                 }
             });
             
-            // Update chart
-            rsvpChart.data.datasets[0].data = [data.confirmados, data.nao_confirmados, data.pendentes];
-            rsvpChart.update();
+            // Update chart if it exists
+            if (typeof rsvpChart !== 'undefined') {
+                rsvpChart.data.datasets[0].data = [data.confirmados, data.nao_confirmados];
+                rsvpChart.update();
+            }
         })
         .catch(error => console.error('Error updating stats:', error));
 }
 
 // Update stats every minute
 setInterval(updateStats, 60000);
-*/
 </script>
 
 <style>
@@ -478,6 +513,10 @@ setInterval(updateStats, 60000);
 .stat-icon.confirmed { background: linear-gradient(135deg, #4CAF50, #45a049); }
 .stat-icon.declined { background: linear-gradient(135deg, #f44336, #e53935); }
 .stat-icon.gifts { background: linear-gradient(135deg, var(--primary-color), var(--accent-color)); }
+.stat-icon.reception { background: linear-gradient(135deg, #FF9800, #F57C00); }
+.stat-icon.total-people { background: linear-gradient(135deg, #9C27B0, #7B1FA2); }
+.stat-icon.ceremony { background: linear-gradient(135deg, #795548, #5D4037); }
+.stat-icon.reception-people { background: linear-gradient(135deg, #E91E63, #C2185B); }
 
 .stat-number {
     font-size: 2rem;

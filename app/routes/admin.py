@@ -89,6 +89,16 @@ def dashboard():
     total_presentes = Presente.query.count()
     presentes_escolhidos = EscolhaPresente.query.count()
     
+    # Cálculos de pessoas (convidados + acompanhantes)
+    # Total de pessoas confirmadas (soma dos acompanhantes dos confirmados + os próprios convidados confirmados)
+    convidados_confirmados = Convidado.query.filter_by(confirmacao=True).all()
+    total_pessoas = sum(1 + (c.numero_acompanhantes or 0) for c in convidados_confirmados)
+    pessoas_cerimonia = total_pessoas  # Todos os confirmados vão à cerimônia
+    
+    # Pessoas na recepção (apenas os liberados para recepção)
+    convidados_recepcao = Convidado.query.filter_by(confirmacao=True, liberado_recepcao=True).all()
+    pessoas_recepcao = sum(1 + (c.numero_acompanhantes or 0) for c in convidados_recepcao)
+    
     # Convidados recentes
     convidados_recentes = Convidado.query.order_by(Convidado.created_at.desc()).limit(5).all()
     
@@ -111,7 +121,10 @@ def dashboard():
         'liberados_recepcao': liberados_recepcao,
         'total_presentes': total_presentes,
         'presentes_escolhidos': presentes_escolhidos,
-        'nao_confirmados': total_convidados - confirmados
+        'nao_confirmados': total_convidados - confirmados,
+        'total_pessoas': total_pessoas,
+        'pessoas_cerimonia': pessoas_cerimonia,
+        'pessoas_recepcao': pessoas_recepcao
     }
     
     return render_template('admin/dashboard.html', 
@@ -476,6 +489,39 @@ def teste_upload_foto():
         return jsonify({'success': False, 'error': f'Erro interno: {str(e)}'})
 
 # ===== ROTAS PARA GERENCIAMENTO DE CONVIDADOS =====
+
+@admin.route('/api/stats')
+@login_required
+def api_stats():
+    """API para atualizar estatísticas do dashboard"""
+    try:
+        # Estatísticas gerais
+        total_convidados = Convidado.query.count()
+        confirmados = Convidado.query.filter_by(confirmacao=True).count()
+        liberados_recepcao = Convidado.query.filter_by(liberado_recepcao=True).count()
+        presentes_escolhidos = EscolhaPresente.query.count()
+        
+        # Cálculos de pessoas (convidados + acompanhantes)
+        convidados_confirmados = Convidado.query.filter_by(confirmacao=True).all()
+        total_pessoas = sum(1 + (c.numero_acompanhantes or 0) for c in convidados_confirmados)
+        pessoas_cerimonia = total_pessoas
+        
+        convidados_recepcao = Convidado.query.filter_by(confirmacao=True, liberado_recepcao=True).all()
+        pessoas_recepcao = sum(1 + (c.numero_acompanhantes or 0) for c in convidados_recepcao)
+        
+        return jsonify({
+            'total_convidados': total_convidados,
+            'confirmados': confirmados,
+            'liberados_recepcao': liberados_recepcao,
+            'nao_confirmados': total_convidados - confirmados,
+            'presentes_escolhidos': presentes_escolhidos,
+            'total_pessoas': total_pessoas,
+            'pessoas_cerimonia': pessoas_cerimonia,
+            'pessoas_recepcao': pessoas_recepcao
+        })
+        
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
 
 @admin.route('/api/convidados')
 @login_required
