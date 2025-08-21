@@ -58,14 +58,14 @@
         
         <div class="info-box">
             <h3>Configurações Atuais:</h3>
-            <p><strong>Foto Casal:</strong> {{ config.foto_casal or '(vazio)' }}</p>
-            <p><strong>Foto Noiva:</strong> {{ config.foto_noiva or '(vazio)' }}</p>
-            <p><strong>Foto Noivo:</strong> {{ config.foto_noivo or '(vazio)' }}</p>
+            <p><strong>Foto Casal:</strong> {{ config.foto_casal or '(vazio)' }}{% if config.foto_casal_blob %} + Upload no banco{% endif %}</p>
+            <p><strong>Foto Noiva:</strong> {{ config.foto_noiva or '(vazio)' }}{% if config.foto_noiva_blob %} + Upload no banco{% endif %}</p>
+            <p><strong>Foto Noivo:</strong> {{ config.foto_noivo or '(vazio)' }}{% if config.foto_noivo_blob %} + Upload no banco{% endif %}</p>
         </div>
 
         <h2>Teste 1: Imagem do Noivo</h2>
-        {% if config.foto_noivo %}
-            <img src="{{ config.foto_noivo }}" 
+        {% if config.has_foto('noivo') %}
+            <img src="{{ config.get_foto_url('noivo') }}" 
                  alt="Foto do Noivo" 
                  class="test-image"
                  onload="document.getElementById('noivo-status').innerHTML = '✅ Imagem carregada com sucesso!'; document.getElementById('noivo-status').className = 'success-msg';"
@@ -79,8 +79,8 @@
         {% endif %}
 
         <h2>Teste 2: Imagem da Noiva</h2>
-        {% if config.foto_noiva %}
-            <img src="{{ config.foto_noiva }}" 
+        {% if config.has_foto('noiva') %}
+            <img src="{{ config.get_foto_url('noiva') }}" 
                  alt="Foto da Noiva" 
                  class="test-image"
                  onload="document.getElementById('noiva-status').innerHTML = '✅ Imagem carregada com sucesso!'; document.getElementById('noiva-status').className = 'success-msg';"
@@ -94,8 +94,8 @@
         {% endif %}
 
         <h2>Teste 3: Imagem do Casal</h2>
-        {% if config.foto_casal %}
-            <img src="{{ config.foto_casal }}" 
+        {% if config.has_foto('casal') %}
+            <img src="{{ config.get_foto_url('casal') }}" 
                  alt="Foto do Casal" 
                  class="test-image"
                  onload="document.getElementById('casal-status').innerHTML = '✅ Imagem carregada com sucesso!'; document.getElementById('casal-status').className = 'success-msg';"

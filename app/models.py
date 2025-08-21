@@ -40,20 +40,29 @@ class ConfiguracaoSite(db.Model):
     horario_festa = db.Column(db.Time, nullable=True)
     mensagem_principal = db.Column(db.Text, default='Criamos esse site para compartilhar com vocês os detalhes da organização do nosso casamento. ♥')
     cor_tema = db.Column(db.String(7), default='#d4a574')  # Rosa/dourado
-    foto_casal = db.Column(db.String(500), nullable=True)
+    foto_casal = db.Column(db.String(500), nullable=True)  # URL (compatibilidade)
+    foto_casal_blob = db.Column(db.LargeBinary, nullable=True)  # Imagem armazenada
+    foto_casal_filename = db.Column(db.String(255), nullable=True)  # Nome original
+    foto_casal_mimetype = db.Column(db.String(100), nullable=True)  # Tipo MIME
     
     # Campos do casal
     descricao_noiva = db.Column(db.Text, nullable=True)
     aniversario_noiva = db.Column(db.String(50), nullable=True)
     paixoes_noiva = db.Column(db.String(200), nullable=True)
     frase_noiva = db.Column(db.String(200), nullable=True)
-    foto_noiva = db.Column(db.String(500), nullable=True)
+    foto_noiva = db.Column(db.String(500), nullable=True)  # URL (compatibilidade)
+    foto_noiva_blob = db.Column(db.LargeBinary, nullable=True)  # Imagem armazenada
+    foto_noiva_filename = db.Column(db.String(255), nullable=True)  # Nome original
+    foto_noiva_mimetype = db.Column(db.String(100), nullable=True)  # Tipo MIME
     
     descricao_noivo = db.Column(db.Text, nullable=True)
     aniversario_noivo = db.Column(db.String(50), nullable=True)
     paixoes_noivo = db.Column(db.String(200), nullable=True)
     frase_noivo = db.Column(db.String(200), nullable=True)
-    foto_noivo = db.Column(db.String(500), nullable=True)
+    foto_noivo = db.Column(db.String(500), nullable=True)  # URL (compatibilidade)
+    foto_noivo_blob = db.Column(db.LargeBinary, nullable=True)  # Imagem armazenada
+    foto_noivo_filename = db.Column(db.String(255), nullable=True)  # Nome original
+    foto_noivo_mimetype = db.Column(db.String(100), nullable=True)  # Tipo MIME
     
     # História de amor - opcionais
     mostrar_historia = db.Column(db.Boolean, default=True)
@@ -67,6 +76,26 @@ class ConfiguracaoSite(db.Model):
     grande_dia_texto = db.Column(db.Text, nullable=True)
     
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    
+    def get_foto_url(self, tipo):
+        """Retorna a URL da foto (upload ou link externo)"""
+        if tipo == 'casal':
+            return f'/image/casal/{self.id}' if self.foto_casal_blob else self.foto_casal
+        elif tipo == 'noiva':
+            return f'/image/noiva/{self.id}' if self.foto_noiva_blob else self.foto_noiva
+        elif tipo == 'noivo':
+            return f'/image/noivo/{self.id}' if self.foto_noivo_blob else self.foto_noivo
+        return None
+    
+    def has_foto(self, tipo):
+        """Verifica se tem foto (upload ou link)"""
+        if tipo == 'casal':
+            return self.foto_casal_blob is not None or bool(self.foto_casal)
+        elif tipo == 'noiva':
+            return self.foto_noiva_blob is not None or bool(self.foto_noiva)
+        elif tipo == 'noivo':
+            return self.foto_noivo_blob is not None or bool(self.foto_noivo)
+        return False
 
 class Convidado(db.Model):
     """Modelo para convidados"""

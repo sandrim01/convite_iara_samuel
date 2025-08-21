@@ -1,8 +1,11 @@
-from flask import Blueprint, render_template, redirect, url_for, flash, request
+from flask import Blueprint, render_template, redirect, url_for, flash, request, jsonify
 from flask_login import login_user, logout_user, login_required, current_user
 from app.models import db, Admin, ConfiguracaoSite, Convidado, Presente, EscolhaPresente
 from app import login_manager
 from datetime import datetime
+import os
+from werkzeug.utils import secure_filename
+from app.routes.main import process_image, allowed_file
 
 admin = Blueprint('admin', __name__)
 
@@ -324,3 +327,60 @@ def processar_configuracoes():
     except Exception as e:
         flash('Erro ao atualizar configurações. Tente novamente.', 'error')
         return redirect(url_for('admin.dashboard'))
+
+@admin.route('/upload-foto', methods=['POST'])
+@login_required
+def upload_foto():
+    """Upload de fotos dos noivos"""
+    try:
+        if 'foto' not in request.files:
+            return jsonify({'success': False, 'error': 'Nenhum arquivo enviado'})
+        
+        file = request.files['foto']
+        tipo = request.form.get('tipo')  # casal, noiva, noivo
+        
+        if file.filename == '':
+            return jsonify({'success': False, 'error': 'Nenhum arquivo selecionado'})
+        
+        if not allowed_file(file.filename):
+            return jsonify({'success': False, 'error': 'Tipo de arquivo não permitido'})
+        
+        if not tipo or tipo not in ['casal', 'noiva', 'noivo']:
+            return jsonify({'success': False, 'error': 'Tipo de foto inválido'})
+        
+        # Processar a imagem
+        try:
+            processed_image = process_image(file)
+            filename = secure_filename(file.filename)
+            
+            # Salvar no banco de dados
+            config = ConfiguracaoSite.query.first()
+            if not config:
+                config = ConfiguracaoSite()
+                db.session.add(config)
+            
+            # Determinar qual campo atualizar
+            blob_field = f'foto_{tipo}_blob'
+            filename_field = f'foto_{tipo}_filename'
+            mimetype_field = f'foto_{tipo}_mimetype'
+            
+            setattr(config, blob_field, processed_image.getvalue())
+            setattr(config, filename_field, filename)
+            setattr(config, mimetype_field, file.mimetype)
+            
+            db.session.commit()
+            
+            # Retornar URL da imagem
+            image_url = url_for('main.serve_image', tipo=tipo, id=config.id)
+            
+            return jsonify({
+                'success': True,
+                'url': image_url,
+                'message': 'Foto enviada com sucesso!'
+            })
+            
+        except Exception as e:
+            return jsonify({'success': False, 'error': f'Erro ao processar imagem: {str(e)}'})
+    
+    except Exception as e:
+        return jsonify({'success': False, 'error': f'Erro interno: {str(e)}'})

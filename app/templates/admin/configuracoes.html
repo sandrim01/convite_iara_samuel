@@ -124,26 +124,93 @@
                     <small class="form-text">Esta mensagem aparece na página inicial do convite</small>
                 </div>
                 
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="cor_tema">Cor do Tema</label>
-                        <div class="color-input-group">
-                            <input type="color" id="cor_tema" name="cor_tema" 
-                                   value="{{ config.cor_tema or '#B91C1C' }}" 
-                                   class="form-control color-picker">
-                            <input type="text" id="cor_tema_text" 
-                                   value="{{ config.cor_tema or '#B91C1C' }}" 
-                                   class="form-control color-text" readonly>
-                        </div>
-                        <small class="form-text">Cor principal usada nos destaques do site</small>
+                <div class="form-group">
+                    <label for="cor_tema">Cor do Tema</label>
+                    <div class="color-input-group">
+                        <input type="color" id="cor_tema" name="cor_tema" 
+                               value="{{ config.cor_tema or '#B91C1C' }}" 
+                               class="form-control color-picker">
+                        <input type="text" id="cor_tema_text" 
+                               value="{{ config.cor_tema or '#B91C1C' }}" 
+                               class="form-control color-text" readonly>
                     </div>
-                    
-                    <div class="form-group">
-                        <label for="foto_casal">URL da Foto do Casal</label>
-                        <input type="url" id="foto_casal" name="foto_casal" 
-                               value="{{ config.foto_casal or '' }}" 
-                               class="form-control" placeholder="https://exemplo.com/foto.jpg">
-                        <small class="form-text">Link para a foto principal do casal</small>
+                    <small class="form-text">Cor principal usada nos destaques do site</small>
+                </div>
+            </div>
+
+            <!-- Fotos dos Noivos -->
+            <div class="config-section">
+                <h2 class="section-title">
+                    <i class="fas fa-camera"></i>
+                    Fotos dos Noivos
+                </h2>
+                <p class="section-description">Faça upload das fotos que aparecerão no site</p>
+                
+                <div class="photos-grid">
+                    <!-- Foto do Casal -->
+                    <div class="photo-upload-card">
+                        <h3>Foto do Casal</h3>
+                        <div class="photo-preview">
+                            {% if config.has_foto('casal') %}
+                                <img src="{{ config.get_foto_url('casal') }}" alt="Foto do Casal" class="current-photo">
+                                <div class="photo-overlay">
+                                    <button type="button" class="btn-change-photo" onclick="changePhoto('casal')">
+                                        <i class="fas fa-camera"></i>
+                                        Trocar Foto
+                                    </button>
+                                </div>
+                            {% else %}
+                                <div class="photo-placeholder" onclick="changePhoto('casal')">
+                                    <i class="fas fa-heart"></i>
+                                    <span>Clique para adicionar</span>
+                                </div>
+                            {% endif %}
+                        </div>
+                        <input type="file" id="upload-casal" accept="image/*" style="display: none;" onchange="handleFileSelect(this, 'casal')">
+                    </div>
+
+                    <!-- Foto da Noiva -->
+                    <div class="photo-upload-card">
+                        <h3>Foto da Noiva</h3>
+                        <div class="photo-preview">
+                            {% if config.has_foto('noiva') %}
+                                <img src="{{ config.get_foto_url('noiva') }}" alt="Foto da Noiva" class="current-photo">
+                                <div class="photo-overlay">
+                                    <button type="button" class="btn-change-photo" onclick="changePhoto('noiva')">
+                                        <i class="fas fa-camera"></i>
+                                        Trocar Foto
+                                    </button>
+                                </div>
+                            {% else %}
+                                <div class="photo-placeholder" onclick="changePhoto('noiva')">
+                                    <i class="fas fa-user"></i>
+                                    <span>Clique para adicionar</span>
+                                </div>
+                            {% endif %}
+                        </div>
+                        <input type="file" id="upload-noiva" accept="image/*" style="display: none;" onchange="handleFileSelect(this, 'noiva')">
+                    </div>
+
+                    <!-- Foto do Noivo -->
+                    <div class="photo-upload-card">
+                        <h3>Foto do Noivo</h3>
+                        <div class="photo-preview">
+                            {% if config.has_foto('noivo') %}
+                                <img src="{{ config.get_foto_url('noivo') }}" alt="Foto do Noivo" class="current-photo">
+                                <div class="photo-overlay">
+                                    <button type="button" class="btn-change-photo" onclick="changePhoto('noivo')">
+                                        <i class="fas fa-camera"></i>
+                                        Trocar Foto
+                                    </button>
+                                </div>
+                            {% else %}
+                                <div class="photo-placeholder" onclick="changePhoto('noivo')">
+                                    <i class="fas fa-user"></i>
+                                    <span>Clique para adicionar</span>
+                                </div>
+                            {% endif %}
+                        </div>
+                        <input type="file" id="upload-noivo" accept="image/*" style="display: none;" onchange="handleFileSelect(this, 'noivo')">
                     </div>
                 </div>
             </div>
@@ -189,7 +256,255 @@
 {% endblock %}
 
 {% block extra_scripts %}
+<style>
+/* Estilos para upload de fotos */
+.photos-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+    margin-top: 20px;
+}
+
+.photo-upload-card {
+    border: 2px dashed #ddd;
+    border-radius: 12px;
+    padding: 20px;
+    text-align: center;
+    background: #f9f9f9;
+    transition: all 0.3s ease;
+}
+
+.photo-upload-card:hover {
+    border-color: var(--primary-color, #B91C1C);
+    background: #fff;
+}
+
+.photo-upload-card h3 {
+    margin: 0 0 15px 0;
+    color: #333;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.photo-preview {
+    position: relative;
+    width: 100%;
+    height: 200px;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #f0f0f0;
+}
+
+.current-photo {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 8px;
+}
+
+.photo-placeholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    cursor: pointer;
+    color: #666;
+    transition: color 0.3s ease;
+}
+
+.photo-placeholder:hover {
+    color: var(--primary-color, #B91C1C);
+}
+
+.photo-placeholder i {
+    font-size: 32px;
+    margin-bottom: 10px;
+}
+
+.photo-placeholder span {
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.photo-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.photo-preview:hover .photo-overlay {
+    opacity: 1;
+}
+
+.btn-change-photo {
+    background: var(--primary-color, #B91C1C);
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-size: 14px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: background 0.3s ease;
+}
+
+.btn-change-photo:hover {
+    background: #950f0f;
+}
+
+.section-description {
+    color: #666;
+    font-size: 14px;
+    margin: 0;
+}
+
+/* Loading overlay */
+.upload-loading {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.9);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+}
+
+.upload-loading .spinner {
+    width: 40px;
+    height: 40px;
+    border: 4px solid #f0f0f0;
+    border-top: 4px solid var(--primary-color, #B91C1C);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+</style>
+
 <script>
+// Funções para upload de fotos
+function changePhoto(tipo) {
+    const fileInput = document.getElementById('upload-' + tipo);
+    fileInput.click();
+}
+
+function handleFileSelect(input, tipo) {
+    const file = input.files[0];
+    if (!file) return;
+    
+    // Validar tipo de arquivo
+    if (!file.type.startsWith('image/')) {
+        alert('Por favor, selecione apenas arquivos de imagem.');
+        return;
+    }
+    
+    // Validar tamanho (5MB max)
+    if (file.size > 5 * 1024 * 1024) {
+        alert('A imagem deve ter no máximo 5MB.');
+        return;
+    }
+    
+    // Mostrar loading
+    const card = input.closest('.photo-upload-card');
+    const preview = card.querySelector('.photo-preview');
+    showUploadLoading(preview);
+    
+    // Criar FormData para upload
+    const formData = new FormData();
+    formData.append('foto', file);
+    formData.append('tipo', tipo);
+    
+    // Fazer upload via AJAX
+    fetch('/admin/upload-foto', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        hideUploadLoading(preview);
+        
+        if (data.success) {
+            // Atualizar preview
+            updatePhotoPreview(tipo, data.url);
+            showSuccessMessage('Foto enviada com sucesso!');
+        } else {
+            alert('Erro ao enviar foto: ' + data.error);
+        }
+    })
+    .catch(error => {
+        hideUploadLoading(preview);
+        alert('Erro ao enviar foto. Tente novamente.');
+        console.error('Erro:', error);
+    });
+}
+
+function showUploadLoading(container) {
+    const loading = document.createElement('div');
+    loading.className = 'upload-loading';
+    loading.innerHTML = '<div class="spinner"></div>';
+    container.appendChild(loading);
+}
+
+function hideUploadLoading(container) {
+    const loading = container.querySelector('.upload-loading');
+    if (loading) {
+        loading.remove();
+    }
+}
+
+function updatePhotoPreview(tipo, url) {
+    const card = document.querySelector('#upload-' + tipo).closest('.photo-upload-card');
+    const preview = card.querySelector('.photo-preview');
+    
+    preview.innerHTML = `
+        <img src="${url}" alt="Foto ${tipo}" class="current-photo">
+        <div class="photo-overlay">
+            <button type="button" class="btn-change-photo" onclick="changePhoto('${tipo}')">
+                <i class="fas fa-camera"></i>
+                Trocar Foto
+            </button>
+        </div>
+    `;
+}
+
+function showSuccessMessage(message) {
+    const alert = document.createElement('div');
+    alert.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: #10b981;
+        color: white;
+        padding: 15px 20px;
+        border-radius: 8px;
+        z-index: 1000;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    `;
+    alert.textContent = message;
+    document.body.appendChild(alert);
+    
+    setTimeout(() => {
+        alert.remove();
+    }, 3000);
+}
+
 // Atualizar prévia em tempo real
 document.addEventListener('DOMContentLoaded', function() {
     const nomeNoiva = document.getElementById('nome_noiva');

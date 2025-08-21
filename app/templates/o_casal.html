@@ -27,8 +27,8 @@
             <!-- Sobre a Noiva -->
             <div class="couple-card bride-card">
                 <div class="couple-photo">
-                    {% if config.foto_noiva %}
-                        <img src="{{ config.foto_noiva }}" alt="{{ config.nome_noiva or 'Noiva' }}" class="couple-img">
+                    {% if config.has_foto('noiva') %}
+                        <img src="{{ config.get_foto_url('noiva') }}" alt="{{ config.nome_noiva or 'Noiva' }}" class="couple-img">
                     {% else %}
                         <div class="photo-placeholder">
                             <i class="fas fa-heart"></i>
@@ -67,8 +67,8 @@
             <!-- Sobre o Noivo -->
             <div class="couple-card groom-card">
                 <div class="couple-photo">
-                    {% if config.foto_noivo %}
-                        <img src="{{ config.foto_noivo }}" alt="{{ config.nome_noivo or 'Noivo' }}" class="couple-img">
+                    {% if config.has_foto('noivo') %}
+                        <img src="{{ config.get_foto_url('noivo') }}" alt="{{ config.nome_noivo or 'Noivo' }}" class="couple-img">
                     {% else %}
                         <div class="photo-placeholder">
                             <i class="fas fa-heart"></i>

@@ -1,8 +1,39 @@
-from flask import Blueprint, render_template, request, redirect, url_for, flash, jsonify
+from flask import Blueprint, render_template, request, redirect, url_for, flash, jsonify, send_file, abort
 from app.models import db, ConfiguracaoSite, Convidado, Presente, EscolhaPresente
 from datetime import datetime
+from io import BytesIO
+from PIL import Image
+import os
 
 main = Blueprint('main', __name__)
+
+def process_image(file_data, max_size=(800, 800), quality=85):
+    """Processa e redimensiona uma imagem"""
+    try:
+        # Abrir a imagem
+        image = Image.open(BytesIO(file_data))
+        
+        # Converter para RGB se necessário (para JPEG)
+        if image.mode in ('RGBA', 'LA', 'P'):
+            image = image.convert('RGB')
+        
+        # Redimensionar mantendo proporção
+        image.thumbnail(max_size, Image.Resampling.LANCZOS)
+        
+        # Salvar em bytes
+        output = BytesIO()
+        image.save(output, format='JPEG', quality=quality, optimize=True)
+        output.seek(0)
+        
+        return output.getvalue()
+    except Exception as e:
+        print(f"Erro ao processar imagem: {e}")
+        return None
+
+def allowed_file(filename):
+    """Verifica se o arquivo é uma imagem válida"""
+    ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'webp'}
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 @main.route('/')
 def index():
@@ -57,6 +88,36 @@ def teste_imagens():
         )
     
     return render_template('teste_imagens.html', config=config)
+
+@main.route('/image/<tipo>/<int:config_id>')
+def serve_image(tipo, config_id):
+    """Serve imagens armazenadas no banco de dados"""
+    config = ConfiguracaoSite.query.get_or_404(config_id)
+    
+    if tipo == 'casal':
+        image_data = config.foto_casal_blob
+        mimetype = config.foto_casal_mimetype or 'image/jpeg'
+        filename = config.foto_casal_filename or 'casal.jpg'
+    elif tipo == 'noiva':
+        image_data = config.foto_noiva_blob
+        mimetype = config.foto_noiva_mimetype or 'image/jpeg'
+        filename = config.foto_noiva_filename or 'noiva.jpg'
+    elif tipo == 'noivo':
+        image_data = config.foto_noivo_blob
+        mimetype = config.foto_noivo_mimetype or 'image/jpeg'
+        filename = config.foto_noivo_filename or 'noivo.jpg'
+    else:
+        abort(404)
+    
+    if not image_data:
+        abort(404)
+    
+    return send_file(
+        BytesIO(image_data),
+        mimetype=mimetype,
+        as_attachment=False,
+        download_name=filename
+    )
 
 @main.route('/local')
 @main.route('/local-teste')  # Rota adicional para teste
