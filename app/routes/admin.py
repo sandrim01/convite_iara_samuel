@@ -258,6 +258,7 @@ def processar_configuracoes():
         if not config:
             config = ConfiguracaoSite()
         
+        # Dados básicos do casal
         config.nome_noiva = request.form.get('nome_noiva')
         config.nome_noivo = request.form.get('nome_noivo')
         
@@ -275,13 +276,44 @@ def processar_configuracoes():
         if horario_festa_str:
             config.horario_festa = datetime.strptime(horario_festa_str, '%H:%M').time()
         
+        # Locais e endereços
         config.local_cerimonia = request.form.get('local_cerimonia')
         config.endereco_cerimonia = request.form.get('endereco_cerimonia')
         config.local_festa = request.form.get('local_festa')
         config.endereco_festa = request.form.get('endereco_festa')
+        
+        # Personalização
         config.mensagem_principal = request.form.get('mensagem_principal')
         config.cor_tema = request.form.get('cor_tema')
         config.foto_casal = request.form.get('foto_casal')
+        
+        # Informações da noiva
+        config.descricao_noiva = request.form.get('descricao_noiva')
+        config.aniversario_noiva = request.form.get('aniversario_noiva')
+        config.paixoes_noiva = request.form.get('paixoes_noiva')
+        config.frase_noiva = request.form.get('frase_noiva')
+        config.foto_noiva = request.form.get('foto_noiva')
+        
+        # Informações do noivo
+        config.descricao_noivo = request.form.get('descricao_noivo')
+        config.aniversario_noivo = request.form.get('aniversario_noivo')
+        config.paixoes_noivo = request.form.get('paixoes_noivo')
+        config.frase_noivo = request.form.get('frase_noivo')
+        config.foto_noivo = request.form.get('foto_noivo')
+        
+        # História de amor - checkbox
+        config.mostrar_historia = 'mostrar_historia' in request.form
+        
+        # Timeline da história
+        if config.mostrar_historia:
+            config.primeiro_encontro_ano = request.form.get('primeiro_encontro_ano')
+            config.primeiro_encontro_texto = request.form.get('primeiro_encontro_texto')
+            config.namoro_ano = request.form.get('namoro_ano')
+            config.namoro_texto = request.form.get('namoro_texto')
+            config.pedido_ano = request.form.get('pedido_ano')
+            config.pedido_texto = request.form.get('pedido_texto')
+            config.grande_dia_ano = request.form.get('grande_dia_ano')
+            config.grande_dia_texto = request.form.get('grande_dia_texto')
         
         db.session.add(config)
         db.session.commit()

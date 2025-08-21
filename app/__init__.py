@@ -2,6 +2,7 @@ import os
 from flask import Flask
 from dotenv import load_dotenv
 from app.extensions import db, login_manager
+from flask_migrate import Migrate
 
 # Carregar variáveis de ambiente
 load_dotenv()
@@ -33,6 +34,7 @@ def create_app():
     
     # Inicializar extensões
     db.init_app(app)
+    migrate = Migrate(app, db)
     login_manager.init_app(app)
     login_manager.login_view = 'admin.login'
     login_manager.login_message = 'Por favor, faça login para acessar esta página.'

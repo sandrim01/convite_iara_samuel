@@ -1028,6 +1028,171 @@ setInterval(updateStats, 60000);
                     </div>
                 </div>
 
+                <!-- Informações da Noiva -->
+                <div class="config-section">
+                    <h4 class="section-title">
+                        <i class="fas fa-female"></i>
+                        Sobre a Noiva
+                    </h4>
+                    
+                    <div class="form-group">
+                        <label for="descricao_noiva">Descrição da Noiva</label>
+                        <textarea id="descricao_noiva" name="descricao_noiva" rows="3" placeholder="Uma mulher de fé, cheia de sonhos e amor no coração...">{{ config.descricao_noiva or '' }}</textarea>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="aniversario_noiva">Aniversário da Noiva</label>
+                            <input type="text" id="aniversario_noiva" name="aniversario_noiva" 
+                                   value="{{ config.aniversario_noiva or '' }}" placeholder="15 de Março">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="paixoes_noiva">Paixões da Noiva</label>
+                            <input type="text" id="paixoes_noiva" name="paixoes_noiva" 
+                                   value="{{ config.paixoes_noiva or '' }}" placeholder="Família, culinária e música">
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="frase_noiva">Frase da Noiva</label>
+                            <input type="text" id="frase_noiva" name="frase_noiva" 
+                                   value="{{ config.frase_noiva or '' }}" placeholder="O amor é a ponte entre duas almas">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="foto_noiva">URL da Foto da Noiva</label>
+                            <input type="url" id="foto_noiva" name="foto_noiva" 
+                                   value="{{ config.foto_noiva or '' }}" placeholder="https://exemplo.com/noiva.jpg">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Informações do Noivo -->
+                <div class="config-section">
+                    <h4 class="section-title">
+                        <i class="fas fa-male"></i>
+                        Sobre o Noivo
+                    </h4>
+                    
+                    <div class="form-group">
+                        <label for="descricao_noivo">Descrição do Noivo</label>
+                        <textarea id="descricao_noivo" name="descricao_noivo" rows="3" placeholder="Um homem dedicado, com coração generoso e sorriso que ilumina...">{{ config.descricao_noivo or '' }}</textarea>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="aniversario_noivo">Aniversário do Noivo</label>
+                            <input type="text" id="aniversario_noivo" name="aniversario_noivo" 
+                                   value="{{ config.aniversario_noivo or '' }}" placeholder="22 de Julho">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="paixoes_noivo">Paixões do Noivo</label>
+                            <input type="text" id="paixoes_noivo" name="paixoes_noivo" 
+                                   value="{{ config.paixoes_noivo or '' }}" placeholder="Esportes, tecnologia e viagens">
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="frase_noivo">Frase do Noivo</label>
+                            <input type="text" id="frase_noivo" name="frase_noivo" 
+                                   value="{{ config.frase_noivo or '' }}" placeholder="Juntos somos mais fortes">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="foto_noivo">URL da Foto do Noivo</label>
+                            <input type="url" id="foto_noivo" name="foto_noivo" 
+                                   value="{{ config.foto_noivo or '' }}" placeholder="https://exemplo.com/noivo.jpg">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- História de Amor -->
+                <div class="config-section">
+                    <h4 class="section-title">
+                        <i class="fas fa-heart"></i>
+                        Nossa História de Amor
+                    </h4>
+                    
+                    <div class="form-group">
+                        <label>
+                            <input type="checkbox" id="mostrar_historia" name="mostrar_historia" 
+                                   {{ 'checked' if config.mostrar_historia is not defined or config.mostrar_historia else '' }}>
+                            Mostrar a seção "Nossa História de Amor" no site
+                        </label>
+                        <small>Desmarque se não quiser mostrar a linha do tempo da história do casal</small>
+                    </div>
+                    
+                    <div id="historia_fields" style="{{ 'display: none;' if config.mostrar_historia is defined and not config.mostrar_historia else '' }}">
+                        <!-- Primeiro Encontro -->
+                        <div class="timeline-config">
+                            <h5>O Primeiro Encontro</h5>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="primeiro_encontro_ano">Ano</label>
+                                    <input type="text" id="primeiro_encontro_ano" name="primeiro_encontro_ano" 
+                                           value="{{ config.primeiro_encontro_ano or '2020' }}" placeholder="2020">
+                                </div>
+                                <div class="form-group">
+                                    <label for="primeiro_encontro_texto">História</label>
+                                    <textarea id="primeiro_encontro_texto" name="primeiro_encontro_texto" rows="2" placeholder="Foi em uma tarde de domingo...">{{ config.primeiro_encontro_texto or '' }}</textarea>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Namoro -->
+                        <div class="timeline-config">
+                            <h5>O Namoro</h5>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="namoro_ano">Ano</label>
+                                    <input type="text" id="namoro_ano" name="namoro_ano" 
+                                           value="{{ config.namoro_ano or '2022' }}" placeholder="2022">
+                                </div>
+                                <div class="form-group">
+                                    <label for="namoro_texto">História</label>
+                                    <textarea id="namoro_texto" name="namoro_texto" rows="2" placeholder="Depois de dois anos de amizade...">{{ config.namoro_texto or '' }}</textarea>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- O Pedido -->
+                        <div class="timeline-config">
+                            <h5>O Pedido</h5>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="pedido_ano">Ano</label>
+                                    <input type="text" id="pedido_ano" name="pedido_ano" 
+                                           value="{{ config.pedido_ano or '2024' }}" placeholder="2024">
+                                </div>
+                                <div class="form-group">
+                                    <label for="pedido_texto">História</label>
+                                    <textarea id="pedido_texto" name="pedido_texto" rows="2" placeholder="Em uma noite estrelada...">{{ config.pedido_texto or '' }}</textarea>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- O Grande Dia -->
+                        <div class="timeline-config">
+                            <h5>O Grande Dia</h5>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="grande_dia_ano">Ano</label>
+                                    <input type="text" id="grande_dia_ano" name="grande_dia_ano" 
+                                           value="{{ config.grande_dia_ano or '2025' }}" placeholder="2025">
+                                </div>
+                                <div class="form-group">
+                                    <label for="grande_dia_texto">História</label>
+                                    <textarea id="grande_dia_texto" name="grande_dia_texto" rows="2" placeholder="E agora chegou o momento...">{{ config.grande_dia_texto or '' }}</textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Botões de Ação -->
                 <div class="form-actions">
                     <button type="submit" class="btn btn-confirm">
@@ -1055,9 +1220,29 @@ function closeConfigModal() {
     document.body.style.overflow = '';
 }
 
+// Função para mostrar/ocultar campos da história de amor
+function toggleHistoriaFields() {
+    const checkbox = document.getElementById('mostrar_historia');
+    const fields = document.getElementById('historia_fields');
+    
+    if (checkbox.checked) {
+        fields.style.display = 'block';
+    } else {
+        fields.style.display = 'none';
+    }
+}
+
 // Event listeners
 document.addEventListener('DOMContentLoaded', function() {
     const modal = document.getElementById('configModal');
+    
+    // Configurar o checkbox da história
+    const historiaCheckbox = document.getElementById('mostrar_historia');
+    if (historiaCheckbox) {
+        historiaCheckbox.addEventListener('change', toggleHistoriaFields);
+        // Configurar estado inicial
+        toggleHistoriaFields();
+    }
     
     // Fechar ao clicar na overlay
     modal.addEventListener('click', function(e) {

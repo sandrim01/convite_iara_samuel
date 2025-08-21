@@ -27,28 +27,38 @@
             <!-- Sobre a Noiva -->
             <div class="couple-card bride-card">
                 <div class="couple-photo">
-                    <div class="photo-placeholder">
-                        <i class="fas fa-heart"></i>
-                    </div>
+                    {% if config.foto_noiva %}
+                        <img src="{{ config.foto_noiva }}" alt="{{ config.nome_noiva or 'Noiva' }}" class="couple-img">
+                    {% else %}
+                        <div class="photo-placeholder">
+                            <i class="fas fa-heart"></i>
+                        </div>
+                    {% endif %}
                 </div>
                 <div class="couple-info">
                     <h3 class="couple-name heading-script">{{ config.nome_noiva or 'Iara' }}</h3>
                     <div class="couple-role">A Noiva</div>
                     <div class="couple-description">
-                        <p>Uma mulher de fé, cheia de sonhos e amor no coração. Apaixonada pela vida e por fazer cada momento especial ao lado de quem ama.</p>
+                        <p>{{ config.descricao_noiva or 'Uma mulher de fé, cheia de sonhos e amor no coração. Apaixonada pela vida e por fazer cada momento especial ao lado de quem ama.' }}</p>
                         <div class="couple-details">
+                            {% if config.aniversario_noiva %}
                             <div class="detail-item">
                                 <i class="fas fa-birthday-cake"></i>
-                                <span>Aniversário: 15 de Março</span>
+                                <span>Aniversário: {{ config.aniversario_noiva }}</span>
                             </div>
+                            {% endif %}
+                            {% if config.paixoes_noiva %}
                             <div class="detail-item">
                                 <i class="fas fa-heart"></i>
-                                <span>Paixões: Família, culinária e música</span>
+                                <span>Paixões: {{ config.paixoes_noiva }}</span>
                             </div>
+                            {% endif %}
+                            {% if config.frase_noiva %}
                             <div class="detail-item">
                                 <i class="fas fa-quote-left"></i>
-                                <span>"O amor é a ponte entre duas almas"</span>
+                                <span>"{{ config.frase_noiva }}"</span>
                             </div>
+                            {% endif %}
                         </div>
                     </div>
                 </div>
@@ -57,72 +67,92 @@
             <!-- Sobre o Noivo -->
             <div class="couple-card groom-card">
                 <div class="couple-photo">
-                    <div class="photo-placeholder">
-                        <i class="fas fa-heart"></i>
-                    </div>
+                    {% if config.foto_noivo %}
+                        <img src="{{ config.foto_noivo }}" alt="{{ config.nome_noivo or 'Noivo' }}" class="couple-img">
+                    {% else %}
+                        <div class="photo-placeholder">
+                            <i class="fas fa-heart"></i>
+                        </div>
+                    {% endif %}
                 </div>
                 <div class="couple-info">
                     <h3 class="couple-name heading-script">{{ config.nome_noivo or 'Samuel' }}</h3>
                     <div class="couple-role">O Noivo</div>
                     <div class="couple-description">
-                        <p>Um homem dedicado, com coração generoso e sorriso que ilumina qualquer ambiente. Sempre pronto para uma nova aventura ao lado de sua amada.</p>
+                        <p>{{ config.descricao_noivo or 'Um homem dedicado, com coração generoso e sorriso que ilumina qualquer ambiente. Sempre pronto para uma nova aventura ao lado de sua amada.' }}</p>
                         <div class="couple-details">
+                            {% if config.aniversario_noivo %}
                             <div class="detail-item">
                                 <i class="fas fa-birthday-cake"></i>
-                                <span>Aniversário: 22 de Julho</span>
+                                <span>Aniversário: {{ config.aniversario_noivo }}</span>
                             </div>
+                            {% endif %}
+                            {% if config.paixoes_noivo %}
                             <div class="detail-item">
                                 <i class="fas fa-heart"></i>
-                                <span>Paixões: Esportes, tecnologia e viagens</span>
+                                <span>Paixões: {{ config.paixoes_noivo }}</span>
                             </div>
+                            {% endif %}
+                            {% if config.frase_noivo %}
                             <div class="detail-item">
                                 <i class="fas fa-quote-left"></i>
-                                <span>"Juntos somos mais fortes"</span>
+                                <span>"{{ config.frase_noivo }}"</span>
                             </div>
+                            {% endif %}
                         </div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Nossa História -->
+        <!-- Nossa História (Opcional) -->
+        {% if config.mostrar_historia is not defined or config.mostrar_historia %}
         <div class="love-story-section">
             <h2 class="section-title heading-serif">Nossa História de Amor</h2>
             
             <div class="timeline-love">
+                {% if config.primeiro_encontro_ano or config.primeiro_encontro_texto %}
                 <div class="timeline-item">
-                    <div class="timeline-date">2020</div>
+                    <div class="timeline-date">{{ config.primeiro_encontro_ano or '2020' }}</div>
                     <div class="timeline-content">
                         <h4>O Primeiro Encontro</h4>
-                        <p>Foi em uma tarde de domingo, na igreja, que nossos olhares se cruzaram pela primeira vez. O que começou como uma amizade especial, logo se transformou em algo muito maior.</p>
+                        <p>{{ config.primeiro_encontro_texto or 'Foi em uma tarde de domingo, na igreja, que nossos olhares se cruzaram pela primeira vez. O que começou como uma amizade especial, logo se transformou em algo muito maior.' }}</p>
                     </div>
                 </div>
+                {% endif %}
                 
+                {% if config.namoro_ano or config.namoro_texto %}
                 <div class="timeline-item">
-                    <div class="timeline-date">2022</div>
+                    <div class="timeline-date">{{ config.namoro_ano or '2022' }}</div>
                     <div class="timeline-content">
                         <h4>O Namoro</h4>
-                        <p>Depois de dois anos de amizade, decidimos dar o próximo passo. Foi um período de descobertas, crescimento mútuo e muito amor.</p>
+                        <p>{{ config.namoro_texto or 'Depois de dois anos de amizade, decidimos dar o próximo passo. Foi um período de descobertas, crescimento mútuo e muito amor.' }}</p>
                     </div>
                 </div>
+                {% endif %}
                 
+                {% if config.pedido_ano or config.pedido_texto %}
                 <div class="timeline-item">
-                    <div class="timeline-date">2024</div>
+                    <div class="timeline-date">{{ config.pedido_ano or '2024' }}</div>
                     <div class="timeline-content">
                         <h4>O Pedido</h4>
-                        <p>Em uma noite estrelada, com o coração cheio de amor e certeza, veio o pedido de casamento. Um momento mágico que ficará para sempre em nossas memórias.</p>
+                        <p>{{ config.pedido_texto or 'Em uma noite estrelada, com o coração cheio de amor e certeza, veio o pedido de casamento. Um momento mágico que ficará para sempre em nossas memórias.' }}</p>
                     </div>
                 </div>
+                {% endif %}
                 
+                {% if config.grande_dia_ano or config.grande_dia_texto %}
                 <div class="timeline-item">
-                    <div class="timeline-date">2025</div>
+                    <div class="timeline-date">{{ config.grande_dia_ano or '2025' }}</div>
                     <div class="timeline-content">
                         <h4>O Grande Dia</h4>
-                        <p>E agora chegou o momento de unirmos nossas vidas para sempre, na presença de Deus e de todos que amamos. Será um dia inesquecível!</p>
+                        <p>{{ config.grande_dia_texto or 'E agora chegou o momento de unirmos nossas vidas para sempre, na presença de Deus e de todos que amamos. Será um dia inesquecível!' }}</p>
                     </div>
                 </div>
+                {% endif %}
             </div>
         </div>
+        {% endif %}
 
         <!-- Navegação -->
         <div class="step-navigation-bottom">

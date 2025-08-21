@@ -41,6 +41,31 @@ class ConfiguracaoSite(db.Model):
     mensagem_principal = db.Column(db.Text, default='Criamos esse site para compartilhar com vocês os detalhes da organização do nosso casamento. ♥')
     cor_tema = db.Column(db.String(7), default='#d4a574')  # Rosa/dourado
     foto_casal = db.Column(db.String(500), nullable=True)
+    
+    # Campos do casal
+    descricao_noiva = db.Column(db.Text, nullable=True)
+    aniversario_noiva = db.Column(db.String(50), nullable=True)
+    paixoes_noiva = db.Column(db.String(200), nullable=True)
+    frase_noiva = db.Column(db.String(200), nullable=True)
+    foto_noiva = db.Column(db.String(500), nullable=True)
+    
+    descricao_noivo = db.Column(db.Text, nullable=True)
+    aniversario_noivo = db.Column(db.String(50), nullable=True)
+    paixoes_noivo = db.Column(db.String(200), nullable=True)
+    frase_noivo = db.Column(db.String(200), nullable=True)
+    foto_noivo = db.Column(db.String(500), nullable=True)
+    
+    # História de amor - opcionais
+    mostrar_historia = db.Column(db.Boolean, default=True)
+    primeiro_encontro_ano = db.Column(db.String(10), nullable=True)
+    primeiro_encontro_texto = db.Column(db.Text, nullable=True)
+    namoro_ano = db.Column(db.String(10), nullable=True)
+    namoro_texto = db.Column(db.Text, nullable=True)
+    pedido_ano = db.Column(db.String(10), nullable=True)
+    pedido_texto = db.Column(db.Text, nullable=True)
+    grande_dia_ano = db.Column(db.String(10), nullable=True)
+    grande_dia_texto = db.Column(db.Text, nullable=True)
+    
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
 class Convidado(db.Model):

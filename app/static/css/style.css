@@ -1267,6 +1267,23 @@ body.nav-open {
     margin-bottom: 2rem;
 }
 
+.couple-img {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    object-fit: cover;
+    object-position: center;
+    margin: 0 auto;
+    display: block;
+    border: 3px solid var(--rose-200);
+    transition: all 0.3s ease;
+}
+
+.couple-img:hover {
+    transform: scale(1.05);
+    border-color: var(--highlight-color);
+}
+
 .photo-placeholder {
     width: 150px;
     height: 150px;
@@ -4415,5 +4432,111 @@ body.nav-open {
     
     .preview-names {
         font-size: 1.8rem;
+    }
+}
+
+/* ========================================
+   CAMPOS DE CONFIGURAÇÃO DO CASAL
+======================================== */
+
+/* Timeline Config */
+.timeline-config {
+    background: linear-gradient(135deg, #fef7f7, #fef2f2);
+    border: 1px solid var(--rose-200);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    transition: all 0.3s ease;
+}
+
+.timeline-config:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.timeline-config h5 {
+    color: var(--highlight-color);
+    font-family: var(--font-serif);
+    font-size: 1.1rem;
+    margin: 0 0 1rem 0;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.timeline-config h5::before {
+    content: "♥";
+    color: var(--rose-gold);
+    font-size: 1.2rem;
+}
+
+/* Checkbox personalizado para história */
+.form-group label:has(input[type="checkbox"]) {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    margin-bottom: 5px;
+    font-weight: 500;
+    color: var(--text-dark);
+    padding: 0.5rem;
+    border-radius: 8px;
+    transition: background-color 0.3s ease;
+}
+
+.form-group label:has(input[type="checkbox"]):hover {
+    background-color: var(--rose-50);
+}
+
+.form-group input[type="checkbox"] {
+    width: auto;
+    margin-right: 10px;
+    transform: scale(1.3);
+    accent-color: var(--highlight-color);
+}
+
+.form-group small {
+    display: block;
+    color: #666;
+    font-size: 0.85rem;
+    margin-top: 5px;
+    font-style: italic;
+}
+
+/* Seções específicas do casal */
+.config-section h4.section-title i.fa-female {
+    color: #e91e63;
+}
+
+.config-section h4.section-title i.fa-male {
+    color: #2196f3;
+}
+
+.config-section h4.section-title i.fa-heart {
+    color: var(--rose-gold);
+    animation: heartbeat 2s ease-in-out infinite;
+}
+
+@keyframes heartbeat {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); }
+}
+
+/* Modal maior para acomodar mais campos */
+.modal-container {
+    max-width: 900px;
+}
+
+@media (max-width: 768px) {
+    .timeline-config {
+        padding: 1rem;
+    }
+    
+    .timeline-config h5 {
+        font-size: 1rem;
+    }
+    
+    .modal-container {
+        max-width: 95%;
     }
 }
