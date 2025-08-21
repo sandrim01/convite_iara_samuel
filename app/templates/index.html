@@ -32,7 +32,7 @@
                 
                 <h1 class="hero-names heading-script">
                     <span class="bride-name">{{ config.nome_noiva or 'Iara' }}</span>
-                    <span class="heart">♥</span>
+                    <span class="heart-separator">♥</span>
                     <span class="groom-name">{{ config.nome_noivo or 'Samuel' }}</span>
                 </h1>
                 
@@ -40,13 +40,13 @@
                     {% if config.data_casamento %}
                         {{ config.data_casamento.strftime('%d.%m.%Y') }}
                     {% else %}
-                        28.11.2025
+                        15.12.2025
                     {% endif %}
                 </div>
                 
                 <div class="hero-location text-base">
                     <i class="fas fa-map-marker-alt"></i>
-                    <span>{{ config.local_cerimonia or 'São Paulo' }}</span>
+                    <span>{{ config.local_cerimonia or 'Igreja São José' }}</span>
                 </div>
                 
                 <div class="hero-verse">
@@ -60,16 +60,83 @@
                         </cite>
                     </blockquote>
                 </div>
+            </div>
+        </div>
+    </div>
+</section>
 
-                <!-- Navegação Simples -->
-                <div class="step-navigation">
-                    <a href="{{ url_for('main.o_casal') }}" class="btn btn-step-next">
-                        <span>O Casal</span>
-                        <i class="fas fa-arrow-right"></i>
-                    </a>
+<!-- Welcome Section -->
+<section class="welcome-section section">
+    <div class="container">
+        <div class="welcome-content">
+            <h2 class="section-title heading-serif text-center">
+                Bem-vindos ao nosso Site de Casamento
+            </h2>
+            
+            <div class="welcome-text text-center">
+                <p class="text-large">
+                    {{ config.mensagem_principal or 'Criamos esse site para compartilhar com vocês os detalhes da organização do nosso casamento. ♥' }}
+                </p>
+            </div>
+            
+            {% if config.foto_casal %}
+            <div class="couple-photo-preview">
+                <img src="{{ config.foto_casal }}" alt="{{ config.nome_noiva or 'Noiva' }} e {{ config.nome_noivo or 'Noivo' }}" class="couple-main-photo">
+            </div>
+            {% endif %}
+            
+            <!-- Navegação com botão à direita -->
+            <div class="welcome-navigation">
+                <div class="nav-content">
+                    <div class="nav-left">
+                        <p class="nav-text">Conheça mais sobre nossa história de amor</p>
+                    </div>
+                    <div class="nav-right">
+                        <a href="{{ url_for('main.o_casal') }}" class="btn btn-primary btn-couple">
+                            <span>Conhecer o Casal</span>
+                            <i class="fas fa-heart"></i>
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
+</section>
 
+<!-- Quick Navigation -->
+<section class="quick-nav-section">
+    <div class="container">
+        <div class="quick-nav-grid">
+            <a href="{{ url_for('main.local') }}" class="quick-nav-item">
+                <div class="nav-icon">
+                    <i class="fas fa-map-marker-alt"></i>
+                </div>
+                <div class="nav-content">
+                    <h3>Local da Cerimônia</h3>
+                    <p>Veja onde será nossa celebração</p>
+                </div>
+            </a>
+            
+            <a href="{{ url_for('main.presentes') }}" class="quick-nav-item">
+                <div class="nav-icon">
+                    <i class="fas fa-gift"></i>
+                </div>
+                <div class="nav-content">
+                    <h3>Lista de Presentes</h3>
+                    <p>Escolha um presente especial</p>
+                </div>
+            </a>
+            
+            <a href="{{ url_for('main.confirmar_presenca') }}" class="quick-nav-item">
+                <div class="nav-icon">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+                <div class="nav-content">
+                    <h3>Confirmar Presença</h3>
+                    <p>Nos diga se você estará conosco</p>
+                </div>
+            </a>
+        </div>
+    </div>
+</section>
 {% endblock %}
