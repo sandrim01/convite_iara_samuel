@@ -77,7 +77,7 @@
                 
                 <!-- Mapa placeholder -->
                 <div class="location-map">
-                    <div class="map-placeholder">
+                    <div class="map-placeholder" onclick="openCeremonyMap()" style="cursor: pointer;">
                         <i class="fas fa-map"></i>
                         <p>Mapa do Local</p>
                         <small>Clique para abrir no Google Maps</small>
@@ -191,4 +191,73 @@
         </div>
     </div>
 </div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+// Função para abrir mapa da cerimônia
+function openCeremonyMap() {
+    const address = '{{ config.endereco_cerimonia or "Rua Domingos Alcíno Dadalto, 114, Jardim Itapemirim, Cachoeiro de Itapemirim - ES" }}';
+    const encodedAddress = encodeURIComponent(address);
+    const mapUrl = `https://www.google.com/maps/search/?api=1&query=${encodedAddress}`;
+    window.open(mapUrl, '_blank');
+}
+
+// Modal de confirmação de presença
+document.addEventListener('DOMContentLoaded', function() {
+    const openModal = document.getElementById('openConfirmationModal');
+    const closeModal = document.getElementById('closeConfirmationModal');
+    const cancelModal = document.getElementById('cancelConfirmation');
+    const modal = document.getElementById('confirmationModal');
+    
+    if (openModal) {
+        openModal.addEventListener('click', function() {
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        });
+    }
+    
+    function closeConfirmationModal() {
+        modal.classList.remove('active');
+        document.body.style.overflow = '';
+    }
+    
+    if (closeModal) {
+        closeModal.addEventListener('click', closeConfirmationModal);
+    }
+    
+    if (cancelModal) {
+        cancelModal.addEventListener('click', closeConfirmationModal);
+    }
+    
+    // Fechar ao clicar na overlay
+    modal.addEventListener('click', function(e) {
+        if (e.target === modal) {
+            closeConfirmationModal();
+        }
+    });
+    
+    // Fechar com ESC
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && modal.classList.contains('active')) {
+            closeConfirmationModal();
+        }
+    });
+    
+    // Máscara de telefone
+    const telefoneInput = document.getElementById('modal-telefone');
+    if (telefoneInput) {
+        telefoneInput.addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, '');
+            if (value.length <= 11) {
+                value = value.replace(/(\d{2})(\d{5})(\d{4})/, '($1) $2-$3');
+                if (value.length < 15) {
+                    value = value.replace(/(\d{2})(\d{4})(\d{4})/, '($1) $2-$3');
+                }
+            }
+            e.target.value = value;
+        });
+    }
+});
+</script>
 {% endblock %}
