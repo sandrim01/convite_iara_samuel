@@ -4,20 +4,646 @@
 
 {% block extra_head %}
 <style>
+    @import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;700&family=Playfair+Display:wght@400;500;700&display=swap');
+
     .reception-hero {
         background: linear-gradient(135deg, 
-            rgba(185, 28, 28, 0.9) 0%, 
-            rgba(127, 29, 29, 0.95) 25%,
-            rgba(239, 68, 68, 0.9) 50%,
-            rgba(220, 38, 38, 0.95) 75%,
-            rgba(185, 28, 28, 0.9) 100%),
-            url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="celebration" patternUnits="userSpaceOnUse" width="30" height="30"><circle cx="15" cy="15" r="2" fill="rgba(255,255,255,0.1)"/><path d="M5,5 L8,12 L5,19 L12,16 L19,19 L16,12 L19,5 L12,8 Z" fill="rgba(255,255,255,0.08)"/></pattern></defs><rect width="100" height="100" fill="url(%23celebration)"/></svg>');
+            rgba(139, 69, 19, 0.95) 0%,
+            rgba(160, 82, 45, 0.9) 15%,
+            rgba(218, 165, 32, 0.85) 30%,
+            rgba(255, 218, 185, 0.8) 45%,
+            rgba(255, 228, 225, 0.75) 60%,
+            rgba(255, 182, 193, 0.8) 75%,
+            rgba(219, 112, 147, 0.9) 90%,
+            rgba(199, 21, 133, 0.95) 100%),
+            url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="wedding" patternUnits="userSpaceOnUse" width="25" height="25"><path d="M12.5,5 C8,5 5,8 5,12.5 C5,20 12.5,25 12.5,25 C12.5,25 20,20 20,12.5 C20,8 17,5 12.5,5 Z" fill="rgba(255,255,255,0.08)" stroke="rgba(255,255,255,0.04)" stroke-width="0.5"/><circle cx="12.5" cy="12.5" r="2" fill="rgba(255,215,0,0.1)"/></pattern></defs><rect width="100" height="100" fill="url(%23wedding)"/></svg>');
         min-height: 100vh;
         display: flex;
         align-items: center;
         position: relative;
         overflow: hidden;
+        animation: wedding-bg-flow 20s ease-in-out infinite;
     }
+
+    @keyframes wedding-bg-flow {
+        0%, 100% { 
+            background-position: 0% 50%;
+            filter: hue-rotate(0deg);
+        }
+        50% { 
+            background-position: 100% 50%;
+            filter: hue-rotate(15deg);
+        }
+    }
+    
+    /* Pétalas de rosa caindo */
+    .reception-hero::before {
+        content: '🌹 💐 🤍 💕 👰 🤵 💍 💒 ✨ 🕊️ 💖 🌸 🌹 💐 🤍 💕 👰 🤵 💍 💒 ✨ 🕊️ 💖 🌸';
+        position: absolute;
+        top: -15%;
+        left: -15%;
+        width: 130%;
+        height: 130%;
+        font-size: 2.5rem;
+        line-height: 4rem;
+        word-spacing: 3rem;
+        opacity: 0.2;
+        animation: petals-falling 25s linear infinite;
+        z-index: 1;
+        pointer-events: none;
+        color: #fff;
+        text-shadow: 0 0 10px rgba(255, 182, 193, 0.6);
+    }
+
+    @keyframes petals-falling {
+        0% { 
+            transform: translateY(-20%) rotate(0deg);
+        }
+        100% { 
+            transform: translateY(120%) rotate(360deg);
+        }
+    }
+    
+    /* Brilho romântico */
+    .reception-hero::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: 
+            radial-gradient(circle at 25% 25%, rgba(255, 182, 193, 0.3) 0%, transparent 30%),
+            radial-gradient(circle at 75% 30%, rgba(255, 218, 185, 0.25) 0%, transparent 30%),
+            radial-gradient(circle at 60% 70%, rgba(255, 215, 0, 0.2) 0%, transparent 25%),
+            radial-gradient(circle at 30% 80%, rgba(255, 192, 203, 0.3) 0%, transparent 30%),
+            radial-gradient(circle at 85% 75%, rgba(255, 228, 225, 0.25) 0%, transparent 25%);
+        animation: romantic-sparkle 12s ease-in-out infinite;
+        z-index: 1;
+        pointer-events: none;
+    }
+
+    @keyframes romantic-sparkle {
+        0%, 100% { 
+            opacity: 0.7;
+            transform: scale(1);
+        }
+        50% { 
+            opacity: 1;
+            transform: scale(1.05);
+        }
+    }
+    
+    .reception-hero-content {
+        position: relative;
+        z-index: 2;
+        padding: 5rem 0;
+        text-align: center;
+    }
+    
+    .celebration-badge {
+        display: inline-block;
+        background: linear-gradient(135deg, 
+            rgba(255, 228, 225, 0.9), 
+            rgba(255, 182, 193, 0.8), 
+            rgba(255, 218, 185, 0.9));
+        backdrop-filter: blur(20px);
+        border: 3px solid rgba(255, 255, 255, 0.6);
+        border-radius: 60px;
+        padding: 2rem 4rem;
+        margin-bottom: 3rem;
+        animation: wedding-glow 4s ease-in-out infinite alternate;
+        box-shadow: 
+            0 0 30px rgba(255, 182, 193, 0.5),
+            inset 0 0 20px rgba(255, 255, 255, 0.3);
+        position: relative;
+    }
+
+    .celebration-badge::before {
+        content: '💕';
+        position: absolute;
+        top: -15px;
+        left: 50%;
+        transform: translateX(-50%);
+        font-size: 2rem;
+        animation: heart-float 3s ease-in-out infinite;
+    }
+
+    @keyframes wedding-glow {
+        0% { 
+            box-shadow: 
+                0 0 30px rgba(255, 182, 193, 0.5),
+                inset 0 0 20px rgba(255, 255, 255, 0.3);
+            transform: scale(1);
+        }
+        100% { 
+            box-shadow: 
+                0 0 50px rgba(255, 215, 0, 0.6),
+                inset 0 0 30px rgba(255, 228, 225, 0.5);
+            transform: scale(1.02);
+        }
+    }
+
+    @keyframes heart-float {
+        0%, 100% { 
+            transform: translateX(-50%) translateY(0);
+        }
+        50% { 
+            transform: translateX(-50%) translateY(-10px);
+        }
+    }
+    
+    .celebration-icon {
+        font-size: 4rem;
+        margin-bottom: 1rem;
+        animation: wedding-bounce 2s infinite;
+        background: linear-gradient(45deg, 
+            #ff6b8a, #ffd700, #ffb6c1, #ffe4e1, #dda0dd);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        filter: drop-shadow(0 2px 4px rgba(255, 182, 193, 0.5));
+    }
+
+    @keyframes wedding-bounce {
+        0%, 100% { 
+            transform: scale(1) rotate(0deg);
+        }
+        50% { 
+            transform: scale(1.1) rotate(5deg);
+        }
+    }
+    
+    .luxury-names {
+        margin: 4rem 0;
+        position: relative;
+        animation: names-romance 6s ease-in-out infinite;
+        font-family: 'Playfair Display', serif;
+    }
+
+    @keyframes names-romance {
+        0%, 100% { 
+            transform: scale(1);
+            text-shadow: 0 4px 8px rgba(199, 21, 133, 0.3);
+        }
+        50% { 
+            transform: scale(1.02);
+            text-shadow: 0 8px 16px rgba(255, 182, 193, 0.5);
+        }
+    }
+    
+    .luxury-names::before {
+        content: '🌹 ✨ 💍 ✨ 🌹';
+        position: absolute;
+        top: -40px;
+        left: 50%;
+        transform: translateX(-50%);
+        font-size: 1.8rem;
+        animation: wedding-twinkle 3s ease-in-out infinite;
+        color: #ffd700;
+        filter: drop-shadow(0 2px 4px rgba(255, 215, 0, 0.5));
+    }
+
+    @keyframes wedding-twinkle {
+        0%, 100% { 
+            opacity: 0.8;
+            transform: translateX(-50%) scale(1);
+        }
+        50% { 
+            opacity: 1;
+            transform: translateX(-50%) scale(1.1);
+        }
+    }
+    
+    .luxury-names::after {
+        content: '🤍 💕 👰 🤵 💕 🤍';
+        position: absolute;
+        bottom: -40px;
+        left: 50%;
+        transform: translateX(-50%);
+        font-size: 1.5rem;
+        animation: wedding-twinkle-reverse 3.5s ease-in-out infinite;
+        opacity: 0.9;
+    }
+
+    @keyframes wedding-twinkle-reverse {
+        0%, 100% { 
+            opacity: 0.7;
+            transform: translateX(-50%) rotate(0deg);
+        }
+        50% { 
+            opacity: 1;
+            transform: translateX(-50%) rotate(10deg);
+        }
+    }
+    
+    .luxury-names h1 {
+        font-size: 4.5rem;
+        color: #fff;
+        margin: 0;
+        text-shadow: 
+            0 4px 8px rgba(139, 69, 19, 0.6),
+            0 2px 4px rgba(199, 21, 133, 0.4);
+        animation: romantic-glow 5s ease-in-out infinite;
+        font-weight: 700;
+        letter-spacing: 2px;
+        font-family: 'Dancing Script', cursive;
+    }
+
+    @keyframes romantic-glow {
+        0%, 100% { 
+            color: #fff;
+            text-shadow: 
+                0 4px 8px rgba(139, 69, 19, 0.6),
+                0 2px 4px rgba(199, 21, 133, 0.4);
+        }
+        50% { 
+            color: #ffe4e1;
+            text-shadow: 
+                0 6px 12px rgba(255, 182, 193, 0.7),
+                0 0 20px rgba(255, 215, 0, 0.5);
+        }
+    }
+    
+    .wedding-date {
+        background: linear-gradient(135deg, 
+            rgba(255, 255, 255, 0.95), 
+            rgba(255, 228, 225, 0.9));
+        backdrop-filter: blur(15px);
+        border-radius: 25px;
+        padding: 2.5rem;
+        margin: 3rem 0;
+        border: 2px solid rgba(255, 182, 193, 0.4);
+        box-shadow: 
+            0 8px 25px rgba(199, 21, 133, 0.2),
+            inset 0 0 15px rgba(255, 255, 255, 0.6);
+        animation: date-elegance 8s ease-in-out infinite;
+        position: relative;
+    }
+
+    .wedding-date::before {
+        content: '💒';
+        position: absolute;
+        top: -20px;
+        left: 50%;
+        transform: translateX(-50%);
+        font-size: 2.5rem;
+        background: linear-gradient(135deg, #fff, #ffe4e1);
+        border-radius: 50%;
+        width: 60px;
+        height: 60px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 4px 12px rgba(199, 21, 133, 0.3);
+        animation: church-glow 4s ease-in-out infinite;
+    }
+
+    @keyframes church-glow {
+        0%, 100% { 
+            transform: translateX(-50%) scale(1);
+            box-shadow: 0 4px 12px rgba(199, 21, 133, 0.3);
+        }
+        50% { 
+            transform: translateX(-50%) scale(1.1);
+            box-shadow: 0 8px 20px rgba(255, 182, 193, 0.5);
+        }
+    }
+
+    @keyframes date-elegance {
+        0%, 100% { 
+            transform: scale(1);
+            box-shadow: 
+                0 8px 25px rgba(199, 21, 133, 0.2),
+                inset 0 0 15px rgba(255, 255, 255, 0.6);
+        }
+        50% { 
+            transform: scale(1.01);
+            box-shadow: 
+                0 12px 35px rgba(255, 182, 193, 0.3),
+                inset 0 0 25px rgba(255, 228, 225, 0.8);
+        }
+    }
+    
+    .wedding-date h2 {
+        font-size: 3.5rem;
+        color: #8b4513;
+        margin: 0 0 1rem 0;
+        font-weight: 700;
+        text-shadow: 0 2px 4px rgba(139, 69, 19, 0.3);
+        animation: date-celebration 3s ease-in-out infinite;
+        font-family: 'Dancing Script', cursive;
+    }
+
+    @keyframes date-celebration {
+        0%, 100% { 
+            transform: scale(1);
+            color: #8b4513;
+        }
+        50% { 
+            transform: scale(1.03);
+            color: #a0522d;
+        }
+    }
+    
+    .wedding-date .time {
+        font-size: 1.8rem;
+        color: #c71585;
+        margin: 0.5rem 0;
+        font-weight: 500;
+        animation: time-romantic 4s ease-in-out infinite;
+        font-family: 'Playfair Display', serif;
+    }
+
+    @keyframes time-romantic {
+        0%, 100% { 
+            color: #c71585;
+            transform: translateX(0);
+        }
+        25% { 
+            color: #da70d6;
+            transform: translateX(-2px);
+        }
+        75% { 
+            color: #dda0dd;
+            transform: translateX(2px);
+        }
+    }
+    
+    .wedding-location {
+        background: linear-gradient(135deg, 
+            rgba(255, 228, 225, 0.9), 
+            rgba(255, 182, 193, 0.8), 
+            rgba(255, 218, 185, 0.9));
+        backdrop-filter: blur(20px);
+        border-radius: 30px;
+        padding: 3rem;
+        margin: 2.5rem 0;
+        border: 3px solid rgba(255, 255, 255, 0.5);
+        box-shadow: 
+            0 10px 30px rgba(199, 21, 133, 0.2),
+            inset 0 0 20px rgba(255, 255, 255, 0.4);
+        animation: location-romance 10s ease-in-out infinite;
+        position: relative;
+    }
+
+    .wedding-location::before {
+        content: '🏰✨';
+        position: absolute;
+        top: -25px;
+        right: 30px;
+        font-size: 2.2rem;
+        animation: castle-sparkle 5s ease-in-out infinite;
+    }
+
+    @keyframes castle-sparkle {
+        0%, 100% { 
+            transform: scale(1) rotate(0deg);
+            opacity: 0.8;
+        }
+        50% { 
+            transform: scale(1.2) rotate(15deg);
+            opacity: 1;
+        }
+    }
+
+    @keyframes location-romance {
+        0%, 100% { 
+            transform: scale(1);
+            background: linear-gradient(135deg, 
+                rgba(255, 228, 225, 0.9), 
+                rgba(255, 182, 193, 0.8), 
+                rgba(255, 218, 185, 0.9));
+        }
+        50% { 
+            transform: scale(1.01);
+            background: linear-gradient(135deg, 
+                rgba(255, 218, 185, 0.9), 
+                rgba(255, 228, 225, 0.9), 
+                rgba(255, 182, 193, 0.8));
+        }
+    }
+    
+    .wedding-location h3 {
+        color: #8b4513;
+        margin-bottom: 1.5rem;
+        font-size: 2.2rem;
+        font-weight: 600;
+        animation: venue-elegance 4s ease-in-out infinite;
+        font-family: 'Playfair Display', serif;
+        text-shadow: 0 2px 4px rgba(139, 69, 19, 0.2);
+    }
+
+    @keyframes venue-elegance {
+        0%, 100% { 
+            transform: translateY(0);
+            color: #8b4513;
+        }
+        50% { 
+            transform: translateY(-3px);
+            color: #a0522d;
+        }
+    }
+    
+    .wedding-actions {
+        background: linear-gradient(135deg, 
+            rgba(255, 240, 245, 0.95), 
+            rgba(255, 228, 225, 0.9), 
+            rgba(253, 245, 230, 0.95));
+        backdrop-filter: blur(15px);
+        padding: 4rem 2rem;
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+        border-top: 4px solid rgba(199, 21, 133, 0.3);
+        border-bottom: 4px solid rgba(255, 182, 193, 0.3);
+    }
+
+    .wedding-actions::before {
+        content: '💒 👰 🤵 💍 💕 🌹 💐 ✨ 🕊️ 💖 🌸 💒 👰 🤵 💍 💕 🌹 💐 ✨ 🕊️ 💖 🌸';
+        position: absolute;
+        top: 20%;
+        left: 0;
+        width: 100%;
+        font-size: 1.8rem;
+        animation: wedding-celebration-parade 15s linear infinite;
+        opacity: 0.3;
+        word-spacing: 2rem;
+        line-height: 3rem;
+    }
+
+    @keyframes wedding-celebration-parade {
+        0% { transform: translateX(-100%); }
+        100% { transform: translateX(100%); }
+    }
+
+    .wedding-actions::after {
+        content: '🎊 💒 🎉 💍 ✨ 🌹 🎊 💒 🎉 💍 ✨ 🌹';
+        position: absolute;
+        bottom: 20%;
+        left: 0;
+        width: 100%;
+        font-size: 1.5rem;
+        animation: wedding-celebration-parade-reverse 12s linear infinite;
+        opacity: 0.25;
+        word-spacing: 3rem;
+    }
+
+    @keyframes wedding-celebration-parade-reverse {
+        0% { transform: translateX(100%); }
+        100% { transform: translateX(-100%); }
+    }
+    
+    .wedding-btn {
+        display: inline-block;
+        padding: 1.2rem 3rem;
+        margin: 1rem;
+        background: linear-gradient(135deg, 
+            #8b4513, #a0522d, #daa520, #ffb6c1);
+        color: white;
+        text-decoration: none;
+        border-radius: 60px;
+        font-weight: 600;
+        transition: all 0.4s ease;
+        border: none;
+        cursor: pointer;
+        font-size: 1.2rem;
+        position: relative;
+        z-index: 2;
+        animation: btn-wedding-elegance 6s ease-in-out infinite;
+        box-shadow: 
+            0 8px 20px rgba(139, 69, 19, 0.3),
+            inset 0 2px 4px rgba(255, 255, 255, 0.2);
+        font-family: 'Playfair Display', serif;
+        letter-spacing: 1px;
+    }
+
+    @keyframes btn-wedding-elegance {
+        0%, 100% { 
+            transform: scale(1); 
+            box-shadow: 
+                0 8px 20px rgba(139, 69, 19, 0.3),
+                inset 0 2px 4px rgba(255, 255, 255, 0.2);
+        }
+        50% { 
+            transform: scale(1.02); 
+            box-shadow: 
+                0 12px 30px rgba(218, 165, 32, 0.4),
+                inset 0 4px 8px rgba(255, 255, 255, 0.3);
+        }
+    }
+    
+    .wedding-btn:hover {
+        transform: scale(1.05) translateY(-2px);
+        box-shadow: 
+            0 15px 40px rgba(139, 69, 19, 0.4),
+            inset 0 4px 8px rgba(255, 255, 255, 0.4);
+        background: linear-gradient(135deg, 
+            #a0522d, #daa520, #ffb6c1, #8b4513);
+    }
+    
+    .wedding-footer {
+        background: linear-gradient(135deg, 
+            #8b4513, #a0522d, #c71585, #da70d6);
+        color: white;
+        text-align: center;
+        padding: 3rem 2rem;
+        position: relative;
+        overflow: hidden;
+        animation: footer-wedding-glow 8s ease-in-out infinite;
+    }
+
+    @keyframes footer-wedding-glow {
+        0%, 100% { 
+            background: linear-gradient(135deg, 
+                #8b4513, #a0522d, #c71585, #da70d6);
+        }
+        50% { 
+            background: linear-gradient(135deg, 
+                #a0522d, #c71585, #da70d6, #8b4513);
+        }
+    }
+
+    .wedding-footer::before {
+        content: '🌹 💐 ✨ 💕 🤍 💍 👰 🤵 💒 🌹 💐 ✨ 💕 🤍 💍 👰 🤵 💒';
+        position: absolute;
+        bottom: 10px;
+        left: 0;
+        width: 100%;
+        font-size: 1.5rem;
+        animation: footer-wedding-romance 18s linear infinite;
+        opacity: 0.6;
+        word-spacing: 2rem;
+    }
+
+    @keyframes footer-wedding-romance {
+        0% { transform: translateX(100%); }
+        100% { transform: translateX(-100%); }
+    }
+    
+    .wedding-footer p {
+        position: relative;
+        z-index: 2;
+        animation: footer-love-text 4s ease-in-out infinite;
+        font-style: italic;
+        font-size: 1.3rem;
+        font-family: 'Dancing Script', cursive;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        margin: 0;
+        padding: 1rem 0;
+    }
+
+    @keyframes footer-love-text {
+        0%, 100% { 
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+            transform: scale(1);
+        }
+        50% { 
+            text-shadow: 0 4px 8px rgba(255, 182, 193, 0.6);
+            transform: scale(1.01);
+        }
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+        .luxury-names h1 { 
+            font-size: 3.2rem; 
+        }
+        .wedding-date h2 { 
+            font-size: 2.8rem; 
+        }
+        .wedding-btn { 
+            padding: 1rem 2.5rem; 
+            margin: 0.8rem; 
+            font-size: 1.1rem;
+        }
+        .wedding-location { 
+            padding: 2rem; 
+        }
+        .reception-hero-content {
+            padding: 3rem 0;
+        }
+        .celebration-badge {
+            padding: 1.5rem 2.5rem;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .luxury-names h1 { 
+            font-size: 2.5rem; 
+        }
+        .wedding-date h2 { 
+            font-size: 2.2rem; 
+        }
+        .celebration-icon {
+            font-size: 3rem;
+        }
+        .wedding-location h3 {
+            font-size: 1.8rem;
+        }
+    }
+</style>
+{% endblock %}
     
     /* Confetes animados */
     .reception-hero::before {
@@ -341,37 +967,82 @@
 {% endblock %}
 
 {% block content %}
-<!-- Hero Section - Convite de Recepção Super Festivo -->
+<!-- Hero Section - Convite de Recepção de Casamento -->
 <section class="reception-hero">
     <div class="container">
         <div class="reception-hero-content text-center">
             <div class="celebration-badge">
-                <div class="celebration-icon">🎉</div>
+                <div class="celebration-icon">💒</div>
                 <h2 class="text-xl font-semibold">Parabéns!</h2>
                 <p class="text-base opacity-90">Você confirmou presença na cerimônia</p>
             </div>
             
             <div class="luxury-names">
-                <h1 class="elegant-name text-white">{{ config.nome_noiva or 'Iara' }}</h1>
-                <div class="elegant-ampersand text-white">&</div>
-                <h1 class="elegant-name text-white">{{ config.nome_noivo or 'Samuel' }}</h1>
+                <h1 class="text-white">{{ config.nome_noiva or 'Iara' }} & {{ config.nome_noivo or 'Samuel' }}</h1>
             </div>
             
-            <div class="invitation-title">
-                <p class="invitation-subtitle text-white">Agora você está convidado(a) para nossa</p>
-                <h1 class="invitation-main">RECEPÇÃO</h1>
+            <div class="wedding-date">
+                <p class="text-lg mb-3">Agora você está convidado(a) para nossa</p>
+                <h2>RECEPÇÃO</h2>
+                <div class="time">
+                    {% if config.data_casamento %}
+                        {{ config.data_casamento.strftime('%d de %B de %Y') }}
+                    {% else %}
+                        15 de Dezembro de 2025
+                    {% endif %}
+                </div>
+                <div class="time">
+                    {% if config.horario_festa %}
+                        às {{ config.horario_festa.strftime('%H:%M') }}
+                    {% else %}
+                        às 18:00
+                    {% endif %}
+                </div>
             </div>
             
-            <div class="elegant-date text-white">
-                {% if config.data_casamento %}
-                    {{ config.data_casamento.strftime('%d.%m.%Y') }}
-                {% else %}
-                    15.12.2025
-                {% endif %}
+            <div class="wedding-location">
+                <h3>{{ config.local_festa or 'Salão de Festas Elegance' }}</h3>
+                <p class="text-lg">{{ config.endereco_festa or 'Av. Principal, 456 - Jardim das Rosas' }}</p>
             </div>
+        </div>
+    </div>
+</section>
+
+<!-- Seção de Ações -->
+<section class="wedding-actions">
+    <div class="container">
+        <h3 class="text-2xl font-bold mb-6 text-center" style="color: #8b4513; z-index: 2; position: relative; font-family: 'Playfair Display', serif;">
+            Celebre Conosco! 💕
+        </h3>
+        
+        <div class="text-center">
+            <a href="tel:{{ config.telefone_contato or '(11) 99999-9999' }}" class="wedding-btn">
+                <i class="fas fa-phone mr-2"></i>
+                Ligar para os Noivos
+            </a>
             
-            <div class="scroll-indicator">
-                <i class="fas fa-chevron-down fa-2x"></i>
+            <a href="https://wa.me/{{ (config.whatsapp or '5511999999999') | replace('(', '') | replace(')', '') | replace(' ', '') | replace('-', '') }}" 
+               target="_blank" class="wedding-btn">
+                <i class="fab fa-whatsapp mr-2"></i>
+                WhatsApp
+            </a>
+            
+            <button onclick="adicionarEvento()" class="wedding-btn">
+                <i class="fas fa-calendar-plus mr-2"></i>
+                Adicionar à Agenda
+            </button>
+        </div>
+    </div>
+</section>
+
+<!-- Footer Romântico -->
+<footer class="wedding-footer">
+    <div class="container">
+        <p>
+            "Onde há amor verdadeiro, há festa eterna. Obrigado por celebrar conosco este momento especial!"
+        </p>
+    </div>
+</footer>
             </div>
         </div>
     </div>
