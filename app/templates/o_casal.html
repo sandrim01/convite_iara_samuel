@@ -21,7 +21,7 @@
 </section>
 
 <!-- Seção do Casal -->
-<section class="couple-section section">
+<section class="couple-section section" id="couple-info">
     <div class="container">
         <div class="couple-grid">
             <!-- Sobre a Noiva -->
@@ -167,4 +167,68 @@
         </div>
     </div>
 </section>
+
+<script>
+// Script para rolagem automática suave até as informações do casal
+document.addEventListener('DOMContentLoaded', function() {
+    // Aguardar um pequeno delay para a página carregar completamente
+    setTimeout(function() {
+        // Encontrar a seção das informações do casal
+        const coupleSection = document.getElementById('couple-info');
+        
+        if (coupleSection) {
+            // Calcular posição para scroll suave
+            const headerHeight = 80; // Altura aproximada do header
+            const targetPosition = coupleSection.offsetTop - headerHeight;
+            
+            // Scroll suave com animação
+            window.scrollTo({
+                top: targetPosition,
+                behavior: 'smooth'
+            });
+        }
+    }, 1500); // Delay de 1.5 segundos para mostrar primeiro o título
+});
+
+// Animação de entrada para os cards do casal
+function animateCards() {
+    const cards = document.querySelectorAll('.couple-card');
+    
+    cards.forEach((card, index) => {
+        // Aplicar delay escalonado para cada card
+        setTimeout(() => {
+            card.style.opacity = '1';
+            card.style.transform = 'translateY(0)';
+        }, 500 + (index * 300)); // 500ms base + 300ms para cada card
+    });
+}
+
+// Observador para animar quando os cards ficam visíveis
+const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            animateCards();
+            observer.unobserve(entry.target); // Parar de observar após animar
+        }
+    });
+}, {
+    threshold: 0.3 // Animar quando 30% da seção estiver visível
+});
+
+// Iniciar observação quando a página carregar
+document.addEventListener('DOMContentLoaded', function() {
+    const coupleSection = document.getElementById('couple-info');
+    if (coupleSection) {
+        // Preparar cards para animação
+        const cards = document.querySelectorAll('.couple-card');
+        cards.forEach(card => {
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(30px)';
+            card.style.transition = 'all 0.6s ease';
+        });
+        
+        observer.observe(coupleSection);
+    }
+});
+</script>
 {% endblock %}
