@@ -1,0 +1,577 @@
+{% extends "admin/base.html" %}
+
+{% block title %}Editar Convidado - Admin{% endblock %}
+
+{% block content %}
+<div class="admin-header">
+    <div class="admin-header-content">
+        <h1 class="admin-title">
+            <i class="fas fa-user-edit"></i>
+            Editar Convidado
+        </h1>
+        <p class="admin-subtitle">Edite as informações de {{ convidado.nome }}</p>
+    </div>
+    
+    <div class="admin-header-actions">
+        <a href="{{ url_for('admin.convidados') }}" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i>
+            Voltar
+        </a>
+    </div>
+</div>
+
+<div class="admin-content">
+    <div class="form-container">
+        <form method="POST" action="{{ url_for('admin.processar_editar_convidado', id=convidado.id) }}" class="guest-form">
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="nome">
+                        <i class="fas fa-user"></i>
+                        Nome Completo
+                    </label>
+                    <input type="text" 
+                           id="nome" 
+                           name="nome" 
+                           required 
+                           class="form-control"
+                           value="{{ convidado.nome }}"
+                           placeholder="Ex: João Silva">
+                    <small class="help-text">Nome que aparecerá no convite</small>
+                </div>
+                
+                <div class="form-group">
+                    <label for="email">
+                        <i class="fas fa-envelope"></i>
+                        Email
+                    </label>
+                    <input type="email" 
+                           id="email" 
+                           name="email" 
+                           class="form-control"
+                           value="{{ convidado.email or '' }}"
+                           placeholder="Ex: joao@email.com">
+                    <small class="help-text">Para envio do convite e notificações</small>
+                </div>
+                
+                <div class="form-group">
+                    <label for="telefone">
+                        <i class="fas fa-phone"></i>
+                        Telefone
+                    </label>
+                    <input type="tel" 
+                           id="telefone" 
+                           name="telefone" 
+                           class="form-control"
+                           value="{{ convidado.telefone or '' }}"
+                           placeholder="Ex: (11) 99999-9999">
+                    <small class="help-text">Para contato via WhatsApp</small>
+                </div>
+                
+                <div class="form-group">
+                    <label class="checkbox-label">
+                        <input type="checkbox" 
+                               name="liberado_recepcao" 
+                               {{ 'checked' if convidado.liberado_recepcao else '' }}>
+                        <span class="checkmark"></span>
+                        <span class="label-text">
+                            <i class="fas fa-glass-cheers"></i>
+                            Liberado para Recepção
+                        </span>
+                    </label>
+                    <small class="help-text">Se marcado, o convidado poderá acessar informações da recepção</small>
+                </div>
+            </div>
+            
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save"></i>
+                    Salvar Alterações
+                </button>
+                
+                <a href="{{ url_for('admin.convidados') }}" class="btn btn-secondary">
+                    <i class="fas fa-times"></i>
+                    Cancelar
+                </a>
+            </div>
+        </form>
+    </div>
+    
+    <!-- Informações do convidado -->
+    <div class="info-panel">
+        <h3>
+            <i class="fas fa-info-circle"></i>
+            Informações do Convidado
+        </h3>
+        
+        <div class="info-grid">
+            <div class="info-card">
+                <div class="info-header">
+                    <i class="fas fa-key"></i>
+                    <strong>Token do Convite</strong>
+                </div>
+                <div class="info-content">
+                    <code>{{ convidado.token }}</code>
+                    <button onclick="copyToken()" class="btn-copy" title="Copiar Token">
+                        <i class="fas fa-copy"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="info-card">
+                <div class="info-header">
+                    <i class="fas fa-link"></i>
+                    <strong>Link do Convite</strong>
+                </div>
+                <div class="info-content">
+                    <span class="link-text">{{ request.url_root }}convite/{{ convidado.token }}</span>
+                    <button onclick="copyLink()" class="btn-copy" title="Copiar Link">
+                        <i class="fas fa-copy"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="info-card">
+                <div class="info-header">
+                    <i class="fas fa-calendar"></i>
+                    <strong>Data de Cadastro</strong>
+                </div>
+                <div class="info-content">
+                    {% if convidado.created_at %}
+                        {{ convidado.created_at.strftime('%d/%m/%Y às %H:%M') }}
+                    {% else %}
+                        Não disponível
+                    {% endif %}
+                </div>
+            </div>
+            
+            <div class="info-card">
+                <div class="info-header">
+                    <i class="fas fa-check-circle"></i>
+                    <strong>Status da Confirmação</strong>
+                </div>
+                <div class="info-content">
+                    {% if convidado.confirmacao %}
+                        <span class="status confirmed">
+                            <i class="fas fa-check"></i>
+                            Confirmado
+                        </span>
+                        {% if convidado.data_confirmacao %}
+                            <small>em {{ convidado.data_confirmacao.strftime('%d/%m/%Y às %H:%M') }}</small>
+                        {% endif %}
+                    {% else %}
+                        <span class="status pending">
+                            <i class="fas fa-clock"></i>
+                            Pendente
+                        </span>
+                    {% endif %}
+                </div>
+            </div>
+            
+            {% if convidado.numero_acompanhantes is not none %}
+            <div class="info-card">
+                <div class="info-header">
+                    <i class="fas fa-users"></i>
+                    <strong>Acompanhantes</strong>
+                </div>
+                <div class="info-content">
+                    {{ convidado.numero_acompanhantes }} pessoa(s)
+                </div>
+            </div>
+            {% endif %}
+            
+            {% if convidado.mensagem %}
+            <div class="info-card full-width">
+                <div class="info-header">
+                    <i class="fas fa-comment"></i>
+                    <strong>Mensagem</strong>
+                </div>
+                <div class="info-content">
+                    "{{ convidado.mensagem }}"
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_scripts %}
+<style>
+.form-container {
+    background: white;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    margin-bottom: 30px;
+}
+
+.guest-form {
+    max-width: 600px;
+}
+
+.form-grid {
+    display: grid;
+    gap: 24px;
+    margin-bottom: 30px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.form-group label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 8px;
+    font-size: 14px;
+}
+
+.form-control {
+    padding: 12px;
+    border: 2px solid #e1e5e9;
+    border-radius: 8px;
+    font-size: 14px;
+    transition: border-color 0.3s ease;
+}
+
+.form-control:focus {
+    outline: none;
+    border-color: var(--primary-color, #B91C1C);
+}
+
+.checkbox-label {
+    display: flex !important;
+    align-items: center !important;
+    gap: 12px !important;
+    padding: 12px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin-bottom: 0 !important;
+}
+
+.checkbox-label:hover {
+    background: #e9ecef;
+}
+
+.checkbox-label input[type="checkbox"] {
+    position: relative;
+    width: 20px;
+    height: 20px;
+    margin: 0;
+}
+
+.label-text {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 600;
+    color: #333;
+}
+
+.help-text {
+    color: #666;
+    font-size: 12px;
+    margin-top: 4px;
+}
+
+.form-actions {
+    display: flex;
+    gap: 12px;
+    justify-content: flex-start;
+}
+
+.btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn-primary {
+    background: var(--primary-color, #B91C1C);
+    color: white;
+}
+
+.btn-primary:hover {
+    background: #991b1b;
+    transform: translateY(-1px);
+}
+
+.btn-secondary {
+    background: #6b7280;
+    color: white;
+}
+
+.btn-secondary:hover {
+    background: #4b5563;
+    transform: translateY(-1px);
+}
+
+.info-panel {
+    background: white;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.info-panel h3 {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0 0 20px 0;
+    color: #333;
+    font-size: 18px;
+}
+
+.info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 16px;
+}
+
+.info-card {
+    padding: 16px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    border-left: 4px solid var(--primary-color, #B91C1C);
+}
+
+.info-card.full-width {
+    grid-column: 1 / -1;
+}
+
+.info-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+}
+
+.info-header i {
+    color: var(--primary-color, #B91C1C);
+}
+
+.info-header strong {
+    color: #333;
+    font-size: 14px;
+}
+
+.info-content {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.info-content code {
+    background: #e9ecef;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-family: monospace;
+    font-size: 12px;
+    color: #495057;
+}
+
+.link-text {
+    font-size: 12px;
+    color: #495057;
+    word-break: break-all;
+    flex: 1;
+}
+
+.btn-copy {
+    background: var(--primary-color, #B91C1C);
+    color: white;
+    border: none;
+    padding: 4px 8px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 12px;
+    transition: all 0.3s ease;
+}
+
+.btn-copy:hover {
+    background: #991b1b;
+    transform: scale(1.05);
+}
+
+.status {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.status.confirmed {
+    background: #d4edda;
+    color: #155724;
+}
+
+.status.pending {
+    background: #fff3cd;
+    color: #856404;
+}
+
+.info-content small {
+    display: block;
+    color: #666;
+    font-size: 11px;
+    margin-top: 4px;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+    .form-container,
+    .info-panel {
+        padding: 20px;
+    }
+    
+    .form-actions {
+        flex-direction: column;
+    }
+    
+    .btn {
+        justify-content: center;
+    }
+    
+    .info-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .link-text {
+        font-size: 11px;
+    }
+}
+</style>
+
+<script>
+// Formatação do telefone
+document.getElementById('telefone').addEventListener('input', function(e) {
+    let value = e.target.value.replace(/\D/g, '');
+    
+    if (value.length <= 11) {
+        if (value.length <= 2) {
+            value = value.replace(/(\d{0,2})/, '($1');
+        } else if (value.length <= 7) {
+            value = value.replace(/(\d{2})(\d{0,5})/, '($1) $2');
+        } else {
+            value = value.replace(/(\d{2})(\d{5})(\d{0,4})/, '($1) $2-$3');
+        }
+    }
+    
+    e.target.value = value;
+});
+
+// Validação do formulário
+document.querySelector('.guest-form').addEventListener('submit', function(e) {
+    const nome = document.getElementById('nome').value.trim();
+    
+    if (!nome) {
+        e.preventDefault();
+        alert('Por favor, preencha o nome do convidado.');
+        document.getElementById('nome').focus();
+        return;
+    }
+    
+    if (nome.length < 2) {
+        e.preventDefault();
+        alert('O nome deve ter pelo menos 2 caracteres.');
+        document.getElementById('nome').focus();
+        return;
+    }
+});
+
+// Copiar token
+function copyToken() {
+    const token = '{{ convidado.token }}';
+    copyToClipboard(token, 'Token copiado!');
+}
+
+// Copiar link
+function copyLink() {
+    const link = '{{ request.url_root }}convite/{{ convidado.token }}';
+    copyToClipboard(link, 'Link copiado!');
+}
+
+// Função auxiliar para copiar
+function copyToClipboard(text, message) {
+    if (navigator.clipboard) {
+        navigator.clipboard.writeText(text).then(() => {
+            showNotification(message, 'success');
+        });
+    } else {
+        // Fallback para navegadores antigos
+        const textArea = document.createElement('textarea');
+        textArea.value = text;
+        document.body.appendChild(textArea);
+        textArea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textArea);
+        showNotification(message, 'success');
+    }
+}
+
+// Mostrar notificações
+function showNotification(message, type) {
+    const notification = document.createElement('div');
+    notification.className = `notification ${type}`;
+    notification.textContent = message;
+    
+    notification.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        padding: 12px 20px;
+        border-radius: 6px;
+        color: white;
+        font-weight: 500;
+        z-index: 9999;
+        animation: slideIn 0.3s ease;
+        ${type === 'success' ? 'background: #4caf50;' : 'background: #f44336;'}
+    `;
+    
+    document.body.appendChild(notification);
+    
+    setTimeout(() => {
+        notification.style.animation = 'slideOut 0.3s ease';
+        setTimeout(() => {
+            if (notification.parentNode) {
+                notification.parentNode.removeChild(notification);
+            }
+        }, 300);
+    }, 3000);
+}
+
+// CSS para animações
+const style = document.createElement('style');
+style.textContent = `
+    @keyframes slideIn {
+        from { transform: translateX(100%); opacity: 0; }
+        to { transform: translateX(0); opacity: 1; }
+    }
+    
+    @keyframes slideOut {
+        from { transform: translateX(0); opacity: 1; }
+        to { transform: translateX(100%); opacity: 0; }
+    }
+`;
+document.head.appendChild(style);
+</script>
+{% endblock %}

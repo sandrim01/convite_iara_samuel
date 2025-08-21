@@ -474,3 +474,109 @@ def teste_upload_foto():
     
     except Exception as e:
         return jsonify({'success': False, 'error': f'Erro interno: {str(e)}'})
+
+# ===== ROTAS PARA GERENCIAMENTO DE CONVIDADOS =====
+
+@admin.route('/convidados/<int:id>/toggle-recepcao', methods=['POST'])
+@login_required
+def toggle_recepcao_convidado(id):
+    """Toggle liberação para recepção do convidado"""
+    try:
+        convidado = Convidado.query.get_or_404(id)
+        data = request.get_json()
+        
+        convidado.liberado_recepcao = data.get('enabled', False)
+        db.session.commit()
+        
+        status = "liberado" if convidado.liberado_recepcao else "bloqueado"
+        
+        return jsonify({
+            'success': True,
+            'message': f'Convidado {status} para recepção'
+        })
+        
+    except Exception as e:
+        return jsonify({
+            'success': False,
+            'message': f'Erro ao atualizar: {str(e)}'
+        })
+
+@admin.route('/convidados/<int:id>/detalhes')
+@login_required
+def detalhes_convidado(id):
+    """Obter detalhes completos do convidado"""
+    try:
+        convidado = Convidado.query.get_or_404(id)
+        
+        return jsonify({
+            'success': True,
+            'guest': {
+                'id': convidado.id,
+                'nome': convidado.nome,
+                'email': convidado.email,
+                'telefone': convidado.telefone,
+                'token': convidado.token,
+                'confirmacao': convidado.confirmacao,
+                'numero_acompanhantes': convidado.numero_acompanhantes,
+                'liberado_recepcao': convidado.liberado_recepcao,
+                'mensagem': convidado.mensagem,
+                'data_confirmacao': convidado.data_confirmacao.isoformat() if convidado.data_confirmacao else None,
+                'created_at': convidado.created_at.isoformat() if hasattr(convidado, 'created_at') and convidado.created_at else None
+            }
+        })
+        
+    except Exception as e:
+        return jsonify({
+            'success': False,
+            'message': f'Erro ao carregar detalhes: {str(e)}'
+        })
+
+@admin.route('/convidados/<int:id>/editar')
+@login_required
+def editar_convidado(id):
+    """Formulário para editar convidado"""
+    convidado = Convidado.query.get_or_404(id)
+    return render_template('admin/editar_convidado.html', convidado=convidado)
+
+@admin.route('/convidados/<int:id>/editar', methods=['POST'])
+@login_required
+def processar_editar_convidado(id):
+    """Processar edição de convidado"""
+    try:
+        convidado = Convidado.query.get_or_404(id)
+        
+        convidado.nome = request.form.get('nome')
+        convidado.email = request.form.get('email')
+        convidado.telefone = request.form.get('telefone')
+        convidado.liberado_recepcao = 'liberado_recepcao' in request.form
+        
+        db.session.commit()
+        
+        flash(f'Convidado "{convidado.nome}" atualizado com sucesso!', 'success')
+        return redirect(url_for('admin.convidados'))
+        
+    except Exception as e:
+        flash('Erro ao atualizar convidado. Tente novamente.', 'error')
+        return redirect(url_for('admin.editar_convidado', id=id))
+
+@admin.route('/convidados/<int:id>/excluir', methods=['DELETE'])
+@login_required
+def excluir_convidado(id):
+    """Excluir convidado"""
+    try:
+        convidado = Convidado.query.get_or_404(id)
+        nome = convidado.nome
+        
+        db.session.delete(convidado)
+        db.session.commit()
+        
+        return jsonify({
+            'success': True,
+            'message': f'Convidado "{nome}" excluído com sucesso'
+        })
+        
+    except Exception as e:
+        return jsonify({
+            'success': False,
+            'message': f'Erro ao excluir convidado: {str(e)}'
+        })

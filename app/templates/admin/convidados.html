@@ -1,0 +1,1016 @@
+{% extends "admin/base.html" %}
+
+{% block title %}Gerenciar Convidados - Admin{% endblock %}
+
+{% block content %}
+<div class="admin-header">
+    <div class="admin-header-content">
+        <h1 class="admin-title">
+            <i class="fas fa-users"></i>
+            Gerenciar Convidados
+        </h1>
+        <p class="admin-subtitle">Gerencie a lista de convidados do casamento</p>
+    </div>
+    
+    <div class="admin-header-actions">
+        <a href="{{ url_for('admin.adicionar_convidado') }}" class="btn btn-primary">
+            <i class="fas fa-plus"></i>
+            Adicionar Convidado
+        </a>
+    </div>
+</div>
+
+<div class="admin-content">
+    <!-- Estatísticas -->
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-icon">
+                <i class="fas fa-users"></i>
+            </div>
+            <div class="stat-content">
+                <h3>{{ convidados.total }}</h3>
+                <p>Total de Convidados</p>
+            </div>
+        </div>
+        
+        <div class="stat-card">
+            <div class="stat-icon">
+                <i class="fas fa-check-circle"></i>
+            </div>
+            <div class="stat-content">
+                <h3>{{ convidados.items | selectattr('confirmacao', 'equalto', True) | list | length }}</h3>
+                <p>Confirmações</p>
+            </div>
+        </div>
+        
+        <div class="stat-card">
+            <div class="stat-icon">
+                <i class="fas fa-clock"></i>
+            </div>
+            <div class="stat-content">
+                <h3>{{ convidados.items | selectattr('confirmacao', 'equalto', False) | list | length }}</h3>
+                <p>Pendentes</p>
+            </div>
+        </div>
+        
+        <div class="stat-card">
+            <div class="stat-icon">
+                <i class="fas fa-glass-cheers"></i>
+            </div>
+            <div class="stat-content">
+                <h3>{{ convidados.items | selectattr('liberado_recepcao', 'equalto', True) | list | length }}</h3>
+                <p>Liberados Recepção</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filtros -->
+    <div class="filters-section">
+        <div class="search-box">
+            <i class="fas fa-search"></i>
+            <input type="text" id="search-input" placeholder="Buscar convidados..." onkeyup="filterGuests()">
+        </div>
+        
+        <div class="filter-buttons">
+            <button class="filter-btn active" data-filter="all">
+                <i class="fas fa-list"></i> Todos
+            </button>
+            <button class="filter-btn" data-filter="confirmed">
+                <i class="fas fa-check"></i> Confirmados
+            </button>
+            <button class="filter-btn" data-filter="pending">
+                <i class="fas fa-clock"></i> Pendentes
+            </button>
+            <button class="filter-btn" data-filter="reception">
+                <i class="fas fa-glass-cheers"></i> Recepção
+            </button>
+        </div>
+    </div>
+
+    <!-- Lista de Convidados -->
+    <div class="guests-container">
+        {% if convidados.items %}
+            <div class="guests-table-container">
+                <table class="guests-table" id="guests-table">
+                    <thead>
+                        <tr>
+                            <th>Nome</th>
+                            <th>Contato</th>
+                            <th>Status</th>
+                            <th>Acompanhantes</th>
+                            <th>Recepção</th>
+                            <th>Data Confirmação</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for convidado in convidados.items %}
+                        <tr class="guest-row" 
+                            data-guest-id="{{ convidado.id }}"
+                            data-name="{{ convidado.nome.lower() }}"
+                            data-status="{{ 'confirmed' if convidado.confirmacao else 'pending' }}"
+                            data-reception="{{ 'yes' if convidado.liberado_recepcao else 'no' }}">
+                            
+                            <td class="guest-name">
+                                <div class="name-container">
+                                    <strong>{{ convidado.nome }}</strong>
+                                    <small class="guest-token">Token: {{ convidado.token[:8] }}...</small>
+                                </div>
+                            </td>
+                            
+                            <td class="guest-contact">
+                                {% if convidado.email %}
+                                    <div class="contact-item">
+                                        <i class="fas fa-envelope"></i>
+                                        {{ convidado.email }}
+                                    </div>
+                                {% endif %}
+                                {% if convidado.telefone %}
+                                    <div class="contact-item">
+                                        <i class="fas fa-phone"></i>
+                                        {{ convidado.telefone }}
+                                    </div>
+                                {% endif %}
+                            </td>
+                            
+                            <td class="guest-status">
+                                {% if convidado.confirmacao %}
+                                    <span class="status-badge confirmed">
+                                        <i class="fas fa-check-circle"></i>
+                                        Confirmado
+                                    </span>
+                                {% else %}
+                                    <span class="status-badge pending">
+                                        <i class="fas fa-clock"></i>
+                                        Pendente
+                                    </span>
+                                {% endif %}
+                            </td>
+                            
+                            <td class="guest-companions">
+                                <span class="companions-count">
+                                    {{ convidado.numero_acompanhantes or 0 }}
+                                </span>
+                            </td>
+                            
+                            <td class="guest-reception">
+                                <label class="toggle-switch">
+                                    <input type="checkbox" 
+                                           {{ 'checked' if convidado.liberado_recepcao else '' }}
+                                           onchange="toggleReception({{ convidado.id }}, this.checked)">
+                                    <span class="toggle-slider"></span>
+                                </label>
+                            </td>
+                            
+                            <td class="guest-date">
+                                {% if convidado.data_confirmacao %}
+                                    {{ convidado.data_confirmacao.strftime('%d/%m/%Y %H:%M') }}
+                                {% else %}
+                                    <span class="no-date">-</span>
+                                {% endif %}
+                            </td>
+                            
+                            <td class="guest-actions">
+                                <div class="action-buttons">
+                                    <button class="btn-action btn-view" onclick="viewGuest({{ convidado.id }})" title="Ver Detalhes">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                    <button class="btn-action btn-edit" onclick="editGuest({{ convidado.id }})" title="Editar">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button class="btn-action btn-link" onclick="copyLink('{{ convidado.token }}')" title="Copiar Link">
+                                        <i class="fas fa-link"></i>
+                                    </button>
+                                    <button class="btn-action btn-delete" onclick="deleteGuest({{ convidado.id }}, '{{ convidado.nome }}')" title="Excluir">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Paginação -->
+            {% if convidados.pages > 1 %}
+            <div class="pagination-container">
+                <div class="pagination">
+                    {% if convidados.has_prev %}
+                        <a href="{{ url_for('admin.convidados', page=convidados.prev_num) }}" class="page-link">
+                            <i class="fas fa-chevron-left"></i>
+                        </a>
+                    {% endif %}
+                    
+                    {% for page in convidados.iter_pages() %}
+                        {% if page %}
+                            {% if page != convidados.page %}
+                                <a href="{{ url_for('admin.convidados', page=page) }}" class="page-link">{{ page }}</a>
+                            {% else %}
+                                <span class="page-link active">{{ page }}</span>
+                            {% endif %}
+                        {% else %}
+                            <span class="page-ellipsis">...</span>
+                        {% endif %}
+                    {% endfor %}
+                    
+                    {% if convidados.has_next %}
+                        <a href="{{ url_for('admin.convidados', page=convidados.next_num) }}" class="page-link">
+                            <i class="fas fa-chevron-right"></i>
+                        </a>
+                    {% endif %}
+                </div>
+                
+                <div class="pagination-info">
+                    Mostrando {{ (convidados.page - 1) * convidados.per_page + 1 }} - 
+                    {{ min(convidados.page * convidados.per_page, convidados.total) }} 
+                    de {{ convidados.total }} convidados
+                </div>
+            </div>
+            {% endif %}
+
+        {% else %}
+            <div class="empty-state">
+                <i class="fas fa-users"></i>
+                <h3>Nenhum convidado cadastrado</h3>
+                <p>Comece adicionando seus primeiros convidados</p>
+                <a href="{{ url_for('admin.adicionar_convidado') }}" class="btn btn-primary">
+                    <i class="fas fa-plus"></i>
+                    Adicionar Primeiro Convidado
+                </a>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Modal para visualizar detalhes do convidado -->
+<div class="modal fade" id="guestModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="fas fa-user"></i>
+                    <span id="modal-guest-name">Detalhes do Convidado</span>
+                </h5>
+                <button type="button" class="close" data-dismiss="modal">
+                    <span>&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="modal-body">
+                <!-- Conteúdo será carregado via JavaScript -->
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_scripts %}
+<style>
+/* Estilos para gerenciamento de convidados */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.stat-card {
+    background: white;
+    padding: 24px;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    transition: transform 0.3s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-2px);
+}
+
+.stat-icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--primary-color, #B91C1C);
+    color: white;
+    font-size: 20px;
+}
+
+.stat-content h3 {
+    margin: 0;
+    font-size: 28px;
+    font-weight: 700;
+    color: #333;
+}
+
+.stat-content p {
+    margin: 4px 0 0 0;
+    color: #666;
+    font-size: 14px;
+}
+
+.filters-section {
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    margin-bottom: 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.search-box {
+    position: relative;
+    flex: 1;
+    min-width: 250px;
+}
+
+.search-box i {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #999;
+}
+
+.search-box input {
+    width: 100%;
+    padding: 12px 12px 12px 40px;
+    border: 2px solid #e1e5e9;
+    border-radius: 8px;
+    font-size: 14px;
+    transition: border-color 0.3s ease;
+}
+
+.search-box input:focus {
+    outline: none;
+    border-color: var(--primary-color, #B91C1C);
+}
+
+.filter-buttons {
+    display: flex;
+    gap: 8px;
+}
+
+.filter-btn {
+    padding: 10px 16px;
+    border: 2px solid #e1e5e9;
+    background: white;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 14px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.filter-btn:hover {
+    border-color: var(--primary-color, #B91C1C);
+    color: var(--primary-color, #B91C1C);
+}
+
+.filter-btn.active {
+    background: var(--primary-color, #B91C1C);
+    border-color: var(--primary-color, #B91C1C);
+    color: white;
+}
+
+.guests-container {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    overflow: hidden;
+}
+
+.guests-table-container {
+    overflow-x: auto;
+}
+
+.guests-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.guests-table th {
+    background: #f8f9fa;
+    padding: 16px 12px;
+    text-align: left;
+    font-weight: 600;
+    color: #333;
+    border-bottom: 2px solid #e1e5e9;
+    white-space: nowrap;
+}
+
+.guests-table td {
+    padding: 16px 12px;
+    border-bottom: 1px solid #e1e5e9;
+    vertical-align: top;
+}
+
+.guest-row:hover {
+    background: #f8f9fa;
+}
+
+.guest-name strong {
+    display: block;
+    color: #333;
+    font-weight: 600;
+    margin-bottom: 4px;
+}
+
+.guest-token {
+    color: #999;
+    font-size: 11px;
+    font-family: monospace;
+}
+
+.contact-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 4px;
+    font-size: 13px;
+    color: #666;
+}
+
+.contact-item i {
+    width: 12px;
+    color: #999;
+}
+
+.status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.status-badge.confirmed {
+    background: #d4edda;
+    color: #155724;
+}
+
+.status-badge.pending {
+    background: #fff3cd;
+    color: #856404;
+}
+
+.companions-count {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    background: #f0f0f0;
+    border-radius: 50%;
+    font-weight: 600;
+    color: #333;
+}
+
+.toggle-switch {
+    position: relative;
+    display: inline-block;
+    width: 44px;
+    height: 24px;
+}
+
+.toggle-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.toggle-slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    transition: 0.3s;
+    border-radius: 24px;
+}
+
+.toggle-slider:before {
+    position: absolute;
+    content: "";
+    height: 18px;
+    width: 18px;
+    left: 3px;
+    bottom: 3px;
+    background-color: white;
+    transition: 0.3s;
+    border-radius: 50%;
+}
+
+.toggle-switch input:checked + .toggle-slider {
+    background-color: var(--primary-color, #B91C1C);
+}
+
+.toggle-switch input:checked + .toggle-slider:before {
+    transform: translateX(20px);
+}
+
+.action-buttons {
+    display: flex;
+    gap: 4px;
+}
+
+.btn-action {
+    width: 32px;
+    height: 32px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    transition: all 0.3s ease;
+}
+
+.btn-view {
+    background: #e3f2fd;
+    color: #1976d2;
+}
+
+.btn-edit {
+    background: #fff3e0;
+    color: #f57c00;
+}
+
+.btn-link {
+    background: #e8f5e8;
+    color: #388e3c;
+}
+
+.btn-delete {
+    background: #ffebee;
+    color: #d32f2f;
+}
+
+.btn-action:hover {
+    transform: scale(1.1);
+    opacity: 0.8;
+}
+
+.no-date {
+    color: #999;
+    font-style: italic;
+}
+
+.pagination-container {
+    padding: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px solid #e1e5e9;
+}
+
+.pagination {
+    display: flex;
+    gap: 4px;
+}
+
+.page-link {
+    padding: 8px 12px;
+    border: 1px solid #e1e5e9;
+    background: white;
+    color: #333;
+    text-decoration: none;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+}
+
+.page-link:hover {
+    background: var(--primary-color, #B91C1C);
+    color: white;
+    border-color: var(--primary-color, #B91C1C);
+}
+
+.page-link.active {
+    background: var(--primary-color, #B91C1C);
+    color: white;
+    border-color: var(--primary-color, #B91C1C);
+}
+
+.pagination-info {
+    color: #666;
+    font-size: 14px;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    color: #666;
+}
+
+.empty-state i {
+    font-size: 64px;
+    color: #ddd;
+    margin-bottom: 20px;
+}
+
+.empty-state h3 {
+    margin: 0 0 8px 0;
+    color: #333;
+}
+
+.empty-state p {
+    margin: 0 0 24px 0;
+}
+
+/* Modal styles */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5);
+    z-index: 1050;
+    display: none;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal.show {
+    display: flex;
+}
+
+.modal-dialog {
+    max-width: 600px;
+    width: 90%;
+}
+
+.modal-content {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+}
+
+.modal-header {
+    padding: 20px;
+    border-bottom: 1px solid #e5e7eb;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.modal-title {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 600;
+    color: #333;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.close {
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    color: #6b7280;
+}
+
+.modal-body {
+    padding: 20px;
+}
+
+.modal-footer {
+    padding: 20px;
+    border-top: 1px solid #e5e7eb;
+    display: flex;
+    justify-content: flex-end;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+    .filters-section {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .filter-buttons {
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+    
+    .pagination-container {
+        flex-direction: column;
+        gap: 16px;
+        text-align: center;
+    }
+    
+    .action-buttons {
+        flex-direction: column;
+    }
+}
+</style>
+
+<script>
+// Variáveis globais
+let currentFilter = 'all';
+
+// Inicialização
+document.addEventListener('DOMContentLoaded', function() {
+    initializeFilters();
+    initializeSearch();
+});
+
+// Sistema de filtros
+function initializeFilters() {
+    const filterButtons = document.querySelectorAll('.filter-btn');
+    
+    filterButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            // Remove active de todos os botões
+            filterButtons.forEach(btn => btn.classList.remove('active'));
+            
+            // Adiciona active ao clicado
+            this.classList.add('active');
+            
+            // Atualiza filtro atual
+            currentFilter = this.dataset.filter;
+            
+            // Aplica filtro
+            applyFilters();
+        });
+    });
+}
+
+// Sistema de busca
+function initializeSearch() {
+    const searchInput = document.getElementById('search-input');
+    if (searchInput) {
+        searchInput.addEventListener('input', applyFilters);
+    }
+}
+
+// Aplicar filtros
+function applyFilters() {
+    const searchTerm = document.getElementById('search-input').value.toLowerCase();
+    const rows = document.querySelectorAll('.guest-row');
+    
+    rows.forEach(row => {
+        const name = row.dataset.name;
+        const status = row.dataset.status;
+        const reception = row.dataset.reception;
+        
+        // Filtro de busca
+        const matchesSearch = name.includes(searchTerm);
+        
+        // Filtro de status
+        let matchesFilter = true;
+        if (currentFilter === 'confirmed') {
+            matchesFilter = status === 'confirmed';
+        } else if (currentFilter === 'pending') {
+            matchesFilter = status === 'pending';
+        } else if (currentFilter === 'reception') {
+            matchesFilter = reception === 'yes';
+        }
+        
+        // Mostrar/ocultar linha
+        if (matchesSearch && matchesFilter) {
+            row.style.display = '';
+        } else {
+            row.style.display = 'none';
+        }
+    });
+}
+
+// Busca rápida (compatibilidade)
+function filterGuests() {
+    applyFilters();
+}
+
+// Toggle recepção
+function toggleReception(guestId, enabled) {
+    fetch(`/admin/convidados/${guestId}/toggle-recepcao`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ enabled: enabled })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Atualizar atributo da linha
+            const row = document.querySelector(`tr[data-guest-id="${guestId}"]`);
+            if (row) {
+                row.dataset.reception = enabled ? 'yes' : 'no';
+            }
+            
+            // Mostrar notificação
+            showNotification(data.message, 'success');
+        } else {
+            showNotification(data.message || 'Erro ao atualizar', 'error');
+        }
+    })
+    .catch(error => {
+        console.error('Erro:', error);
+        showNotification('Erro de conexão', 'error');
+    });
+}
+
+// Ver detalhes do convidado
+function viewGuest(guestId) {
+    // Implementar modal com detalhes
+    fetch(`/admin/convidados/${guestId}/detalhes`)
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            showGuestModal(data.guest);
+        }
+    })
+    .catch(error => {
+        console.error('Erro:', error);
+        showNotification('Erro ao carregar detalhes', 'error');
+    });
+}
+
+// Editar convidado
+function editGuest(guestId) {
+    window.location.href = `/admin/convidados/${guestId}/editar`;
+}
+
+// Copiar link do convite
+function copyLink(token) {
+    const link = `${window.location.origin}/convite/${token}`;
+    
+    if (navigator.clipboard) {
+        navigator.clipboard.writeText(link).then(() => {
+            showNotification('Link copiado!', 'success');
+        });
+    } else {
+        // Fallback para navegadores sem clipboard API
+        const textArea = document.createElement('textarea');
+        textArea.value = link;
+        document.body.appendChild(textArea);
+        textArea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textArea);
+        showNotification('Link copiado!', 'success');
+    }
+}
+
+// Excluir convidado
+function deleteGuest(guestId, guestName) {
+    if (confirm(`Tem certeza que deseja excluir o convidado "${guestName}"?`)) {
+        fetch(`/admin/convidados/${guestId}/excluir`, {
+            method: 'DELETE'
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Remover linha da tabela
+                const row = document.querySelector(`tr[data-guest-id="${guestId}"]`);
+                if (row) {
+                    row.remove();
+                }
+                showNotification(data.message, 'success');
+            } else {
+                showNotification(data.message || 'Erro ao excluir', 'error');
+            }
+        })
+        .catch(error => {
+            console.error('Erro:', error);
+            showNotification('Erro de conexão', 'error');
+        });
+    }
+}
+
+// Mostrar modal com detalhes
+function showGuestModal(guest) {
+    const modal = document.getElementById('guestModal');
+    const modalName = document.getElementById('modal-guest-name');
+    const modalBody = document.getElementById('modal-body');
+    
+    modalName.textContent = guest.nome;
+    modalBody.innerHTML = `
+        <div class="guest-details">
+            <div class="detail-section">
+                <h6>Informações Básicas</h6>
+                <p><strong>Nome:</strong> ${guest.nome}</p>
+                <p><strong>Email:</strong> ${guest.email || 'Não informado'}</p>
+                <p><strong>Telefone:</strong> ${guest.telefone || 'Não informado'}</p>
+                <p><strong>Token:</strong> ${guest.token}</p>
+            </div>
+            
+            <div class="detail-section">
+                <h6>Status</h6>
+                <p><strong>Confirmação:</strong> ${guest.confirmacao ? 'Confirmado' : 'Pendente'}</p>
+                <p><strong>Acompanhantes:</strong> ${guest.numero_acompanhantes || 0}</p>
+                <p><strong>Liberado Recepção:</strong> ${guest.liberado_recepcao ? 'Sim' : 'Não'}</p>
+            </div>
+            
+            ${guest.mensagem ? `
+            <div class="detail-section">
+                <h6>Mensagem</h6>
+                <p>${guest.mensagem}</p>
+            </div>
+            ` : ''}
+            
+            <div class="detail-section">
+                <h6>Link do Convite</h6>
+                <div class="link-container">
+                    <input type="text" value="${window.location.origin}/convite/${guest.token}" readonly class="form-control">
+                    <button onclick="copyLink('${guest.token}')" class="btn btn-primary">Copiar</button>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    modal.classList.add('show');
+}
+
+// Fechar modal
+function closeModal() {
+    const modal = document.getElementById('guestModal');
+    modal.classList.remove('show');
+}
+
+// Event listeners para modal
+document.addEventListener('click', function(e) {
+    const modal = document.getElementById('guestModal');
+    if (e.target === modal) {
+        closeModal();
+    }
+    
+    if (e.target.classList.contains('close') || e.target.dataset.dismiss === 'modal') {
+        closeModal();
+    }
+});
+
+// Mostrar notificações
+function showNotification(message, type) {
+    // Criar elemento de notificação
+    const notification = document.createElement('div');
+    notification.className = `notification ${type}`;
+    notification.textContent = message;
+    
+    // Estilos inline para a notificação
+    notification.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        padding: 12px 20px;
+        border-radius: 6px;
+        color: white;
+        font-weight: 500;
+        z-index: 9999;
+        animation: slideIn 0.3s ease;
+        ${type === 'success' ? 'background: #4caf50;' : 'background: #f44336;'}
+    `;
+    
+    document.body.appendChild(notification);
+    
+    // Remover após 3 segundos
+    setTimeout(() => {
+        notification.style.animation = 'slideOut 0.3s ease';
+        setTimeout(() => {
+            if (notification.parentNode) {
+                notification.parentNode.removeChild(notification);
+            }
+        }, 300);
+    }, 3000);
+}
+
+// CSS para animações
+const style = document.createElement('style');
+style.textContent = `
+    @keyframes slideIn {
+        from { transform: translateX(100%); opacity: 0; }
+        to { transform: translateX(0); opacity: 1; }
+    }
+    
+    @keyframes slideOut {
+        from { transform: translateX(0); opacity: 1; }
+        to { transform: translateX(100%); opacity: 0; }
+    }
+`;
+document.head.appendChild(style);
+</script>
+{% endblock %}
