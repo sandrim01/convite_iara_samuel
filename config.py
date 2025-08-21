@@ -4,29 +4,34 @@ class Config:
     SECRET_KEY = os.environ.get('SECRET_KEY') or 'dev-key-change-in-production-please'
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     
+    # URL do PostgreSQL fornecida
+    POSTGRESQL_URL = 'postgresql://postgres:WRCdYiMGmLhZfsBqFelhfOTpRCQsNIEp@tramway.proxy.rlwy.net:19242/railway'
+    
     # Configuração do banco de dados
-    database_url = os.environ.get('DATABASE_URL')
+    database_url = os.environ.get('DATABASE_URL') or POSTGRESQL_URL
+    
     if database_url:
         if database_url.startswith('postgresql://'):
-            # Corrigir URL do PostgreSQL para usar pg8000
-            SQLALCHEMY_DATABASE_URI = database_url.replace('postgresql://', 'postgresql+pg8000://')
+            # Usar psycopg2 como driver
+            SQLALCHEMY_DATABASE_URI = database_url.replace('postgresql://', 'postgresql+psycopg2://')
         else:
             SQLALCHEMY_DATABASE_URI = database_url
     else:
-        # Fallback para SQLite em desenvolvimento
-        SQLALCHEMY_DATABASE_URI = 'sqlite:///convite.db'
+        # Usar PostgreSQL como padrão
+        SQLALCHEMY_DATABASE_URI = POSTGRESQL_URL.replace('postgresql://', 'postgresql+psycopg2://')
     
-    # Configurações de produção
-    if os.environ.get('RAILWAY_ENVIRONMENT_NAME'):
-        # Estamos no Railway
-        SQLALCHEMY_ENGINE_OPTIONS = {
-            'pool_pre_ping': True,
-            'pool_recycle': 300,
-        }
+    # Configurações de conexão do PostgreSQL
+    SQLALCHEMY_ENGINE_OPTIONS = {
+        'pool_pre_ping': True,
+        'pool_recycle': 300,
+        'pool_timeout': 20,
+        'max_overflow': 0,
+    }
 
 class DevelopmentConfig(Config):
     DEBUG = True
-    SQLALCHEMY_DATABASE_URI = 'sqlite:///convite.db'
+    # Usar PostgreSQL também em desenvolvimento
+    pass
 
 class ProductionConfig(Config):
     DEBUG = False
