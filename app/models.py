@@ -78,13 +78,22 @@ class ConfiguracaoSite(db.Model):
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     
     def get_foto_url(self, tipo):
-        """Retorna a URL da foto (upload ou link externo)"""
+        """Retorna a URL da foto: prioriza link externo (Instagram/URL), senão upload."""
         if tipo == 'casal':
-            return f'/image/casal/{self.id}' if self.foto_casal_blob else self.foto_casal
+            if self.foto_casal:
+                return self.foto_casal
+            elif self.foto_casal_blob:
+                return f'/image/casal/{self.id}'
         elif tipo == 'noiva':
-            return f'/image/noiva/{self.id}' if self.foto_noiva_blob else self.foto_noiva
+            if self.foto_noiva:
+                return self.foto_noiva
+            elif self.foto_noiva_blob:
+                return f'/image/noiva/{self.id}'
         elif tipo == 'noivo':
-            return f'/image/noivo/{self.id}' if self.foto_noivo_blob else self.foto_noivo
+            if self.foto_noivo:
+                return self.foto_noivo
+            elif self.foto_noivo_blob:
+                return f'/image/noivo/{self.id}'
         return None
     
     def has_foto(self, tipo):
