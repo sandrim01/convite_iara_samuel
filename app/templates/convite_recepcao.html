@@ -225,6 +225,20 @@
         background: var(--highlight-color);
         color: white;
     }
+
+    /* Maps Button Styling */
+    .reception-btn.maps {
+        background: linear-gradient(135deg, #34a853, #0f9d58);
+        color: white;
+    }
+
+    .reception-btn.maps:hover {
+        background: linear-gradient(135deg, #0f9d58, #34a853);
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-heavy);
+        text-decoration: none;
+        color: white;
+    }
 </style>
 {% endblock %}
 
@@ -286,6 +300,11 @@
                     <a href="{{ url_for('main.lista_presentes') }}" class="reception-btn">
                         <i class="fas fa-gift"></i>
                         <span>Lista de Presentes</span>
+                    </a>
+                    <a href="https://www.google.com/maps/search/?api=1&query={{ (config.endereco_festa or 'Av. Principal, 456 - Jardim das Rosas') | urlencode }}" 
+                       class="reception-btn maps" target="_blank" rel="noopener noreferrer">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <span>Ver no Maps</span>
                     </a>
                 </div>
             </div>
