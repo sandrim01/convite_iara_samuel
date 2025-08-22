@@ -344,20 +344,19 @@
                             <div class="photo-preview">
                                 {% if config.has_foto('casal') %}
                                     <img src="{{ config.get_foto_url('casal') }}" alt="Foto do Casal" class="current-photo">
-                                    <div class="photo-actions">
-                                        <button type="button" class="btn-change-photo" onclick="openUploadModal('casal')">
-                                            <i class="fas fa-edit"></i> Alterar
-                                        </button>
-                                    </div>
                                 {% else %}
                                     <div class="no-photo">
                                         <i class="fas fa-camera"></i>
                                         <p>Nenhuma foto</p>
-                                        <button type="button" class="btn-upload" onclick="openUploadModal('casal')">
-                                            <i class="fas fa-upload"></i> Enviar Foto
-                                        </button>
                                     </div>
                                 {% endif %}
+                                <div class="file-input-group">
+                                    <input type="text" id="file-casal-text" class="form-control file-text" placeholder="Nenhum arquivo selecionado" readonly>
+                                    <input type="file" id="file-casal" name="foto_casal" accept="image/*" style="display:none" onchange="document.getElementById('file-casal-text').value = this.files[0] ? this.files[0].name : ''">
+                                    <button type="button" class="btn-upload-select" onclick="document.getElementById('file-casal').click()">
+                                        Selecionar Arquivo
+                                    </button>
+                                </div>
                             </div>
                         </div>
 
@@ -367,20 +366,19 @@
                             <div class="photo-preview">
                                 {% if config.has_foto('noiva') %}
                                     <img src="{{ config.get_foto_url('noiva') }}" alt="Foto da Noiva" class="current-photo">
-                                    <div class="photo-actions">
-                                        <button type="button" class="btn-change-photo" onclick="openUploadModal('noiva')">
-                                            <i class="fas fa-edit"></i> Alterar
-                                        </button>
-                                    </div>
                                 {% else %}
                                     <div class="no-photo">
                                         <i class="fas fa-camera"></i>
                                         <p>Nenhuma foto</p>
-                                        <button type="button" class="btn-upload" onclick="openUploadModal('noiva')">
-                                            <i class="fas fa-upload"></i> Enviar Foto
-                                        </button>
                                     </div>
                                 {% endif %}
+                                <div class="file-input-group">
+                                    <input type="text" id="file-noiva-text" class="form-control file-text" placeholder="Nenhum arquivo selecionado" readonly>
+                                    <input type="file" id="file-noiva" name="foto_noiva" accept="image/*" style="display:none" onchange="document.getElementById('file-noiva-text').value = this.files[0] ? this.files[0].name : ''">
+                                    <button type="button" class="btn-upload-select" onclick="document.getElementById('file-noiva').click()">
+                                        Selecionar Arquivo
+                                    </button>
+                                </div>
                             </div>
                         </div>
 
@@ -390,20 +388,19 @@
                             <div class="photo-preview">
                                 {% if config.has_foto('noivo') %}
                                     <img src="{{ config.get_foto_url('noivo') }}" alt="Foto do Noivo" class="current-photo">
-                                    <div class="photo-actions">
-                                        <button type="button" class="btn-change-photo" onclick="openUploadModal('noivo')">
-                                            <i class="fas fa-edit"></i> Alterar
-                                        </button>
-                                    </div>
                                 {% else %}
                                     <div class="no-photo">
                                         <i class="fas fa-camera"></i>
                                         <p>Nenhuma foto</p>
-                                        <button type="button" class="btn-upload" onclick="openUploadModal('noivo')">
-                                            <i class="fas fa-upload"></i> Enviar Foto
-                                        </button>
                                     </div>
                                 {% endif %}
+                                <div class="file-input-group">
+                                    <input type="text" id="file-noivo-text" class="form-control file-text" placeholder="Nenhum arquivo selecionado" readonly>
+                                    <input type="file" id="file-noivo" name="foto_noivo" accept="image/*" style="display:none" onchange="document.getElementById('file-noivo-text').value = this.files[0] ? this.files[0].name : ''">
+                                    <button type="button" class="btn-upload-select" onclick="document.getElementById('file-noivo').click()">
+                                        Selecionar Arquivo
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </div>
