@@ -60,9 +60,9 @@ def create_app():
                 username='admin',
                 email='admin@convite.com'
             )
-            admin_user.set_password('admin')
+            admin_user.set_password('Casamento2025*#')
             db.session.add(admin_user)
             db.session.commit()
-            print("👤 Admin padrão criado: admin/admin")
+            print("👤 Admin padrão criado: admin/Casamento2025*#")
     
     return app

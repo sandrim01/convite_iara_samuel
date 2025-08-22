@@ -134,10 +134,22 @@
             </div>
             
             <div class="footer-bottom">
-                <p>&copy; 2025 {{ config.nome_noiva or 'Iara' }} & {{ config.nome_noivo or 'Samuel' }}. Feito com ♥</p>
-                <p>
-                    <a href="{{ url_for('admin.login') }}" class="admin-link">Painel Admin</a>
-                </p>
+                <div class="footer-copyright">
+                    <p>&copy; 2025 {{ config.nome_noiva or 'Iara' }} & {{ config.nome_noivo or 'Samuel' }}. Feito com ♥</p>
+                    <p>
+                        <a href="{{ url_for('admin.login') }}" class="admin-link">Painel Admin</a>
+                    </p>
+                </div>
+                
+                <div class="footer-company">
+                    <p class="company-main">&copy; 2025 UNBUG Solutions TI. Todos os direitos reservados.</p>
+                    <p class="company-description">Especialistas em tecnologia e soluções digitais.</p>
+                    <p class="company-services">Desenvolvimento de sites e sistemas — Criação de convites digitais para festas e casamentos.</p>
+                    <p class="company-contact">
+                        <a href="mailto:contato@unbugsolutions.com">contato@unbugsolutions.com</a> | 
+                        <a href="https://wa.me/5528999928442" target="_blank">WhatsApp: (28) 99992-8442</a>
+                    </p>
+                </div>
             </div>
         </div>
     </footer>

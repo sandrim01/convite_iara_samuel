@@ -2389,6 +2389,67 @@ body.nav-open {
     opacity: 0.8;
 }
 
+/* Footer Bottom Styling */
+.footer-bottom {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.footer-copyright {
+    text-align: center;
+}
+
+.footer-company {
+    text-align: center;
+    font-size: 0.85rem;
+    opacity: 0.9;
+    line-height: 1.6;
+}
+
+.footer-company p {
+    margin: 0.3rem 0;
+}
+
+.footer-company .company-main {
+    font-weight: 600;
+    color: var(--primary-color);
+    margin-bottom: 0.5rem;
+}
+
+.footer-company .company-description {
+    font-style: italic;
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.footer-company .company-services {
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.footer-company .company-contact a {
+    color: var(--primary-color);
+    text-decoration: none;
+    transition: opacity 0.3s ease;
+}
+
+.footer-company .company-contact a:hover {
+    opacity: 0.8;
+    text-decoration: underline;
+}
+
+@media (max-width: 768px) {
+    .footer-bottom {
+        gap: 1rem;
+    }
+    
+    .footer-company {
+        font-size: 0.8rem;
+    }
+}
+
 /* Floating Hearts Animation */
 .floating-hearts {
     position: fixed;
