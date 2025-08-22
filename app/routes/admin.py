@@ -267,23 +267,31 @@ def processar_editar_presente(id):
 @login_required
 def remover_presente(id):
     """Remover presente"""
+    print(f"🗑️  Tentativa de remoção do presente ID: {id}")
     try:
         presente = Presente.query.get_or_404(id)
         nome = presente.nome
+        print(f"📋 Presente encontrado: '{nome}'")
         
         # Verificar se o presente já foi escolhido
         escolhas = EscolhaPresente.query.filter_by(presente_id=id).count()
+        print(f"📊 Escolhas encontradas: {escolhas}")
+        
         if escolhas > 0:
+            print(f"❌ Presente não pode ser removido - já foi escolhido {escolhas} vez(es)")
             flash(f'Não é possível remover o presente "{nome}" pois já foi escolhido por {escolhas} pessoa(s).', 'error')
             return redirect(url_for('admin.presentes'))
         
+        print(f"✅ Removendo presente '{nome}'")
         db.session.delete(presente)
         db.session.commit()
         
+        print(f"🎉 Presente '{nome}' removido com sucesso!")
         flash(f'Presente "{nome}" removido com sucesso!', 'success')
         return redirect(url_for('admin.presentes'))
         
     except Exception as e:
+        print(f"💥 Erro ao remover presente: {str(e)}")
         flash('Erro ao remover presente. Tente novamente.', 'error')
         return redirect(url_for('admin.presentes'))
 

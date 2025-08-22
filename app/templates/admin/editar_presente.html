@@ -311,7 +311,7 @@
             <div class="delete-section">
                 <h3><i class="fas fa-exclamation-triangle"></i> Zona de Perigo</h3>
                 <p>Remover este presente da lista. Esta ação não pode ser desfeita.</p>
-                <button onclick="confirmarRemocao('{{ presente.id }}', '{{ presente.nome }}')" 
+                <button onclick="confirmarRemocao({{ presente.id }}, '{{ presente.nome|replace("'", "\\'") }}')" 
                         class="btn btn-danger">
                     <i class="fas fa-trash"></i>
                     <span>Remover Presente</span>
@@ -376,14 +376,37 @@
     });
     
     function confirmarRemocao(presenteId, nomePresente) {
+        console.log('Tentando remover presente:', presenteId, nomePresente);
+        
         if (confirm(`Tem certeza que deseja remover o presente "${nomePresente}"?\n\nEsta ação não pode ser desfeita.`)) {
-            // Criar form para DELETE request
-            const form = document.createElement('form');
-            form.method = 'POST';
-            form.action = `/admin/presentes/${presenteId}/remover`;
-            
-            document.body.appendChild(form);
-            form.submit();
+            try {
+                // Criar form para POST request
+                const form = document.createElement('form');
+                form.method = 'POST';
+                form.action = `/admin/presentes/${presenteId}/remover`;
+                
+                // Adicionar input hidden para confirmação (se necessário)
+                const confirmInput = document.createElement('input');
+                confirmInput.type = 'hidden';
+                confirmInput.name = 'confirm';
+                confirmInput.value = 'true';
+                form.appendChild(confirmInput);
+                
+                // Adicionar estilo invisível
+                form.style.display = 'none';
+                
+                console.log('Enviando formulário para:', form.action);
+                
+                // Adicionar ao DOM e submeter
+                document.body.appendChild(form);
+                form.submit();
+                
+            } catch (error) {
+                console.error('Erro ao remover presente:', error);
+                alert('Erro ao tentar remover o presente. Tente novamente.');
+            }
+        } else {
+            console.log('Remoção cancelada pelo usuário');
         }
     }
 </script>
