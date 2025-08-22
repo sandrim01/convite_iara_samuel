@@ -2,7 +2,15 @@
 
 {% block content %}
 <!-- Hero Section - O Casal -->
-<section class="hero hero-couple" id="hero-couple">
+<section class="hero hero-couple" id="hero-couple"
+    {% if config.has_foto('casal') %}
+    style="background: linear-gradient(
+        rgba(249, 242, 242, 0.85),
+        rgba(253, 247, 247, 0.75)
+    ), url('{{ config.get_foto_url('casal') }}') center/cover;
+    height: 70vh;
+    min-height: 500px;"
+    {% endif %}>
     <div class="hero-background">
         <div class="hero-overlay"></div>
     </div>
