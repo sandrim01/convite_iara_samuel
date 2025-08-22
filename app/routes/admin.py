@@ -335,21 +335,42 @@ def processar_configuracoes():
         # Personalização
         config.mensagem_principal = request.form.get('mensagem_principal')
         config.cor_tema = request.form.get('cor_tema')
-        config.foto_casal = request.form.get('foto_casal')
+
+        # Upload de fotos do modal (Visual & Tema)
+        # Foto do Casal
+        file_casal = request.files.get('foto_casal_modal')
+        if file_casal and file_casal.filename:
+            config.foto_casal_blob = file_casal.read()
+            config.foto_casal_filename = file_casal.filename
+            config.foto_casal_mimetype = file_casal.mimetype
+
+        # Foto da Noiva
+        file_noiva = request.files.get('foto_noiva_modal')
+        if file_noiva and file_noiva.filename:
+            config.foto_noiva_blob = file_noiva.read()
+            config.foto_noiva_filename = file_noiva.filename
+            config.foto_noiva_mimetype = file_noiva.mimetype
+
+        # Foto do Noivo
+        file_noivo = request.files.get('foto_noivo_modal')
+        if file_noivo and file_noivo.filename:
+            config.foto_noivo_blob = file_noivo.read()
+            config.foto_noivo_filename = file_noivo.filename
+            config.foto_noivo_mimetype = file_noivo.mimetype
         
         # Informações da noiva
         config.descricao_noiva = request.form.get('descricao_noiva')
         config.aniversario_noiva = request.form.get('aniversario_noiva')
         config.paixoes_noiva = request.form.get('paixoes_noiva')
         config.frase_noiva = request.form.get('frase_noiva')
-        config.foto_noiva = request.form.get('foto_noiva')
+    # O campo config.foto_noiva (string) não é mais usado, pois agora é BLOB
         
         # Informações do noivo
         config.descricao_noivo = request.form.get('descricao_noivo')
         config.aniversario_noivo = request.form.get('aniversario_noivo')
         config.paixoes_noivo = request.form.get('paixoes_noivo')
         config.frase_noivo = request.form.get('frase_noivo')
-        config.foto_noivo = request.form.get('foto_noivo')
+    # O campo config.foto_noivo (string) não é mais usado, pois agora é BLOB
         
         # História de amor - checkbox
         config.mostrar_historia = 'mostrar_historia' in request.form
