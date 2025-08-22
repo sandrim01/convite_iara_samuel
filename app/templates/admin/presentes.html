@@ -216,10 +216,10 @@
                     <i class="fas fa-arrow-left"></i>
                     <span class="text-base">Dashboard</span>
                 </a>
-                <a href="{{ url_for('admin.adicionar_presente') }}" class="btn btn-primary">
+                <button onclick="abrirModalAdicionarPresente()" class="btn btn-primary">
                     <i class="fas fa-plus"></i>
                     <span class="text-base">Adicionar Presente</span>
-                </a>
+                </button>
             </div>
         </div>
     </div>
@@ -360,10 +360,264 @@
         {% endif %}
     </div>
 </section>
+
+<!-- Modal Adicionar Presente -->
+<div id="modalAdicionarPresente" class="modal" style="display: none;">
+    <div class="modal-overlay" onclick="fecharModalAdicionarPresente()"></div>
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3><i class="fas fa-gift"></i> Adicionar Presente</h3>
+            <button onclick="fecharModalAdicionarPresente()" class="modal-close">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="modal-body">
+            <form id="formAdicionarPresente" onsubmit="adicionarPresentePorLink(event)">
+                <div class="form-group">
+                    <label for="linkPresente">
+                        <i class="fas fa-link"></i> Link do Produto
+                    </label>
+                    <input type="url" 
+                           id="linkPresente" 
+                           name="link" 
+                           placeholder="Ex: https://www.amazon.com.br/produto..." 
+                           required>
+                    <small class="form-help">
+                        Cole o link de qualquer loja online (Amazon, Magazine Luiza, Americanas, etc.)
+                    </small>
+                </div>
+                
+                <div id="previewPresente" style="display: none;">
+                    <div class="preview-card">
+                        <div class="preview-image">
+                            <img id="previewImagem" src="" alt="Preview">
+                        </div>
+                        <div class="preview-info">
+                            <h4 id="previewNome">Nome do Produto</h4>
+                            <p id="previewPreco">R$ 0,00</p>
+                            <p id="previewDescricao">Descrição do produto...</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="modal-actions">
+                    <button type="button" onclick="fecharModalAdicionarPresente()" class="btn btn-outline">
+                        <i class="fas fa-times"></i> Cancelar
+                    </button>
+                    <button type="button" onclick="buscarInformacoesPresente()" class="btn btn-secondary" id="btnBuscar">
+                        <i class="fas fa-search"></i> Buscar Informações
+                    </button>
+                    <button type="submit" class="btn btn-primary" id="btnAdicionar" style="display: none;">
+                        <i class="fas fa-plus"></i> Adicionar Presente
+                    </button>
+                </div>
+                
+                <div id="loadingBusca" style="display: none;" class="loading-indicator">
+                    <i class="fas fa-spinner fa-spin"></i> Buscando informações do produto...
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<style>
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: fadeIn 0.3s ease;
+}
+
+.modal-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(4px);
+}
+
+.modal-content {
+    background: var(--white);
+    border-radius: var(--border-radius-large);
+    box-shadow: var(--shadow-heavy);
+    width: 90%;
+    max-width: 600px;
+    max-height: 90vh;
+    overflow-y: auto;
+    position: relative;
+    animation: slideUp 0.3s ease;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem;
+    border-bottom: 1px solid var(--border-light);
+}
+
+.modal-header h3 {
+    margin: 0;
+    color: var(--primary);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.modal-close {
+    background: none;
+    border: none;
+    font-size: 1.25rem;
+    color: var(--text-secondary);
+    cursor: pointer;
+    padding: 0.5rem;
+    border-radius: var(--border-radius);
+    transition: all 0.3s ease;
+}
+
+.modal-close:hover {
+    background: var(--gray-light);
+    color: var(--text-dark);
+}
+
+.modal-body {
+    padding: 1.5rem;
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+    color: var(--text-dark);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 0.875rem;
+    border: 2px solid var(--border-light);
+    border-radius: var(--border-radius);
+    font-size: 1rem;
+    transition: all 0.3s ease;
+}
+
+.form-group input:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px var(--primary-light);
+}
+
+.form-help {
+    display: block;
+    margin-top: 0.5rem;
+    color: var(--text-secondary);
+    font-size: 0.875rem;
+}
+
+.preview-card {
+    display: flex;
+    gap: 1rem;
+    padding: 1rem;
+    border: 2px solid var(--border-light);
+    border-radius: var(--border-radius);
+    background: var(--gray-lightest);
+}
+
+.preview-image {
+    flex-shrink: 0;
+    width: 100px;
+    height: 100px;
+    border-radius: var(--border-radius);
+    overflow: hidden;
+    background: var(--white);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.preview-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.preview-info h4 {
+    margin: 0 0 0.5rem 0;
+    color: var(--text-dark);
+}
+
+.preview-info p {
+    margin: 0.25rem 0;
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+}
+
+.modal-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: flex-end;
+    margin-top: 2rem;
+}
+
+.loading-indicator {
+    text-align: center;
+    padding: 1rem;
+    color: var(--primary);
+    font-weight: 500;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes slideUp {
+    from { 
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to { 
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@media (max-width: 768px) {
+    .modal-content {
+        width: 95%;
+        margin: 1rem;
+    }
+    
+    .preview-card {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .modal-actions {
+        flex-direction: column;
+    }
+}
+</style>
+
 {% endblock %}
 
 {% block scripts %}
 <script>
+    // Função original de confirmação de remoção
     function confirmarRemocao(presenteId, nomePresente) {
         if (confirm(`Tem certeza que deseja remover o presente "${nomePresente}"?\n\nEsta ação não pode ser desfeita.`)) {
             // Criar form para DELETE request
@@ -385,5 +639,120 @@
             form.submit();
         }
     }
+
+    // Funções do modal de adicionar presente
+    function abrirModalAdicionarPresente() {
+        document.getElementById('modalAdicionarPresente').style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+        document.getElementById('linkPresente').focus();
+    }
+
+    function fecharModalAdicionarPresente() {
+        document.getElementById('modalAdicionarPresente').style.display = 'none';
+        document.body.style.overflow = 'auto';
+        
+        // Limpar formulário
+        document.getElementById('formAdicionarPresente').reset();
+        document.getElementById('previewPresente').style.display = 'none';
+        document.getElementById('btnAdicionar').style.display = 'none';
+        document.getElementById('btnBuscar').style.display = 'inline-flex';
+    }
+
+    async function buscarInformacoesPresente() {
+        const link = document.getElementById('linkPresente').value.trim();
+        
+        if (!link) {
+            alert('Por favor, insira um link válido do produto.');
+            return;
+        }
+
+        // Mostrar loading
+        document.getElementById('loadingBusca').style.display = 'block';
+        document.getElementById('btnBuscar').disabled = true;
+
+        try {
+            const response = await fetch('/admin/buscar-produto-por-link', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ link: link })
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+                // Mostrar preview
+                document.getElementById('previewImagem').src = data.imagem || '/static/img/placeholder-gift.png';
+                document.getElementById('previewNome').textContent = data.nome || 'Nome não encontrado';
+                document.getElementById('previewPreco').textContent = data.preco || 'Preço não informado';
+                document.getElementById('previewDescricao').textContent = data.descricao || 'Descrição não disponível';
+                
+                document.getElementById('previewPresente').style.display = 'block';
+                document.getElementById('btnAdicionar').style.display = 'inline-flex';
+                document.getElementById('btnBuscar').style.display = 'none';
+                
+                // Armazenar dados para envio
+                window.dadosPresente = data;
+            } else {
+                alert('Não foi possível buscar as informações do produto. Erro: ' + (data.error || 'Erro desconhecido'));
+            }
+        } catch (error) {
+            console.error('Erro ao buscar produto:', error);
+            alert('Erro ao buscar informações do produto. Verifique sua conexão e tente novamente.');
+        } finally {
+            document.getElementById('loadingBusca').style.display = 'none';
+            document.getElementById('btnBuscar').disabled = false;
+        }
+    }
+
+    async function adicionarPresentePorLink(event) {
+        event.preventDefault();
+        
+        if (!window.dadosPresente) {
+            alert('Por favor, busque as informações do produto primeiro.');
+            return;
+        }
+
+        try {
+            const response = await fetch('/admin/adicionar-presente-por-link', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(window.dadosPresente)
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                alert('Presente adicionado com sucesso!');
+                fecharModalAdicionarPresente();
+                // Recarregar página para mostrar novo presente
+                window.location.reload();
+            } else {
+                alert('Erro ao adicionar presente: ' + (result.error || 'Erro desconhecido'));
+            }
+        } catch (error) {
+            console.error('Erro ao adicionar presente:', error);
+            alert('Erro ao adicionar presente. Tente novamente.');
+        }
+    }
+
+    // Fechar modal com ESC
+    document.addEventListener('keydown', function(event) {
+        if (event.key === 'Escape') {
+            fecharModalAdicionarPresente();
+        }
+    });
+
+    // Buscar automaticamente quando colar um link
+    document.getElementById('linkPresente').addEventListener('paste', function() {
+        setTimeout(() => {
+            if (this.value.trim()) {
+                document.getElementById('btnBuscar').click();
+            }
+        }, 100);
+    });
 </script>
 {% endblock %}

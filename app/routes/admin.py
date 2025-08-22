@@ -4,9 +4,12 @@ from app.models import db, Admin, ConfiguracaoSite, Convidado, Presente, Escolha
 from app import login_manager
 from datetime import datetime
 import os
+import re
+import requests
 from werkzeug.utils import secure_filename
 from PIL import Image
 from io import BytesIO
+from bs4 import BeautifulSoup
 
 admin = Blueprint('admin', __name__)
 
@@ -701,3 +704,262 @@ def excluir_convidado(id):
             'success': False,
             'message': f'Erro ao excluir convidado: {str(e)}'
         })
+
+@admin.route('/buscar-produto-por-link', methods=['POST'])
+@login_required
+def buscar_produto_por_link():
+    """Busca informações de um produto através do link"""
+    try:
+        data = request.get_json()
+        link = data.get('link', '').strip()
+        
+        if not link:
+            return jsonify({'success': False, 'error': 'Link não fornecido'})
+        
+        # Aqui vamos implementar o scraping/busca das informações
+        produto_info = extrair_informacoes_produto(link)
+        
+        if produto_info:
+            return jsonify({
+                'success': True,
+                'nome': produto_info.get('nome'),
+                'preco': produto_info.get('preco'),
+                'descricao': produto_info.get('descricao'),
+                'imagem': produto_info.get('imagem'),
+                'link_original': link,
+                'categoria': produto_info.get('categoria', 'casa')
+            })
+        else:
+            return jsonify({'success': False, 'error': 'Não foi possível extrair informações do produto'})
+            
+    except Exception as e:
+        return jsonify({'success': False, 'error': f'Erro interno: {str(e)}'})
+
+@admin.route('/adicionar-presente-por-link', methods=['POST'])
+@login_required 
+def adicionar_presente_por_link():
+    """Adiciona um presente usando informações extraídas do link"""
+    try:
+        data = request.get_json()
+        
+        # Criar novo presente com as informações extraídas
+        presente = Presente(
+            nome=data.get('nome', 'Produto sem nome'),
+            categoria=data.get('categoria', 'casa'),
+            descricao=data.get('descricao', ''),
+            preco_sugerido=extrair_preco_numerico(data.get('preco', '0')),
+            link_loja=data.get('link_original', ''),
+            imagem_url=data.get('imagem', ''),
+            disponivel=True
+        )
+        
+        db.session.add(presente)
+        db.session.commit()
+        
+        return jsonify({
+            'success': True,
+            'message': f'Presente "{presente.nome}" adicionado com sucesso!',
+            'presente_id': presente.id
+        })
+        
+    except Exception as e:
+        return jsonify({'success': False, 'error': f'Erro ao adicionar presente: {str(e)}'})
+
+def extrair_informacoes_produto(link):
+    """Extrai informações do produto a partir do link"""
+    import requests
+    from bs4 import BeautifulSoup
+    import re
+    
+    try:
+        # Headers para simular um navegador real
+        headers = {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
+            'Accept-Language': 'pt-BR,pt;q=0.9,en;q=0.8',
+            'Accept-Encoding': 'gzip, deflate, br',
+            'DNT': '1',
+            'Connection': 'keep-alive',
+            'Upgrade-Insecure-Requests': '1',
+        }
+        
+        response = requests.get(link, headers=headers, timeout=10)
+        response.raise_for_status()
+        
+        soup = BeautifulSoup(response.content, 'html.parser')
+        
+        # Extrair informações com diferentes estratégias dependendo do site
+        nome = extrair_nome_produto(soup, link)
+        preco = extrair_preco_produto(soup, link)
+        descricao = extrair_descricao_produto(soup, link)
+        imagem = extrair_imagem_produto(soup, link)
+        categoria = determinar_categoria(nome, descricao)
+        
+        return {
+            'nome': nome,
+            'preco': preco,
+            'descricao': descricao,
+            'imagem': imagem,
+            'categoria': categoria
+        }
+        
+    except Exception as e:
+        print(f"Erro ao extrair informações do produto: {e}")
+        return None
+
+def extrair_nome_produto(soup, link):
+    """Extrai o nome do produto"""
+    selectors = [
+        'h1#productTitle',  # Amazon
+        'h1.ui-pdp-title',  # Mercado Livre
+        'h1.product-title',  # Magazine Luiza
+        'h1.title',
+        'h1',
+        '.product-name',
+        '.product-title',
+        '[data-testid="product-title"]',
+        'meta[property="og:title"]'
+    ]
+    
+    for selector in selectors:
+        try:
+            if selector.startswith('meta'):
+                element = soup.select_one(selector)
+                if element:
+                    return element.get('content', '').strip()
+            else:
+                element = soup.select_one(selector)
+                if element:
+                    return element.get_text().strip()
+        except:
+            continue
+    
+    # Fallback para o título da página
+    title = soup.find('title')
+    if title:
+        return title.get_text().strip()
+    
+    return 'Produto'
+
+def extrair_preco_produto(soup, link):
+    """Extrai o preço do produto"""
+    selectors = [
+        '.a-price-whole',  # Amazon
+        '.andes-money-amount__fraction',  # Mercado Livre
+        '.price-current',
+        '.price',
+        '.product-price',
+        '[data-testid="price"]',
+        'meta[property="product:price:amount"]'
+    ]
+    
+    for selector in selectors:
+        try:
+            if selector.startswith('meta'):
+                element = soup.select_one(selector)
+                if element:
+                    return f"R$ {element.get('content', '0')}"
+            else:
+                element = soup.select_one(selector)
+                if element:
+                    preco_text = element.get_text().strip()
+                    # Procurar por padrões de preço
+                    match = re.search(r'R?\$?\s*(\d+[,.]?\d*)', preco_text)
+                    if match:
+                        return f"R$ {match.group(1)}"
+        except:
+            continue
+    
+    return 'Consulte o site'
+
+def extrair_descricao_produto(soup, link):
+    """Extrai a descrição do produto"""
+    selectors = [
+        '#productDescription',  # Amazon
+        '.ui-pdp-description',  # Mercado Livre
+        '.product-description',
+        '.description',
+        'meta[property="og:description"]',
+        'meta[name="description"]'
+    ]
+    
+    for selector in selectors:
+        try:
+            if selector.startswith('meta'):
+                element = soup.select_one(selector)
+                if element:
+                    desc = element.get('content', '').strip()
+                    if len(desc) > 20:  # Evitar descrições muito curtas
+                        return desc[:300] + '...' if len(desc) > 300 else desc
+            else:
+                element = soup.select_one(selector)
+                if element:
+                    desc = element.get_text().strip()
+                    if len(desc) > 20:
+                        return desc[:300] + '...' if len(desc) > 300 else desc
+        except:
+            continue
+    
+    return 'Descrição disponível no site da loja'
+
+def extrair_imagem_produto(soup, link):
+    """Extrai a imagem do produto"""
+    selectors = [
+        '#landingImage',  # Amazon
+        '.ui-pdp-image',  # Mercado Livre
+        '.product-image img',
+        '.main-image img',
+        'meta[property="og:image"]',
+        'img[alt*="produto"], img[alt*="product"]'
+    ]
+    
+    for selector in selectors:
+        try:
+            if selector.startswith('meta'):
+                element = soup.select_one(selector)
+                if element:
+                    return element.get('content', '')
+            else:
+                element = soup.select_one(selector)
+                if element:
+                    src = element.get('src') or element.get('data-src')
+                    if src and src.startswith('http'):
+                        return src
+        except:
+            continue
+    
+    return ''
+
+def determinar_categoria(nome, descricao):
+    """Determina a categoria baseada no nome e descrição"""
+    texto_completo = f"{nome} {descricao}".lower()
+    
+    categorias = {
+        'cozinha': ['panela', 'frigideira', 'cozinha', 'cozinhar', 'mixer', 'liquidificador', 'microondas', 'geladeira'],
+        'quarto': ['cama', 'travesseiro', 'lençol', 'quarto', 'colchão', 'edredom'],
+        'sala': ['sofá', 'poltrona', 'mesa', 'televisão', 'tv', 'sala', 'centro'],
+        'banheiro': ['toalha', 'banheiro', 'chuveiro', 'sabonete', 'shampoo'],
+        'eletronicos': ['eletrônico', 'smartphone', 'tablet', 'notebook', 'computador', 'tv', 'som']
+    }
+    
+    for categoria, palavras in categorias.items():
+        if any(palavra in texto_completo for palavra in palavras):
+            return categoria
+    
+    return 'casa'
+
+def extrair_preco_numerico(preco_texto):
+    """Converte texto de preço para número decimal"""
+    try:
+        # Remover caracteres não numéricos exceto vírgula e ponto
+        numeros = re.sub(r'[^\d,.]', '', str(preco_texto))
+        
+        # Converter vírgula para ponto se for decimal brasileiro
+        if ',' in numeros and '.' not in numeros:
+            numeros = numeros.replace(',', '.')
+        elif ',' in numeros and '.' in numeros:
+            # Formato brasileiro: 1.234,56
+            numeros = numeros.replace('.', '').replace(',', '.')
+        
+        return float(numeros) if numeros else 0.0
+    except:
+        return 0.0
