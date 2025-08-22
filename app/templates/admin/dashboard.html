@@ -911,6 +911,47 @@ setInterval(updateStats, 60000);
     margin-top: 1.5rem;
 }
 
+/* Estilos para upload de arquivos */
+.file-input-group {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.file-input-group .file-text {
+    flex: 1;
+    background-color: #f8f9fa;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    padding: 8px 12px;
+    font-size: 14px;
+    color: #6b7280;
+}
+
+.btn-upload-select {
+    background: var(--primary-color, #B91C1C);
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    white-space: nowrap;
+}
+
+.btn-upload-select:hover {
+    background: #991b1b;
+    transform: translateY(-1px);
+}
+
+.btn-upload-select i {
+    font-size: 12px;
+}
+
 .quick-action-card {
     background: none;
     border: none;
@@ -949,7 +990,7 @@ setInterval(updateStats, 60000);
         </div>
 
         <div class="modal-body">
-            <form id="configForm" method="POST" action="{{ url_for('admin.processar_configuracoes') }}">
+            <form id="configForm" method="POST" action="{{ url_for('admin.processar_configuracoes') }}" enctype="multipart/form-data">
                 <!-- Informações dos Noivos -->
                 <div class="config-section">
                     <h4 class="section-title">
@@ -1060,14 +1101,17 @@ setInterval(updateStats, 60000);
                         </div>
                         
                         <div class="form-group">
-                            <label for="foto_casal">URL da Foto do Casal</label>
-                            <input type="url" id="foto_casal" name="foto_casal" 
-                                   value="{{ config.foto_casal or '' }}" placeholder="https://i.imgur.com/exemplo.jpg">
+                            <label for="foto_casal_modal">Foto do Casal</label>
+                            <div class="file-input-group">
+                                <input type="file" id="foto_casal_modal" name="foto_casal_modal" accept="image/*" style="display:none" onchange="updateFileText('foto_casal_modal', 'foto-casal-text')">
+                                <input type="text" id="foto-casal-text" class="form-control file-text" placeholder="Nenhum arquivo selecionado" readonly>
+                                <button type="button" class="btn-upload-select" onclick="document.getElementById('foto_casal_modal').click()">
+                                    <i class="fas fa-upload"></i> Selecionar Arquivo
+                                </button>
+                            </div>
                             <small class="form-help">
                                 <i class="fas fa-info-circle"></i>
-                                <strong>Importante:</strong> Use apenas links diretos para imagens (terminam em .jpg, .png, .gif). 
-                                Links do Instagram, Facebook ou Google Photos não funcionam. 
-                                Recomendamos usar <a href="https://imgur.com" target="_blank">Imgur</a> para hospedar suas fotos.
+                                Selecione uma imagem do seu dispositivo (JPG, PNG, GIF)
                             </small>
                         </div>
                     </div>
@@ -1107,12 +1151,17 @@ setInterval(updateStats, 60000);
                         </div>
                         
                         <div class="form-group">
-                            <label for="foto_noiva">URL da Foto da Noiva</label>
-                            <input type="url" id="foto_noiva" name="foto_noiva" 
-                                   value="{{ config.foto_noiva or '' }}" placeholder="https://i.imgur.com/noiva.jpg">
+                            <label for="foto_noiva_modal">Foto da Noiva</label>
+                            <div class="file-input-group">
+                                <input type="file" id="foto_noiva_modal" name="foto_noiva_modal" accept="image/*" style="display:none" onchange="updateFileText('foto_noiva_modal', 'foto-noiva-text')">
+                                <input type="text" id="foto-noiva-text" class="form-control file-text" placeholder="Nenhum arquivo selecionado" readonly>
+                                <button type="button" class="btn-upload-select" onclick="document.getElementById('foto_noiva_modal').click()">
+                                    <i class="fas fa-upload"></i> Selecionar Arquivo
+                                </button>
+                            </div>
                             <small class="form-help">
                                 <i class="fas fa-info-circle"></i>
-                                Use apenas links diretos para imagens. Evite links do Instagram ou Google Photos.
+                                Selecione uma imagem do seu dispositivo (JPG, PNG, GIF)
                             </small>
                         </div>
                     </div>
@@ -1152,12 +1201,17 @@ setInterval(updateStats, 60000);
                         </div>
                         
                         <div class="form-group">
-                            <label for="foto_noivo">URL da Foto do Noivo</label>
-                            <input type="url" id="foto_noivo" name="foto_noivo" 
-                                   value="{{ config.foto_noivo or '' }}" placeholder="https://i.imgur.com/noivo.jpg">
+                            <label for="foto_noivo_modal">Foto do Noivo</label>
+                            <div class="file-input-group">
+                                <input type="file" id="foto_noivo_modal" name="foto_noivo_modal" accept="image/*" style="display:none" onchange="updateFileText('foto_noivo_modal', 'foto-noivo-text')">
+                                <input type="text" id="foto-noivo-text" class="form-control file-text" placeholder="Nenhum arquivo selecionado" readonly>
+                                <button type="button" class="btn-upload-select" onclick="document.getElementById('foto_noivo_modal').click()">
+                                    <i class="fas fa-upload"></i> Selecionar Arquivo
+                                </button>
+                            </div>
                             <small class="form-help">
                                 <i class="fas fa-info-circle"></i>
-                                Use apenas links diretos para imagens. Evite links do Instagram ou Google Photos.
+                                Selecione uma imagem do seu dispositivo (JPG, PNG, GIF)
                             </small>
                         </div>
                     </div>
@@ -1331,6 +1385,21 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 });
+
+// Função para atualizar o texto do arquivo selecionado
+function updateFileText(fileInputId, textInputId) {
+    const fileInput = document.getElementById(fileInputId);
+    const textInput = document.getElementById(textInputId);
+    
+    if (fileInput.files.length > 0) {
+        const fileName = fileInput.files[0].name;
+        textInput.value = fileName;
+        textInput.style.color = '#4ade80'; // Verde para indicar sucesso
+    } else {
+        textInput.value = 'Nenhum arquivo selecionado';
+        textInput.style.color = '#6b7280'; // Cinza padrão
+    }
+}
 
 // ===== MODAL DE GERENCIAMENTO DE CONVIDADOS =====
 
