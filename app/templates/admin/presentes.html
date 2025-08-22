@@ -352,10 +352,10 @@
             <i class="fas fa-gift"></i>
             <h3>Nenhum presente cadastrado</h3>
             <p>Comece adicionando o primeiro presente à lista!</p>
-            <a href="{{ url_for('admin.adicionar_presente') }}" class="btn btn-primary">
+            <button onclick="abrirModalAdicionarPresente()" class="btn btn-primary">
                 <i class="fas fa-plus"></i>
                 <span>Adicionar Primeiro Presente</span>
-            </a>
+            </button>
         </div>
         {% endif %}
     </div>
