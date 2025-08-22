@@ -1,0 +1,1580 @@
+{% extends "base.html" %}
+
+{% block title %}Convite de Recepção - {{ config.nome_noiva or 'Iara' }} & {{ config.nome_noivo or 'Samuel' }}{% endblock %}
+
+{% block extra_head %}
+<style>
+    /* Reception Hero Section - Elegant Style */
+    .reception-hero {
+        background: linear-gradient(
+            135deg,
+            rgba(249, 242, 242, 0.95) 0%,
+            rgba(253, 247, 247, 0.9) 50%,
+            rgba(254, 247, 247, 0.95) 100%
+        ),
+        url('https://images.unsplash.com/photo-1519741497674-611481863552?w=1920&h=1080&fit=crop') center/cover;
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        position: relative;
+        overflow: hidden;
+    }
+
+    /* Subtle floating elements */
+    .reception-hero::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: 
+            radial-gradient(circle at 20% 20%, rgba(212, 165, 116, 0.1) 0%, transparent 30%),
+            radial-gradient(circle at 80% 30%, rgba(185, 28, 28, 0.08) 0%, transparent 25%),
+            radial-gradient(circle at 60% 70%, rgba(212, 165, 116, 0.1) 0%, transparent 30%),
+            radial-gradient(circle at 30% 80%, rgba(185, 28, 28, 0.08) 0%, transparent 25%);
+        animation: subtle-glow 8s ease-in-out infinite;
+        z-index: 1;
+        pointer-events: none;
+    }
+
+    @keyframes subtle-glow {
+        0%, 100% { 
+            opacity: 0.5;
+            transform: scale(1);
+        }
+        50% { 
+            opacity: 0.8;
+            transform: scale(1.02);
+        }
+    }
+    
+    .reception-hero-content {
+        position: relative;
+        z-index: 2;
+        padding: 4rem 0;
+        text-align: center;
+    }
+    
+    .celebration-badge {
+        display: inline-block;
+        background: linear-gradient(135deg, 
+            rgba(255, 228, 225, 0.9), 
+            rgba(255, 182, 193, 0.8), 
+            rgba(255, 218, 185, 0.9));
+        backdrop-filter: blur(20px);
+        border: 3px solid rgba(255, 255, 255, 0.6);
+        border-radius: 60px;
+        padding: 2rem 4rem;
+        margin-bottom: 3rem;
+        animation: wedding-glow 4s ease-in-out infinite alternate;
+        box-shadow: 
+            0 0 30px rgba(255, 182, 193, 0.5),
+            inset 0 0 20px rgba(255, 255, 255, 0.3);
+        position: relative;
+    }
+
+    .celebration-badge::before {
+        content: '💕';
+        position: absolute;
+        top: -15px;
+        left: 50%;
+        transform: translateX(-50%);
+        font-size: 2rem;
+        animation: heart-float 3s ease-in-out infinite;
+    }
+
+    @keyframes wedding-glow {
+        0% { 
+            box-shadow: 
+                0 0 30px rgba(255, 182, 193, 0.5),
+                inset 0 0 20px rgba(255, 255, 255, 0.3);
+            transform: scale(1);
+        }
+        100% { 
+            box-shadow: 
+                0 0 50px rgba(255, 215, 0, 0.6),
+                inset 0 0 30px rgba(255, 228, 225, 0.5);
+            transform: scale(1.02);
+        }
+        text-align: center;
+    }
+
+    /* Elegant Names Section */
+    .reception-names {
+        margin: 3rem 0;
+        position: relative;
+        font-family: var(--font-script);
+    }
+    
+    .reception-names h1 {
+        font-size: 3.5rem;
+        color: var(--highlight-color);
+        margin: 0;
+        text-shadow: 0 2px 4px rgba(185, 28, 28, 0.2);
+        font-weight: 400;
+        line-height: 1.2;
+    }
+
+    .reception-names .heart-separator {
+        font-size: 2rem;
+        color: var(--primary-color);
+        margin: 0 1rem;
+        display: inline-block;
+        animation: heart-pulse 2s ease-in-out infinite;
+    }
+
+    @keyframes heart-pulse {
+        0%, 100% { 
+            transform: scale(1);
+        }
+        50% { 
+            transform: scale(1.1);
+        }
+    }
+
+    /* Reception Details */
+    .reception-details {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        border-radius: var(--radius-2xl);
+        padding: 3rem;
+        margin: 3rem 0;
+        box-shadow: var(--shadow-heavy);
+        border: 1px solid rgba(212, 165, 116, 0.2);
+    }
+
+    .reception-title {
+        font-family: var(--font-serif);
+        font-size: 2.5rem;
+        color: var(--highlight-color);
+        margin-bottom: 2rem;
+        text-align: center;
+        font-weight: 500;
+        font-style: italic;
+    }
+
+    .reception-info {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 2rem;
+        margin: 2rem 0;
+    }
+
+    @media (max-width: 768px) {
+        .reception-info {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    .info-item {
+        text-align: center;
+        padding: 1.5rem;
+        background: rgba(212, 165, 116, 0.1);
+        border-radius: var(--radius-lg);
+        border: 1px solid rgba(212, 165, 116, 0.2);
+    }
+
+    .info-item h3 {
+        color: var(--highlight-color);
+        font-size: 1.5rem;
+        margin-bottom: 1rem;
+        font-family: var(--font-serif);
+        font-weight: 500;
+    }
+
+    .info-item p {
+        color: var(--text-dark);
+        font-size: 1.1rem;
+        line-height: 1.6;
+        margin: 0.5rem 0;
+    }
+
+    /* Elegant Message */
+    .reception-message {
+        text-align: center;
+        margin: 3rem 0;
+        padding: 2rem;
+        background: linear-gradient(135deg, 
+            rgba(212, 165, 116, 0.1) 0%, 
+            rgba(185, 28, 28, 0.05) 100%);
+        border-radius: var(--radius-xl);
+        border: 1px solid rgba(212, 165, 116, 0.2);
+    }
+
+    .reception-message p {
+        font-size: 1.3rem;
+        color: var(--text-dark);
+        line-height: 1.7;
+        font-style: italic;
+        margin-bottom: 1rem;
+    }
+
+    /* Navigation Buttons */
+    .reception-navigation {
+        display: flex;
+        justify-content: center;
+        gap: 2rem;
+        margin: 3rem 0;
+        flex-wrap: wrap;
+    }
+
+    @media (max-width: 768px) {
+        .reception-navigation {
+            flex-direction: column;
+            align-items: center;
+        }
+    }
+
+    .reception-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        background: linear-gradient(135deg, var(--highlight-color), var(--accent-color));
+        color: white;
+        padding: 1rem 2.5rem;
+        border-radius: 50px;
+        text-decoration: none;
+        font-weight: 500;
+        font-size: 1.1rem;
+        transition: all 0.3s ease;
+        box-shadow: var(--shadow-medium);
+        border: none;
+        cursor: pointer;
+    }
+
+    .reception-btn:hover {
+        background: linear-gradient(135deg, var(--accent-color), var(--highlight-color));
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-heavy);
+        text-decoration: none;
+        color: white;
+    }
+
+    .reception-btn.secondary {
+        background: transparent;
+        color: var(--highlight-color);
+        border: 2px solid var(--highlight-color);
+    }
+
+    .reception-btn.secondary:hover {
+        background: var(--highlight-color);
+        color: white;
+    }
+            0 2px 4px rgba(199, 21, 133, 0.4);
+        animation: romantic-glow 5s ease-in-out infinite;
+        font-weight: 700;
+        letter-spacing: 2px;
+        font-family: 'Dancing Script', cursive;
+    }
+
+    @keyframes romantic-glow {
+        0%, 100% { 
+            color: #fff;
+            text-shadow: 
+                0 4px 8px rgba(139, 69, 19, 0.6),
+                0 2px 4px rgba(199, 21, 133, 0.4);
+        }
+        50% { 
+            color: #ffe4e1;
+            text-shadow: 
+                0 6px 12px rgba(255, 182, 193, 0.7),
+                0 0 20px rgba(255, 215, 0, 0.5);
+        }
+    }
+    
+    .wedding-date {
+        background: linear-gradient(135deg, 
+            rgba(255, 255, 255, 0.95), 
+            rgba(255, 228, 225, 0.9));
+        backdrop-filter: blur(15px);
+        border-radius: 25px;
+        padding: 2.5rem;
+        margin: 3rem 0;
+        border: 2px solid rgba(255, 182, 193, 0.4);
+        box-shadow: 
+            0 8px 25px rgba(199, 21, 133, 0.2),
+            inset 0 0 15px rgba(255, 255, 255, 0.6);
+        animation: date-elegance 8s ease-in-out infinite;
+        position: relative;
+    }
+
+    .wedding-date::before {
+        content: '💒';
+        position: absolute;
+        top: -20px;
+        left: 50%;
+        transform: translateX(-50%);
+        font-size: 2.5rem;
+        background: linear-gradient(135deg, #fff, #ffe4e1);
+        border-radius: 50%;
+        width: 60px;
+        height: 60px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 4px 12px rgba(199, 21, 133, 0.3);
+        animation: church-glow 4s ease-in-out infinite;
+    }
+
+    @keyframes church-glow {
+        0%, 100% { 
+            transform: translateX(-50%) scale(1);
+            box-shadow: 0 4px 12px rgba(199, 21, 133, 0.3);
+        }
+        50% { 
+            transform: translateX(-50%) scale(1.1);
+            box-shadow: 0 8px 20px rgba(255, 182, 193, 0.5);
+        }
+    }
+
+    @keyframes date-elegance {
+        0%, 100% { 
+            transform: scale(1);
+            box-shadow: 
+                0 8px 25px rgba(199, 21, 133, 0.2),
+                inset 0 0 15px rgba(255, 255, 255, 0.6);
+        }
+        50% { 
+            transform: scale(1.01);
+            box-shadow: 
+                0 12px 35px rgba(255, 182, 193, 0.3),
+                inset 0 0 25px rgba(255, 228, 225, 0.8);
+        }
+    }
+    
+    .wedding-date h2 {
+        font-size: 3.5rem;
+        color: #8b4513;
+        margin: 0 0 1rem 0;
+        font-weight: 700;
+        text-shadow: 0 2px 4px rgba(139, 69, 19, 0.3);
+        animation: date-celebration 3s ease-in-out infinite;
+        font-family: 'Dancing Script', cursive;
+    }
+
+    @keyframes date-celebration {
+        0%, 100% { 
+            transform: scale(1);
+            color: #8b4513;
+        }
+        50% { 
+            transform: scale(1.03);
+            color: #a0522d;
+        }
+    }
+    
+    .wedding-date .time {
+        font-size: 1.8rem;
+        color: #c71585;
+        margin: 0.5rem 0;
+        font-weight: 500;
+        animation: time-romantic 4s ease-in-out infinite;
+        font-family: 'Playfair Display', serif;
+    }
+
+    @keyframes time-romantic {
+        0%, 100% { 
+            color: #c71585;
+            transform: translateX(0);
+        }
+        25% { 
+            color: #da70d6;
+            transform: translateX(-2px);
+        }
+        75% { 
+            color: #dda0dd;
+            transform: translateX(2px);
+        }
+    }
+    
+    .wedding-location {
+        background: linear-gradient(135deg, 
+            rgba(255, 228, 225, 0.9), 
+            rgba(255, 182, 193, 0.8), 
+            rgba(255, 218, 185, 0.9));
+        backdrop-filter: blur(20px);
+        border-radius: 30px;
+        padding: 3rem;
+        margin: 2.5rem 0;
+        border: 3px solid rgba(255, 255, 255, 0.5);
+        box-shadow: 
+            0 10px 30px rgba(199, 21, 133, 0.2),
+            inset 0 0 20px rgba(255, 255, 255, 0.4);
+        animation: location-romance 10s ease-in-out infinite;
+        position: relative;
+    }
+
+    .wedding-location::before {
+        content: '🏰✨';
+        position: absolute;
+        top: -25px;
+        right: 30px;
+        font-size: 2.2rem;
+        animation: castle-sparkle 5s ease-in-out infinite;
+    }
+
+    @keyframes castle-sparkle {
+        0%, 100% { 
+            transform: scale(1) rotate(0deg);
+            opacity: 0.8;
+        }
+        50% { 
+            transform: scale(1.2) rotate(15deg);
+            opacity: 1;
+        }
+    }
+
+    @keyframes location-romance {
+        0%, 100% { 
+            transform: scale(1);
+            background: linear-gradient(135deg, 
+                rgba(255, 228, 225, 0.9), 
+                rgba(255, 182, 193, 0.8), 
+                rgba(255, 218, 185, 0.9));
+        }
+        50% { 
+            transform: scale(1.01);
+            background: linear-gradient(135deg, 
+                rgba(255, 218, 185, 0.9), 
+                rgba(255, 228, 225, 0.9), 
+                rgba(255, 182, 193, 0.8));
+        }
+    }
+    
+    .wedding-location h3 {
+        color: #8b4513;
+        margin-bottom: 1.5rem;
+        font-size: 2.2rem;
+        font-weight: 600;
+        animation: venue-elegance 4s ease-in-out infinite;
+        font-family: 'Playfair Display', serif;
+        text-shadow: 0 2px 4px rgba(139, 69, 19, 0.2);
+    }
+
+    @keyframes venue-elegance {
+        0%, 100% { 
+            transform: translateY(0);
+            color: #8b4513;
+        }
+        50% { 
+            transform: translateY(-3px);
+            color: #a0522d;
+        }
+    }
+    
+    .wedding-actions {
+        background: linear-gradient(135deg, 
+            rgba(255, 240, 245, 0.95), 
+            rgba(255, 228, 225, 0.9), 
+            rgba(253, 245, 230, 0.95));
+        backdrop-filter: blur(15px);
+        padding: 4rem 2rem;
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+        border-top: 4px solid rgba(199, 21, 133, 0.3);
+        border-bottom: 4px solid rgba(255, 182, 193, 0.3);
+    }
+
+    .wedding-actions::before {
+        content: '💒 👰 🤵 💍 💕 🌹 💐 ✨ 🕊️ 💖 🌸 💒 👰 🤵 💍 💕 🌹 💐 ✨ 🕊️ 💖 🌸';
+        position: absolute;
+        top: 20%;
+        left: 0;
+        width: 100%;
+        font-size: 1.8rem;
+        animation: wedding-celebration-parade 15s linear infinite;
+        opacity: 0.3;
+        word-spacing: 2rem;
+        line-height: 3rem;
+    }
+
+    @keyframes wedding-celebration-parade {
+        0% { transform: translateX(-100%); }
+        100% { transform: translateX(100%); }
+    }
+
+    .wedding-actions::after {
+        content: '🎊 💒 🎉 💍 ✨ 🌹 🎊 💒 🎉 💍 ✨ 🌹';
+        position: absolute;
+        bottom: 20%;
+        left: 0;
+        width: 100%;
+        font-size: 1.5rem;
+        animation: wedding-celebration-parade-reverse 12s linear infinite;
+        opacity: 0.25;
+        word-spacing: 3rem;
+    }
+
+    @keyframes wedding-celebration-parade-reverse {
+        0% { transform: translateX(100%); }
+        100% { transform: translateX(-100%); }
+    }
+    
+    .wedding-btn {
+        display: inline-block;
+        padding: 1.2rem 3rem;
+        margin: 1rem;
+        background: linear-gradient(135deg, 
+            #8b4513, #a0522d, #daa520, #ffb6c1);
+        color: white;
+        text-decoration: none;
+        border-radius: 60px;
+        font-weight: 600;
+        transition: all 0.4s ease;
+        border: none;
+        cursor: pointer;
+        font-size: 1.2rem;
+        position: relative;
+        z-index: 2;
+        animation: btn-wedding-elegance 6s ease-in-out infinite;
+        box-shadow: 
+            0 8px 20px rgba(139, 69, 19, 0.3),
+            inset 0 2px 4px rgba(255, 255, 255, 0.2);
+        font-family: 'Playfair Display', serif;
+        letter-spacing: 1px;
+    }
+
+    @keyframes btn-wedding-elegance {
+        0%, 100% { 
+            transform: scale(1); 
+            box-shadow: 
+                0 8px 20px rgba(139, 69, 19, 0.3),
+                inset 0 2px 4px rgba(255, 255, 255, 0.2);
+        }
+        50% { 
+            transform: scale(1.02); 
+            box-shadow: 
+                0 12px 30px rgba(218, 165, 32, 0.4),
+                inset 0 4px 8px rgba(255, 255, 255, 0.3);
+        }
+    }
+    
+    .wedding-btn:hover {
+        transform: scale(1.05) translateY(-2px);
+        box-shadow: 
+            0 15px 40px rgba(139, 69, 19, 0.4),
+            inset 0 4px 8px rgba(255, 255, 255, 0.4);
+        background: linear-gradient(135deg, 
+            #a0522d, #daa520, #ffb6c1, #8b4513);
+    }
+    
+    .wedding-footer {
+        background: linear-gradient(135deg, 
+            #8b4513, #a0522d, #c71585, #da70d6);
+        color: white;
+        text-align: center;
+        padding: 3rem 2rem;
+        position: relative;
+        overflow: hidden;
+        animation: footer-wedding-glow 8s ease-in-out infinite;
+    }
+
+    @keyframes footer-wedding-glow {
+        0%, 100% { 
+            background: linear-gradient(135deg, 
+                #8b4513, #a0522d, #c71585, #da70d6);
+        }
+        50% { 
+            background: linear-gradient(135deg, 
+                #a0522d, #c71585, #da70d6, #8b4513);
+        }
+    }
+
+    .wedding-footer::before {
+        content: '🌹 💐 ✨ 💕 🤍 💍 👰 🤵 💒 🌹 💐 ✨ 💕 🤍 💍 👰 🤵 💒';
+        position: absolute;
+        bottom: 10px;
+        left: 0;
+        width: 100%;
+        font-size: 1.5rem;
+        animation: footer-wedding-romance 18s linear infinite;
+        opacity: 0.6;
+        word-spacing: 2rem;
+    }
+
+    @keyframes footer-wedding-romance {
+        0% { transform: translateX(100%); }
+        100% { transform: translateX(-100%); }
+    }
+    
+    .wedding-footer p {
+        position: relative;
+        z-index: 2;
+        animation: footer-love-text 4s ease-in-out infinite;
+        font-style: italic;
+        font-size: 1.3rem;
+        font-family: 'Dancing Script', cursive;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        margin: 0;
+        padding: 1rem 0;
+    }
+
+    @keyframes footer-love-text {
+        0%, 100% { 
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+            transform: scale(1);
+        }
+        50% { 
+            text-shadow: 0 4px 8px rgba(255, 182, 193, 0.6);
+            transform: scale(1.01);
+        }
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+        .luxury-names h1 { 
+            font-size: 3.2rem; 
+        }
+        .wedding-date h2 { 
+            font-size: 2.8rem; 
+        }
+        .wedding-btn { 
+            padding: 1rem 2.5rem; 
+            margin: 0.8rem; 
+            font-size: 1.1rem;
+        }
+        .wedding-location { 
+            padding: 2rem; 
+        }
+        .reception-hero-content {
+            padding: 3rem 0;
+        }
+        .celebration-badge {
+            padding: 1.5rem 2.5rem;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .luxury-names h1 { 
+            font-size: 2.5rem; 
+        }
+        .wedding-date h2 { 
+            font-size: 2.2rem; 
+        }
+        .celebration-icon {
+            font-size: 3rem;
+        }
+        .wedding-location h3 {
+            font-size: 1.8rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Reception Hero Section -->
+<section class="reception-hero">
+    <div class="container">
+        <div class="reception-hero-content">
+            
+            <!-- Reception Names -->
+            <div class="reception-names">
+                <h1 class="heading-script">{{ config.nome_noiva or 'Iara' }}</h1>
+                <span class="heart-separator">♥</span>
+                <h1 class="heading-script">{{ config.nome_noivo or 'Samuel' }}</h1>
+            </div>
+            
+            <!-- Reception Details Card -->
+            <div class="reception-details">
+                <h2 class="reception-title">Recepção de Casamento</h2>
+                
+                <div class="reception-info">
+                    <div class="info-item">
+                        <h3>Data & Horário</h3>
+                        <p>
+                            {% if config.data_casamento %}
+                                {{ config.data_casamento.strftime('%d de %B de %Y') }}
+                            {% else %}
+                                15 de Dezembro de 2025
+                            {% endif %}
+                        </p>
+                        <p>
+                            {% if config.horario_festa %}
+                                às {{ config.horario_festa.strftime('%H:%M') }}
+                            {% else %}
+                                às 18:00
+                            {% endif %}
+                        </p>
+                    </div>
+                    
+                    <div class="info-item">
+                        <h3>Local</h3>
+                        <p>{{ config.local_festa or 'Salão de Festas Elegance' }}</p>
+                        <p class="text-sm">{{ config.endereco_festa or 'Av. Principal, 456 - Jardim das Rosas' }}</p>
+                    </div>
+                </div>
+                
+                <!-- Welcome Message -->
+                <div class="reception-message">
+                    <p>Confirmada sua presença na cerimônia, gostaríamos de convidá-lo(a) para celebrar conosco esta data tão especial em nossa recepção.</p>
+                    <p>Sua presença será uma bênção em nosso grande dia!</p>
+                </div>
+                
+                <!-- Navigation Buttons -->
+                <div class="reception-navigation">
+                    <a href="{{ url_for('main.index') }}" class="reception-btn secondary">
+                        <i class="fas fa-home"></i>
+                        <span>Voltar ao Convite</span>
+                    </a>
+                    <a href="{{ url_for('main.lista_presentes') }}" class="reception-btn">
+                        <i class="fas fa-gift"></i>
+                        <span>Lista de Presentes</span>
+                    </a>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    // Smooth scroll para navegação
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+            e.preventDefault();
+            document.querySelector(this.getAttribute('href')).scrollIntoView({
+                behavior: 'smooth'
+            });
+        });
+    });
+</script>
+{% endblock %}
+                
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 2rem; margin-bottom: 2rem;">
+                    <div style="text-align: center; padding: 1.5rem; background: #f8fafc; border-radius: 16px; border-left: 4px solid #b91c1c;">
+                        <i class="fas fa-clock" style="font-size: 1.5rem; color: #b91c1c; margin-bottom: 1rem;"></i>
+                        <h4 style="font-weight: 600; color: #1f2937; margin-bottom: 0.5rem;">Horário</h4>
+                        <p style="font-size: 1.3rem; font-weight: 700; color: #b91c1c;">
+                            {% if config.horario_festa %}
+                                {{ config.horario_festa.strftime('%H:%M') }}
+                            {% else %}
+                                18:00
+                            {% endif %}
+                        </p>
+                    </div>
+                    
+                    <div style="text-align: center; padding: 1.5rem; background: #f8fafc; border-radius: 16px; border-left: 4px solid #b91c1c;">
+                        <i class="fas fa-map-marker-alt" style="font-size: 1.5rem; color: #b91c1c; margin-bottom: 1rem;"></i>
+                        <h4 style="font-weight: 600; color: #1f2937; margin-bottom: 0.5rem;">Local</h4>
+                        <p style="font-size: 1.1rem; font-weight: 600; color: #374151; margin-bottom: 0.5rem;">{{ config.local_festa or 'Salão de Festas Elegance' }}</p>
+                        <p style="font-size: 0.95rem; color: #6b7280;">{{ config.endereco_festa or 'Av. Principal, 456 - Jardim das Rosas' }}</p>
+                    </div>
+                </div>
+                
+                <div style="text-align: center;">
+                    <button onclick="openReceptionMap()" style="background: linear-gradient(135deg, #b91c1c, #dc2626); color: white; border: none; padding: 1rem 2.5rem; border-radius: 50px; font-weight: 600; font-size: 1.1rem; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 8px 20px rgba(185,28,28,0.3);" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 12px 25px rgba(185,28,28,0.4)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 8px 20px rgba(185,28,28,0.3)'">
+                        <i class="fas fa-directions" style="margin-right: 0.5rem;"></i>
+                        Ver Localização
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Cards de Informações Especiais -->
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 2rem; margin-bottom: 4rem;">
+            <div style="background: white; border-radius: 20px; padding: 2.5rem; text-align: center; box-shadow: 0 15px 35px rgba(0,0,0,0.08); border: 1px solid rgba(0,0,0,0.05); transition: all 0.3s ease; position: relative; overflow: hidden;" onmouseover="this.style.transform='translateY(-5px)'; this.style.boxShadow='0 20px 40px rgba(0,0,0,0.12)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 15px 35px rgba(0,0,0,0.08)'">
+                <div style="position: absolute; top: 0; left: 0; right: 0; height: 4px; background: linear-gradient(90deg, #b91c1c, #dc2626);"></div>
+                <div style="width: 70px; height: 70px; background: linear-gradient(135deg, #fef2f2, #fee2e2); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.5rem;">
+                    <i class="fas fa-utensils" style="font-size: 1.8rem; color: #b91c1c;"></i>
+                </div>
+                <h4 style="font-size: 1.4rem; font-weight: 700; color: #1f2937; margin-bottom: 1rem;">Jantar Especial</h4>
+                <p style="color: #6b7280; line-height: 1.6;">Menu gourmet cuidadosamente preparado para celebrar este momento único</p>
+            </div>
+            
+            <div style="background: white; border-radius: 20px; padding: 2.5rem; text-align: center; box-shadow: 0 15px 35px rgba(0,0,0,0.08); border: 1px solid rgba(0,0,0,0.05); transition: all 0.3s ease; position: relative; overflow: hidden;" onmouseover="this.style.transform='translateY(-5px)'; this.style.boxShadow='0 20px 40px rgba(0,0,0,0.12)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 15px 35px rgba(0,0,0,0.08)'">
+                <div style="position: absolute; top: 0; left: 0; right: 0; height: 4px; background: linear-gradient(90deg, #b91c1c, #dc2626);"></div>
+                <div style="width: 70px; height: 70px; background: linear-gradient(135deg, #fef2f2, #fee2e2); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.5rem;">
+                    <i class="fas fa-music" style="font-size: 1.8rem; color: #b91c1c;"></i>
+                </div>
+                <h4 style="font-size: 1.4rem; font-weight: 700; color: #1f2937; margin-bottom: 1rem;">Música & Dança</h4>
+                <p style="color: #6b7280; line-height: 1.6;">DJ profissional e pista de dança para celebrarmos juntos até altas horas</p>
+            </div>
+            
+            <div style="background: white; border-radius: 20px; padding: 2.5rem; text-align: center; box-shadow: 0 15px 35px rgba(0,0,0,0.08); border: 1px solid rgba(0,0,0,0.05); transition: all 0.3s ease; position: relative; overflow: hidden;" onmouseover="this.style.transform='translateY(-5px)'; this.style.boxShadow='0 20px 40px rgba(0,0,0,0.12)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 15px 35px rgba(0,0,0,0.08)'">
+                <div style="position: absolute; top: 0; left: 0; right: 0; height: 4px; background: linear-gradient(90deg, #b91c1c, #dc2626);"></div>
+                <div style="width: 70px; height: 70px; background: linear-gradient(135deg, #fef2f2, #fee2e2); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.5rem;">
+                    <i class="fas fa-camera" style="font-size: 1.8rem; color: #b91c1c;"></i>
+                </div>
+                <h4 style="font-size: 1.4rem; font-weight: 700; color: #1f2937; margin-bottom: 1rem;">Fotografia</h4>
+                <p style="color: #6b7280; line-height: 1.6;">Fotógrafo profissional registrará todos os momentos especiais da nossa festa</p>
+            </div>
+        </div>
+        
+        <!-- Dress Code Elegante -->
+        <div style="max-width: 600px; margin: 0 auto; background: white; border-radius: 20px; padding: 3rem; box-shadow: 0 20px 40px rgba(0,0,0,0.1); border: 1px solid rgba(0,0,0,0.05); text-align: center; position: relative; overflow: hidden;">
+            <div style="position: absolute; top: -20px; left: 50%; transform: translateX(-50%); width: 100px; height: 40px; background: linear-gradient(135deg, #b91c1c, #dc2626); clip-path: polygon(20% 0%, 80% 0%, 100% 100%, 0% 100%); display: flex; align-items: center; justify-content: center;">
+                <i class="fas fa-star" style="color: white; font-size: 0.9rem;"></i>
+            </div>
+            
+            <h3 style="font-size: 2.2rem; font-weight: 700; color: #1f2937; margin-bottom: 2rem; font-family: 'Great Vibes', cursive; margin-top: 1rem;">Dress Code</h3>
+            
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 2rem;">
+                <div style="padding: 1.5rem; background: #f8fafc; border-radius: 16px; border: 2px solid #e5e7eb;">
+                    <div style="width: 50px; height: 50px; background: linear-gradient(135deg, #b91c1c, #dc2626); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem;">
+                        <i class="fas fa-tshirt" style="color: white; font-size: 1.2rem;"></i>
+                    </div>
+                    <h4 style="font-weight: 700; color: #1f2937; margin-bottom: 0.5rem;">Esporte Fino</h4>
+                    <p style="color: #6b7280; font-size: 0.9rem;">Traje elegante e confortável para a festa</p>
+                </div>
+                
+                <div style="padding: 1.5rem; background: #f8fafc; border-radius: 16px; border: 2px solid #e5e7eb;">
+                    <div style="width: 50px; height: 50px; background: linear-gradient(135deg, #b91c1c, #dc2626); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem;">
+                        <i class="fas fa-palette" style="color: white; font-size: 1.2rem;"></i>
+                    </div>
+                    <h4 style="font-weight: 700; color: #1f2937; margin-bottom: 0.5rem;">Cores</h4>
+                    <p style="color: #6b7280; font-size: 0.9rem;">Evite branco e vermelho, por favor</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Timeline Section - Design Moderno -->
+<section class="timeline-section" style="padding: 6rem 0; background: linear-gradient(135deg, #1f2937 0%, #374151 50%, #1f2937 100%); position: relative; overflow: hidden;">
+    <!-- Decorações de Fundo -->
+    <div style="position: absolute; top: 10%; left: 5%; width: 200px; height: 200px; background: radial-gradient(circle, rgba(185,28,28,0.1) 0%, transparent 70%); border-radius: 50%;"></div>
+    <div style="position: absolute; bottom: 20%; right: 10%; width: 150px; height: 150px; background: radial-gradient(circle, rgba(185,28,28,0.08) 0%, transparent 70%); border-radius: 50%;"></div>
+    
+    <div class="container" style="position: relative; z-index: 2;">
+        <div class="section-header text-center" style="margin-bottom: 4rem;">
+            <div style="display: inline-block; background: rgba(185,28,28,0.2); backdrop-filter: blur(10px); color: white; padding: 0.5rem 2rem; border-radius: 50px; margin-bottom: 1rem; font-size: 0.9rem; letter-spacing: 1px; text-transform: uppercase; border: 1px solid rgba(185,28,28,0.3);">Programação</div>
+            <h2 style="font-size: 3rem; font-weight: 700; color: white; margin-bottom: 1rem; font-family: 'Great Vibes', cursive;">Cronograma do Dia</h2>
+            <p style="font-size: 1.2rem; color: rgba(255,255,255,0.8); max-width: 600px; margin: 0 auto;">A sequência perfeita para celebrarmos nossa união</p>
+        </div>
+        
+        <div style="max-width: 800px; margin: 0 auto; position: relative;">
+            <!-- Linha Central da Timeline -->
+            <div style="position: absolute; left: 50%; transform: translateX(-50%); top: 0; bottom: 0; width: 4px; background: linear-gradient(180deg, #b91c1c, #dc2626, #b91c1c); border-radius: 2px; z-index: 1;"></div>
+            
+            <!-- Timeline Items -->
+            <div style="display: flex; flex-direction: column; gap: 3rem; position: relative; z-index: 2;">
+                <!-- Item 1 -->
+                <div style="display: flex; align-items: center; position: relative;">
+                    <div style="flex: 1; text-align: right; padding-right: 3rem;">
+                        <div style="background: rgba(255,255,255,0.05); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; padding: 2rem; position: relative;">
+                            <div style="position: absolute; top: 50%; right: -12px; width: 0; height: 0; border-left: 12px solid rgba(255,255,255,0.05); border-top: 12px solid transparent; border-bottom: 12px solid transparent;"></div>
+                            <h4 style="font-size: 1.3rem; font-weight: 700; color: white; margin-bottom: 0.5rem;">Cerimônia Religiosa</h4>
+                            <p style="color: rgba(255,255,255,0.7); font-size: 0.95rem; margin-bottom: 0;">{{ config.local_cerimonia or 'Igreja Nossa Senhora das Graças' }}</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Timeline Point -->
+                    <div style="width: 80px; height: 80px; background: linear-gradient(135deg, #b91c1c, #dc2626); border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 0 6px rgba(255,255,255,0.1), 0 0 0 12px rgba(185,28,28,0.2); position: relative; z-index: 3;">
+                        <div style="text-align: center; color: white;">
+                            <div style="font-size: 1.1rem; font-weight: 700; line-height: 1;">
+                                {% if config.horario_cerimonia %}
+                                    {{ config.horario_cerimonia.strftime('%H:%M') }}
+                                {% else %}
+                                    16:00
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div style="flex: 1; padding-left: 3rem;"></div>
+                </div>
+                
+                <!-- Item 2 -->
+                <div style="display: flex; align-items: center; position: relative;">
+                    <div style="flex: 1; padding-right: 3rem;"></div>
+                    
+                    <!-- Timeline Point -->
+                    <div style="width: 80px; height: 80px; background: linear-gradient(135deg, #b91c1c, #dc2626); border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 0 6px rgba(255,255,255,0.1), 0 0 0 12px rgba(185,28,28,0.2); position: relative; z-index: 3;">
+                        <div style="text-align: center; color: white;">
+                            <div style="font-size: 1.1rem; font-weight: 700; line-height: 1;">
+                                {% if config.horario_festa %}
+                                    {{ config.horario_festa.strftime('%H:%M') }}
+                                {% else %}
+                                    18:00
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div style="flex: 1; text-align: left; padding-left: 3rem;">
+                        <div style="background: rgba(255,255,255,0.05); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; padding: 2rem; position: relative;">
+                            <div style="position: absolute; top: 50%; left: -12px; width: 0; height: 0; border-right: 12px solid rgba(255,255,255,0.05); border-top: 12px solid transparent; border-bottom: 12px solid transparent;"></div>
+                            <h4 style="font-size: 1.3rem; font-weight: 700; color: white; margin-bottom: 0.5rem;">Chegada na Recepção</h4>
+                            <p style="color: rgba(255,255,255,0.7); font-size: 0.95rem; margin-bottom: 0;">Cocktail de boas-vindas e confraternização</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Item 3 -->
+                <div style="display: flex; align-items: center; position: relative;">
+                    <div style="flex: 1; text-align: right; padding-right: 3rem;">
+                        <div style="background: rgba(255,255,255,0.05); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; padding: 2rem; position: relative;">
+                            <div style="position: absolute; top: 50%; right: -12px; width: 0; height: 0; border-left: 12px solid rgba(255,255,255,0.05); border-top: 12px solid transparent; border-bottom: 12px solid transparent;"></div>
+                            <h4 style="font-size: 1.3rem; font-weight: 700; color: white; margin-bottom: 0.5rem;">Jantar Especial</h4>
+                            <p style="color: rgba(255,255,255,0.7); font-size: 0.95rem; margin-bottom: 0;">Menu gourmet para todos os convidados</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Timeline Point -->
+                    <div style="width: 80px; height: 80px; background: linear-gradient(135deg, #b91c1c, #dc2626); border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 0 6px rgba(255,255,255,0.1), 0 0 0 12px rgba(185,28,28,0.2); position: relative; z-index: 3;">
+                        <div style="text-align: center; color: white;">
+                            <div style="font-size: 1.1rem; font-weight: 700; line-height: 1;">19:00</div>
+                        </div>
+                    </div>
+                    
+                    <div style="flex: 1; padding-left: 3rem;"></div>
+                </div>
+                
+                <!-- Item 4 -->
+                <div style="display: flex; align-items: center; position: relative;">
+                    <div style="flex: 1; padding-right: 3rem;"></div>
+                    
+                    <!-- Timeline Point -->
+                    <div style="width: 80px; height: 80px; background: linear-gradient(135deg, #b91c1c, #dc2626); border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 0 6px rgba(255,255,255,0.1), 0 0 0 12px rgba(185,28,28,0.2); position: relative; z-index: 3;">
+                        <div style="text-align: center; color: white;">
+                            <div style="font-size: 1.1rem; font-weight: 700; line-height: 1;">21:00</div>
+                        </div>
+                    </div>
+                    
+                    <div style="flex: 1; text-align: left; padding-left: 3rem;">
+                        <div style="background: rgba(255,255,255,0.05); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; padding: 2rem; position: relative;">
+                            <div style="position: absolute; top: 50%; left: -12px; width: 0; height: 0; border-right: 12px solid rgba(255,255,255,0.05); border-top: 12px solid transparent; border-bottom: 12px solid transparent;"></div>
+                            <h4 style="font-size: 1.3rem; font-weight: 700; color: white; margin-bottom: 0.5rem;">Festa & Dança</h4>
+                            <p style="color: rgba(255,255,255,0.7); font-size: 0.95rem; margin-bottom: 0;">Música, dança e muita alegria até altas horas</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Mobile Timeline -->
+        <div style="display: none; max-width: 600px; margin: 0 auto;" class="mobile-timeline">
+            <div style="position: relative; padding-left: 3rem;">
+                <!-- Linha vertical mobile -->
+                <div style="position: absolute; left: 1rem; top: 0; bottom: 0; width: 2px; background: linear-gradient(180deg, #b91c1c, #dc2626, #b91c1c);"></div>
+                
+                <div style="display: flex; flex-direction: column; gap: 2rem;">
+                    <div style="position: relative;">
+                        <div style="position: absolute; left: -2.5rem; top: 1rem; width: 40px; height: 40px; background: linear-gradient(135deg, #b91c1c, #dc2626); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; font-size: 0.8rem; z-index: 2;">
+                            {% if config.horario_cerimonia %}
+                                {{ config.horario_cerimonia.strftime('%H:%M') }}
+                            {% else %}
+                                16:00
+                            {% endif %}
+                        </div>
+                        <div style="background: rgba(255,255,255,0.05); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; padding: 1.5rem;">
+                            <h4 style="color: white; font-weight: 700; margin-bottom: 0.5rem;">Cerimônia Religiosa</h4>
+                            <p style="color: rgba(255,255,255,0.7); font-size: 0.9rem; margin: 0;">{{ config.local_cerimonia or 'Igreja Nossa Senhora das Graças' }}</p>
+                        </div>
+                    </div>
+                    
+                    <div style="position: relative;">
+                        <div style="position: absolute; left: -2.5rem; top: 1rem; width: 40px; height: 40px; background: linear-gradient(135deg, #b91c1c, #dc2626); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; font-size: 0.8rem; z-index: 2;">
+                            {% if config.horario_festa %}
+                                {{ config.horario_festa.strftime('%H:%M') }}
+                            {% else %}
+                                18:00
+                            {% endif %}
+                        </div>
+                        <div style="background: rgba(255,255,255,0.05); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; padding: 1.5rem;">
+                            <h4 style="color: white; font-weight: 700; margin-bottom: 0.5rem;">Chegada na Recepção</h4>
+                            <p style="color: rgba(255,255,255,0.7); font-size: 0.9rem; margin: 0;">Cocktail de boas-vindas</p>
+                        </div>
+                    </div>
+                    
+                    <div style="position: relative;">
+                        <div style="position: absolute; left: -2.5rem; top: 1rem; width: 40px; height: 40px; background: linear-gradient(135deg, #b91c1c, #dc2626); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; font-size: 0.8rem; z-index: 2;">19:00</div>
+                        <div style="background: rgba(255,255,255,0.05); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; padding: 1.5rem;">
+                            <h4 style="color: white; font-weight: 700; margin-bottom: 0.5rem;">Jantar Especial</h4>
+                            <p style="color: rgba(255,255,255,0.7); font-size: 0.9rem; margin: 0;">Menu gourmet</p>
+                        </div>
+                    </div>
+                    
+                    <div style="position: relative;">
+                        <div style="position: absolute; left: -2.5rem; top: 1rem; width: 40px; height: 40px; background: linear-gradient(135deg, #b91c1c, #dc2626); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; font-size: 0.8rem; z-index: 2;">21:00</div>
+                        <div style="background: rgba(255,255,255,0.05); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; padding: 1.5rem;">
+                            <h4 style="color: white; font-weight: 700; margin-bottom: 0.5rem;">Festa & Dança</h4>
+                            <p style="color: rgba(255,255,255,0.7); font-size: 0.9rem; margin: 0;">Música e dança</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <style>
+        @media (max-width: 768px) {
+            .timeline-section > .container > div:first-child {
+                display: none !important;
+            }
+            .mobile-timeline {
+                display: block !important;
+            }
+        }
+    </style>
+</section>
+
+<!-- Actions Section - Design Super Festivo -->
+<section class="reception-actions-section" style="padding: 6rem 0; background: linear-gradient(135deg, #f8fafc 0%, #ffffff 30%, #fef7cd 60%, #fff7ed 100%); position: relative; overflow: hidden;">
+    <!-- Decorações de Fundo Festivas -->
+    <div style="position: absolute; top: 10%; left: 5%; width: 300px; height: 300px; background: radial-gradient(circle, rgba(255,215,0,0.1) 0%, transparent 70%); border-radius: 50%; animation: float-celebration 6s ease-in-out infinite;"></div>
+    <div style="position: absolute; bottom: 10%; right: 10%; width: 250px; height: 250px; background: radial-gradient(circle, rgba(255,105,180,0.08) 0%, transparent 70%); border-radius: 50%; animation: float-celebration 8s ease-in-out infinite reverse;"></div>
+    <div style="position: absolute; top: 50%; left: 80%; width: 200px; height: 200px; background: radial-gradient(circle, rgba(0,255,255,0.06) 0%, transparent 70%); border-radius: 50%; animation: float-celebration 7s ease-in-out infinite;"></div>
+    
+    <!-- Confetes flutuantes -->
+    <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; pointer-events: none; z-index: 1;">
+        <div style="position: absolute; top: 20%; left: 15%; font-size: 2rem; animation: confetti-float 12s linear infinite; animation-delay: 0s;">🎊</div>
+        <div style="position: absolute; top: 30%; right: 20%; font-size: 1.8rem; animation: confetti-float 15s linear infinite; animation-delay: 2s;">✨</div>
+        <div style="position: absolute; top: 60%; left: 10%; font-size: 2.2rem; animation: confetti-float 10s linear infinite; animation-delay: 4s;">🎉</div>
+        <div style="position: absolute; top: 40%; right: 15%; font-size: 1.5rem; animation: confetti-float 18s linear infinite; animation-delay: 1s;">🥳</div>
+        <div style="position: absolute; top: 70%; left: 70%; font-size: 2rem; animation: confetti-float 14s linear infinite; animation-delay: 3s;">🎈</div>
+        <div style="position: absolute; top: 15%; left: 60%; font-size: 1.7rem; animation: confetti-float 16s linear infinite; animation-delay: 5s;">🌟</div>
+    </div>
+    
+    <div class="container text-center" style="position: relative; z-index: 2;">
+        <div style="max-width: 700px; margin: 0 auto; background: white; border-radius: 30px; padding: 4rem 3rem; box-shadow: 0 30px 60px rgba(0,0,0,0.1), 0 0 40px rgba(255,215,0,0.2); border: 2px solid rgba(255,215,0,0.1); position: relative; overflow: hidden;">
+            <!-- Decoração do Card Festiva -->
+            <div style="position: absolute; top: -150px; left: -150px; width: 300px; height: 300px; background: linear-gradient(135deg, rgba(255,215,0,0.08), rgba(255,105,180,0.05)); border-radius: 50%; z-index: 1; animation: party-decoration 8s ease-in-out infinite;"></div>
+            <div style="position: absolute; bottom: -120px; right: -120px; width: 240px; height: 240px; background: linear-gradient(135deg, rgba(255,105,180,0.06), rgba(0,255,255,0.04)); border-radius: 50%; z-index: 1; animation: party-decoration 10s ease-in-out infinite reverse;"></div>
+            
+            <div style="position: relative; z-index: 2;">
+                <!-- Ícone de Celebração Super Festivo -->
+                <div style="width: 120px; height: 120px; background: linear-gradient(135deg, #ff6b35, #f7931e, #ffd700, #ff69b4); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 2rem; box-shadow: 0 20px 40px rgba(255,105,180,0.3), 0 0 60px rgba(255,215,0,0.2); position: relative; animation: super-celebration 3s ease-in-out infinite;">
+                    <i class="fas fa-glass-cheers" style="font-size: 3rem; color: white; animation: cheers-animation 2s ease-in-out infinite;"></i>
+                    <div style="position: absolute; inset: -15px; border: 4px solid rgba(255,215,0,0.3); border-radius: 50%; animation: mega-pulse-ring 3s ease-out infinite;"></div>
+                    <div style="position: absolute; inset: -25px; border: 2px solid rgba(255,105,180,0.2); border-radius: 50%; animation: mega-pulse-ring 3s ease-out infinite 0.5s;"></div>
+                </div>
+                
+                <h3 style="font-size: 3.2rem; font-weight: 700; color: #1f2937; margin-bottom: 1.5rem; font-family: 'Great Vibes', cursive; background: linear-gradient(45deg, #b91c1c, #ff6b35, #ffd700, #ff69b4); background-size: 300% 300%; -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; animation: festive-text 4s ease-in-out infinite;">Vamos Celebrar!</h3>
+                
+                <p style="font-size: 1.4rem; color: #6b7280; line-height: 1.7; margin-bottom: 3rem; background: linear-gradient(135deg, rgba(255,215,0,0.1), rgba(255,255,255,0.8), rgba(255,105,180,0.1)); padding: 1.5rem; border-radius: 20px; border: 1px solid rgba(255,215,0,0.2);">
+                    🎊 Mal podemos esperar para celebrar este momento mágico ao lado de pessoas especiais como vocês! Preparem-se para uma festa inesquecível! 🥳
+                </p>
+                
+                <!-- Botões Super Festivos -->
+                <div style="display: flex; gap: 2rem; justify-content: center; flex-wrap: wrap;">
+                    <a href="{{ url_for('main.index') }}" style="display: inline-flex; align-items: center; gap: 1rem; background: linear-gradient(135deg, #ffffff, #fef7cd); color: #1f2937; border: 3px solid #ffd700; padding: 1.5rem 3rem; border-radius: 50px; font-weight: 700; font-size: 1.2rem; text-decoration: none; transition: all 0.4s ease; box-shadow: 0 10px 30px rgba(255,215,0,0.3); position: relative; overflow: hidden;" onmouseover="this.style.transform='translateY(-5px) scale(1.05)'; this.style.boxShadow='0 20px 40px rgba(255,215,0,0.4)'; this.style.background='linear-gradient(135deg, #ffd700, #fff7ed)'" onmouseout="this.style.transform='translateY(0) scale(1)'; this.style.boxShadow='0 10px 30px rgba(255,215,0,0.3)'; this.style.background='linear-gradient(135deg, #ffffff, #fef7cd)'">
+                        <i class="fas fa-home" style="font-size: 1.2rem; animation: home-bounce 2s ease-in-out infinite;"></i>
+                        <span>Voltar ao Início</span>
+                        <div style="position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: linear-gradient(45deg, transparent, rgba(255,255,255,0.3), transparent); transform: rotate(45deg); transition: all 0.6s ease; opacity: 0;" class="shine-effect"></div>
+                    </a>
+                    
+                    <a href="{{ url_for('main.lista_presentes') }}" style="display: inline-flex; align-items: center; gap: 1rem; background: linear-gradient(135deg, #ff6b35, #f7931e, #ffd700); color: white; border: 3px solid rgba(255,255,255,0.3); padding: 1.5rem 3rem; border-radius: 50px; font-weight: 700; font-size: 1.2rem; text-decoration: none; transition: all 0.4s ease; box-shadow: 0 10px 30px rgba(255,107,53,0.4), 0 0 30px rgba(255,215,0,0.2); position: relative; overflow: hidden;" onmouseover="this.style.transform='translateY(-5px) scale(1.05)'; this.style.boxShadow='0 20px 40px rgba(255,107,53,0.5), 0 0 50px rgba(255,215,0,0.4)'" onmouseout="this.style.transform='translateY(0) scale(1)'; this.style.boxShadow='0 10px 30px rgba(255,107,53,0.4), 0 0 30px rgba(255,215,0,0.2)'">
+                        <i class="fas fa-gift" style="font-size: 1.2rem; animation: gift-wiggle 1.5s ease-in-out infinite;"></i>
+                        <span>Lista de Presentes</span>
+                        <div style="position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: linear-gradient(45deg, transparent, rgba(255,255,255,0.4), transparent); transform: rotate(45deg); transition: all 0.6s ease; opacity: 0;" class="shine-effect"></div>
+                    </a>
+                </div>
+                
+                <!-- Cards de Informações Festivais (sem compartilhamento) -->
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 2rem; margin-top: 4rem;">
+                    <div style="background: linear-gradient(135deg, #fff7ed, #ffffff); border-radius: 25px; padding: 2.5rem; text-align: center; box-shadow: 0 15px 35px rgba(255,107,53,0.1); border: 2px solid rgba(255,215,0,0.2); transition: all 0.4s ease; position: relative; overflow: hidden;" onmouseover="this.style.transform='translateY(-8px) rotate(2deg)'; this.style.boxShadow='0 25px 50px rgba(255,107,53,0.2)'" onmouseout="this.style.transform='translateY(0) rotate(0deg)'; this.style.boxShadow='0 15px 35px rgba(255,107,53,0.1)'">
+                        <div style="width: 80px; height: 80px; background: linear-gradient(135deg, #ff6b35, #ffd700); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.5rem; animation: info-pulse 3s ease-in-out infinite;">
+                            <i class="fas fa-phone" style="color: white; font-size: 2rem;"></i>
+                        </div>
+                        <h4 style="font-weight: 700; color: #1f2937; margin-bottom: 1rem; font-size: 1.5rem;">Dúvidas? 🤔</h4>
+                        <p style="color: #6b7280; font-size: 1rem; line-height: 1.6;">Entre em contato conosco pelo WhatsApp para qualquer informação!</p>
+                    </div>
+                    
+                    <div style="background: linear-gradient(135deg, #fef7cd, #ffffff); border-radius: 25px; padding: 2.5rem; text-align: center; box-shadow: 0 15px 35px rgba(255,215,0,0.1); border: 2px solid rgba(255,105,180,0.2); transition: all 0.4s ease; position: relative; overflow: hidden;" onmouseover="this.style.transform='translateY(-8px) rotate(-2deg)'; this.style.boxShadow='0 25px 50px rgba(255,215,0,0.2)'" onmouseout="this.style.transform='translateY(0) rotate(0deg)'; this.style.boxShadow='0 15px 35px rgba(255,215,0,0.1)'">
+                        <div style="width: 80px; height: 80px; background: linear-gradient(135deg, #ffd700, #ff69b4); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.5rem; animation: info-pulse 3s ease-in-out infinite 0.5s;">
+                            <i class="fas fa-calendar-plus" style="color: white; font-size: 2rem;"></i>
+                        </div>
+                        <h4 style="font-weight: 700; color: #1f2937; margin-bottom: 1rem; font-size: 1.5rem;">Agenda 📅</h4>
+                        <p style="color: #6b7280; font-size: 1rem; line-height: 1.6;">Adicione nossa festa na sua agenda para não perder nada!</p>
+                    </div>
+                </div>
+                
+                <!-- Mensagem Especial -->
+                <div style="margin-top: 3rem; padding: 2rem; background: linear-gradient(135deg, rgba(255,215,0,0.1), rgba(255,105,180,0.05)); border-radius: 20px; border-left: 5px solid #ffd700;">
+                    <p style="font-size: 1.2rem; color: #374151; font-style: italic; margin: 0; line-height: 1.6;">
+                        ✨ "A felicidade é real quando compartilhada" ✨<br>
+                        <span style="font-size: 1rem; opacity: 0.8;">Obrigado por fazer parte da nossa história!</span>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <style>
+        @keyframes float-celebration {
+            0%, 100% { transform: translateY(0) scale(1); }
+            50% { transform: translateY(-20px) scale(1.1); }
+        }
+        
+        @keyframes confetti-float {
+            0% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { transform: translateY(-100vh) rotate(360deg); opacity: 0; }
+        }
+        
+        @keyframes party-decoration {
+            0%, 100% { transform: rotate(0deg) scale(1); }
+            50% { transform: rotate(180deg) scale(1.2); }
+        }
+        
+        @keyframes super-celebration {
+            0%, 100% { transform: scale(1) rotate(0deg); }
+            25% { transform: scale(1.1) rotate(5deg); }
+            50% { transform: scale(1.15) rotate(0deg); }
+            75% { transform: scale(1.1) rotate(-5deg); }
+        }
+        
+        @keyframes cheers-animation {
+            0%, 100% { transform: rotate(0deg); }
+            25% { transform: rotate(10deg); }
+            75% { transform: rotate(-10deg); }
+        }
+        
+        @keyframes mega-pulse-ring {
+            0% { transform: scale(1); opacity: 0.8; }
+            100% { transform: scale(1.8); opacity: 0; }
+        }
+        
+        @keyframes festive-text {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+        
+        @keyframes home-bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-3px); }
+        }
+        
+        @keyframes gift-wiggle {
+            0%, 100% { transform: rotate(0deg); }
+            25% { transform: rotate(5deg); }
+            75% { transform: rotate(-5deg); }
+        }
+        
+        @keyframes info-pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        
+        /* Efeito shine nos botões */
+        a:hover .shine-effect {
+            opacity: 1 !important;
+            left: 100% !important;
+        }
+        
+        @media (max-width: 768px) {
+            .reception-actions-section .container > div:first-child {
+                padding: 3rem 2rem !important;
+            }
+            
+            .reception-actions-section a {
+                padding: 1.2rem 2rem !important;
+                font-size: 1rem !important;
+            }
+            
+            .reception-actions-section h3 {
+                font-size: 2.5rem !important;
+            }
+            
+            .reception-actions-section > .container > div:first-child > div:last-child {
+                grid-template-columns: 1fr !important;
+                gap: 1.5rem !important;
+            }
+        }
+    </style>
+</section>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+// Função para abrir mapa da recepção
+function openReceptionMap() {
+    const address = '{{ config.endereco_festa or "Av. Principal, 456 - Jardim das Rosas" }}';
+    const encodedAddress = encodeURIComponent(address);
+    const mapUrl = `https://www.google.com/maps/search/?api=1&query=${encodedAddress}`;
+    window.open(mapUrl, '_blank');
+}
+
+// Função para adicionar evento ao calendário
+function addToCalendar() {
+    const eventDate = '{{ config.data_casamento.strftime("%Y%m%d") if config.data_casamento else "20251215" }}';
+    const startTime = '{{ config.horario_festa.strftime("%H%M%S") if config.horario_festa else "180000" }}';
+    const endTime = '{{ (config.horario_festa.strftime("%H") | int + 5) if config.horario_festa else "23" }}0000';
+    const title = encodeURIComponent('Casamento {{ config.nome_noiva or "Iara" }} & {{ config.nome_noivo or "Samuel" }} - Recepção');
+    const location = encodeURIComponent('{{ config.endereco_festa or "Av. Principal, 456 - Jardim das Rosas" }}');
+    const details = encodeURIComponent('Recepção do casamento de {{ config.nome_noiva or "Iara" }} e {{ config.nome_noivo or "Samuel" }}');
+    
+    const googleCalendarUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${title}&dates=${eventDate}T${startTime}/${eventDate}T${endTime}&details=${details}&location=${location}`;
+    window.open(googleCalendarUrl, '_blank');
+}
+
+// Função para criar confetes interativos
+function createInteractiveConfetti() {
+    const confettiContainer = document.createElement('div');
+    confettiContainer.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        z-index: 9999;
+    `;
+    document.body.appendChild(confettiContainer);
+    
+    const confettiEmojis = ['🎉', '🎊', '✨', '🥳', '🎈', '🌟', '💫', '⭐', '🎭', '🎪'];
+    
+    for (let i = 0; i < 20; i++) {
+        setTimeout(() => {
+            const confetti = document.createElement('div');
+            confetti.textContent = confettiEmojis[Math.floor(Math.random() * confettiEmojis.length)];
+            confetti.style.cssText = `
+                position: absolute;
+                font-size: ${Math.random() * 20 + 15}px;
+                left: ${Math.random() * 100}%;
+                top: -50px;
+                animation: confetti-fall ${Math.random() * 3 + 2}s linear forwards;
+                transform: rotate(${Math.random() * 360}deg);
+            `;
+            confettiContainer.appendChild(confetti);
+            
+            setTimeout(() => {
+                confetti.remove();
+            }, 5000);
+        }, i * 100);
+    }
+    
+    setTimeout(() => {
+        confettiContainer.remove();
+    }, 6000);
+}
+
+// Função para efeito de festa nos botões
+function addPartyEffect(element) {
+    element.style.transform = 'scale(1.1) rotate(5deg)';
+    element.style.boxShadow = '0 0 30px rgba(255,215,0,0.8)';
+    
+    // Criar efeito de brilho
+    const sparkles = document.createElement('div');
+    sparkles.innerHTML = '✨💫⭐🌟';
+    sparkles.style.cssText = `
+        position: absolute;
+        top: -20px;
+        left: 50%;
+        transform: translateX(-50%);
+        font-size: 20px;
+        animation: sparkle-burst 1s ease-out forwards;
+        pointer-events: none;
+        z-index: 10;
+    `;
+    element.style.position = 'relative';
+    element.appendChild(sparkles);
+    
+    setTimeout(() => {
+        element.style.transform = '';
+        element.style.boxShadow = '';
+        sparkles.remove();
+    }, 1000);
+}
+
+// Animações e interações festivas
+document.addEventListener('DOMContentLoaded', function() {
+    // Smooth scroll para indicador
+    const scrollIndicator = document.querySelector('.scroll-indicator');
+    if (scrollIndicator) {
+        scrollIndicator.addEventListener('click', function() {
+            createInteractiveConfetti();
+            document.querySelector('#recepcao-details').scrollIntoView({
+                behavior: 'smooth'
+            });
+        });
+    }
+    
+    // Animação de entrada progressiva com efeito festivo
+    const observerOptions = {
+        threshold: 0.1,
+        rootMargin: '0px 0px -50px 0px'
+    };
+    
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach((entry, index) => {
+            if (entry.isIntersecting) {
+                setTimeout(() => {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0) scale(1)';
+                    
+                    // Adicionar efeito de brilho quando aparece
+                    if (entry.target.classList.contains('info-card') || 
+                        entry.target.querySelector('.info-icon')) {
+                        entry.target.style.animation = 'celebration-entrance 0.8s ease-out';
+                    }
+                }, index * 150);
+            }
+        });
+    }, observerOptions);
+    
+    // Aplicar animação aos elementos
+    const animatedElements = document.querySelectorAll(`
+        .reception-details-section > .container > div:not(.section-header),
+        .timeline-section .timeline-item,
+        .timeline-section .mobile-timeline > div > div > div,
+        .reception-actions-section > .container > div:last-child > div
+    `);
+    
+    animatedElements.forEach(el => {
+        el.style.opacity = '0';
+        el.style.transform = 'translateY(30px) scale(0.9)';
+        el.style.transition = 'all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
+        observer.observe(el);
+    });
+    
+    // Animação especial para a hero section com confetes
+    const heroContent = document.querySelector('.reception-hero-content');
+    if (heroContent) {
+        heroContent.style.opacity = '0';
+        heroContent.style.transform = 'translateY(50px)';
+        
+        setTimeout(() => {
+            heroContent.style.transition = 'all 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
+            heroContent.style.opacity = '1';
+            heroContent.style.transform = 'translateY(0)';
+            
+            // Confetes na entrada
+            setTimeout(() => {
+                createInteractiveConfetti();
+            }, 800);
+        }, 300);
+    }
+    
+    // Efeito de festa nos botões principais
+    const actionButtons = document.querySelectorAll('.reception-actions-section a');
+    actionButtons.forEach(button => {
+        button.addEventListener('mouseenter', function() {
+            if (Math.random() > 0.7) { // 30% de chance de confetes
+                createMiniConfetti(this);
+            }
+        });
+        
+        button.addEventListener('click', function() {
+            addPartyEffect(this);
+        });
+    });
+    
+    // Adicionar eventos aos cards de informação
+    const infoCards = document.querySelectorAll('.reception-actions-section > .container > div:first-child > div:last-child > div');
+    infoCards.forEach((card, index) => {
+        card.addEventListener('click', function() {
+            addPartyEffect(this);
+            switch(index) {
+                case 0:
+                    // Dúvidas - pode adicionar WhatsApp ou telefone
+                    setTimeout(() => {
+                        alert('📞 Entre em contato conosco pelo WhatsApp para qualquer dúvida!');
+                    }, 500);
+                    break;
+                case 1:
+                    addToCalendar();
+                    break;
+            }
+        });
+        
+        // Adicionar cursor pointer e efeito hover
+        card.style.cursor = 'pointer';
+        card.addEventListener('mouseenter', function() {
+            this.style.transform = 'translateY(-8px) rotate(2deg) scale(1.02)';
+        });
+        card.addEventListener('mouseleave', function() {
+            this.style.transform = 'translateY(0) rotate(0deg) scale(1)';
+        });
+    });
+    
+    // Efeito de typing para o título principal
+    const mainTitle = document.querySelector('.invitation-main');
+    if (mainTitle) {
+        const text = mainTitle.textContent;
+        mainTitle.textContent = '';
+        
+        setTimeout(() => {
+            let i = 0;
+            const typingInterval = setInterval(() => {
+                mainTitle.textContent += text[i];
+                i++;
+                
+                if (i >= text.length) {
+                    clearInterval(typingInterval);
+                    // Confetes quando termina de digitar
+                    setTimeout(() => {
+                        createInteractiveConfetti();
+                    }, 500);
+                }
+            }, 120);
+        }, 2000);
+    }
+    
+    // Animação de festa contínua nos nomes
+    const names = document.querySelectorAll('.elegant-name');
+    names.forEach((name, index) => {
+        name.addEventListener('mouseenter', function() {
+            this.style.animation = 'rainbow-celebration 2s ease-in-out infinite';
+        });
+        name.addEventListener('mouseleave', function() {
+            this.style.animation = 'rainbow-text 6s ease-in-out infinite';
+        });
+    });
+    
+    // Loading suave para imagens com efeito festivo
+    const images = document.querySelectorAll('img');
+    images.forEach(img => {
+        img.addEventListener('load', function() {
+            this.style.opacity = '1';
+            this.style.transform = 'scale(1)';
+        });
+        img.style.opacity = '0';
+        img.style.transform = 'scale(0.8)';
+        img.style.transition = 'all 0.6s ease';
+    });
+    
+    // Efeito de partículas no background
+    setInterval(() => {
+        if (Math.random() > 0.95) { // 5% de chance a cada segundo
+            createFloatingEmoji();
+        }
+    }, 1000);
+});
+
+// Função para criar mini confetes nos botões
+function createMiniConfetti(element) {
+    const rect = element.getBoundingClientRect();
+    const confettiContainer = document.createElement('div');
+    confettiContainer.style.cssText = `
+        position: fixed;
+        top: ${rect.top}px;
+        left: ${rect.left}px;
+        width: ${rect.width}px;
+        height: ${rect.height}px;
+        pointer-events: none;
+        z-index: 1000;
+    `;
+    document.body.appendChild(confettiContainer);
+    
+    for (let i = 0; i < 5; i++) {
+        const confetti = document.createElement('div');
+        confetti.textContent = ['✨', '🌟', '💫'][Math.floor(Math.random() * 3)];
+        confetti.style.cssText = `
+            position: absolute;
+            font-size: 12px;
+            left: ${Math.random() * 100}%;
+            top: ${Math.random() * 100}%;
+            animation: mini-confetti-burst 1s ease-out forwards;
+        `;
+        confettiContainer.appendChild(confetti);
+    }
+    
+    setTimeout(() => {
+        confettiContainer.remove();
+    }, 1000);
+}
+
+// Função para emojis flutuantes
+function createFloatingEmoji() {
+    const emoji = document.createElement('div');
+    const emojis = ['🎉', '✨', '🌟', '💫', '🎊'];
+    emoji.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+    emoji.style.cssText = `
+        position: fixed;
+        font-size: 25px;
+        left: ${Math.random() * 100}%;
+        top: 100%;
+        pointer-events: none;
+        z-index: 100;
+        animation: float-up 8s linear forwards;
+        opacity: 0.7;
+    `;
+    document.body.appendChild(emoji);
+    
+    setTimeout(() => {
+        emoji.remove();
+    }, 8000);
+}
+
+// Adicionar CSS dinâmico para animações festivas
+const dynamicCSS = `
+    @keyframes confetti-fall {
+        to {
+            transform: translateY(calc(100vh + 50px)) rotate(720deg);
+            opacity: 0;
+        }
+    }
+    
+    @keyframes sparkle-burst {
+        0% { transform: translateX(-50%) scale(0); opacity: 1; }
+        50% { transform: translateX(-50%) scale(1.5); opacity: 0.8; }
+        100% { transform: translateX(-50%) scale(0); opacity: 0; }
+    }
+    
+    @keyframes celebration-entrance {
+        0% { transform: scale(0.8); filter: brightness(1); }
+        50% { transform: scale(1.1); filter: brightness(1.3); }
+        100% { transform: scale(1); filter: brightness(1); }
+    }
+    
+    @keyframes mini-confetti-burst {
+        0% { transform: scale(0) translateY(0); opacity: 1; }
+        50% { transform: scale(1) translateY(-20px); opacity: 0.8; }
+        100% { transform: scale(0) translateY(-40px); opacity: 0; }
+    }
+    
+    @keyframes float-up {
+        0% { transform: translateY(0) rotate(0deg); opacity: 0.7; }
+        10% { opacity: 1; }
+        90% { opacity: 0.3; }
+        100% { transform: translateY(-100vh) rotate(360deg); opacity: 0; }
+    }
+    
+    @keyframes rainbow-celebration {
+        0%, 100% { 
+            background-position: 0% 50%; 
+            filter: drop-shadow(0 0 10px rgba(255,215,0,0.5)); 
+        }
+        25% { 
+            background-position: 25% 25%; 
+            filter: drop-shadow(0 0 15px rgba(255,105,180,0.5)); 
+        }
+        50% { 
+            background-position: 100% 50%; 
+            filter: drop-shadow(0 0 20px rgba(0,255,255,0.5)); 
+        }
+        75% { 
+            background-position: 75% 75%; 
+            filter: drop-shadow(0 0 15px rgba(255,69,0,0.5)); 
+        }
+    }
+    
+    @media (max-width: 480px) {
+        .luxury-names {
+            margin: 2rem 0 !important;
+        }
+        
+        .elegant-name {
+            font-size: 2.5rem !important;
+        }
+        
+        .invitation-title {
+            padding: 2rem 1.5rem !important;
+            margin: 2rem auto !important;
+        }
+        
+        .invitation-main {
+            font-size: 2.2rem !important;
+            letter-spacing: 2px !important;
+        }
+        
+        .elegant-date {
+            font-size: 1.8rem !important;
+        }
+    }
+    
+    @media (max-width: 640px) {
+        .reception-actions-section a {
+            width: 100% !important;
+            justify-content: center !important;
+        }
+    }
+`;
+
+// Inserir CSS dinâmico
+const styleSheet = document.createElement('style');
+styleSheet.textContent = dynamicCSS;
+document.head.appendChild(styleSheet);
+</script>
+{% endblock %}
