@@ -756,26 +756,36 @@ def buscar_produto_por_link():
 def adicionar_presente_por_link():
     """Adiciona um presente usando informações extraídas do link"""
     try:
+        print("🔄 Rota adicionar_presente_por_link chamada")
+        
         data = request.get_json()
+        print(f"📦 Dados recebidos: {data}")
+        
         link = data.get('link', '').strip()
         
         if not link:
+            print("❌ Link não fornecido")
             return jsonify({'success': False, 'error': 'Link não fornecido'})
         
         print(f"🔗 Processando link: {link}")
         
         # Tentar extrair informações automáticas
         info_produto = extrair_informacoes_produto(link)
+        print(f"📋 Informações extraídas: {info_produto}")
         
         if info_produto and info_produto.get('nome') and info_produto['nome'] != 'Produto':
             # Extração automática bem-sucedida
             presente_existente = Presente.query.filter_by(link_loja=link).first()
             if presente_existente:
+                print("⚠️ Produto já existe")
                 return jsonify({'success': False, 'error': 'Este produto já foi adicionado à lista'})
+            
+            preco_numerico = extrair_preco_numerico(info_produto.get('preco', '0'))
+            print(f"💰 Preço convertido: {preco_numerico}")
             
             presente = Presente(
                 nome=info_produto['nome'],
-                preco_sugerido=extrair_preco_numerico(info_produto.get('preco', '0')),
+                preco_sugerido=preco_numerico,
                 imagem_url=info_produto.get('imagem', ''),
                 link_loja=link,
                 disponivel=True
@@ -794,9 +804,11 @@ def adicionar_presente_por_link():
         else:
             # Extração automática falhou - criar com informações básicas
             nome_do_link = extrair_nome_da_url(link)
+            print(f"📝 Nome extraído da URL: {nome_do_link}")
             
             presente_existente = Presente.query.filter_by(link_loja=link).first()
             if presente_existente:
+                print("⚠️ Produto já existe")
                 return jsonify({'success': False, 'error': 'Este produto já foi adicionado à lista'})
             
             presente = Presente(
@@ -821,6 +833,8 @@ def adicionar_presente_por_link():
         
     except Exception as e:
         print(f"❌ Erro ao adicionar presente: {e}")
+        import traceback
+        traceback.print_exc()
         return jsonify({'success': False, 'error': f'Erro ao adicionar presente: {str(e)}'})
 
 def extrair_nome_da_url(link):
