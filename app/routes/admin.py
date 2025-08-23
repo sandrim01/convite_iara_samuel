@@ -762,38 +762,90 @@ def adicionar_presente_por_link():
         if not link:
             return jsonify({'success': False, 'error': 'Link não fornecido'})
         
-        # Extrair informações do produto
-        print(f"🔍 Extraindo informações do link: {link}")
+        print(f"🔗 Processando link: {link}")
+        
+        # Tentar extrair informações automáticas
         info_produto = extrair_informacoes_produto(link)
         
-        if not info_produto:
-            return jsonify({'success': False, 'error': 'Não foi possível extrair informações do produto do link fornecido'})
-        
-        # Verificar se já existe um presente com esse link
-        presente_existente = Presente.query.filter_by(link_loja=link).first()
-        if presente_existente:
-            return jsonify({'success': False, 'error': 'Este produto já foi adicionado à lista'})
-        
-        # Criar novo presente com as informações extraídas
-        presente = Presente(
-            nome=info_produto.get('nome', 'Produto sem nome'),
-            preco=extrair_preco_numerico(info_produto.get('preco', '0')),
-            imagem_url=info_produto.get('imagem', ''),
-            link_loja=link,
-            escolhido=False
-        )
-        
-        db.session.add(presente)
-        db.session.commit()
-        
-        return jsonify({
-            'success': True,
-            'message': f'Presente "{presente.nome}" adicionado com sucesso!',
-            'presente_id': presente.id
-        })
+        if info_produto and info_produto.get('nome') and info_produto['nome'] != 'Produto':
+            # Extração automática bem-sucedida
+            presente_existente = Presente.query.filter_by(link_loja=link).first()
+            if presente_existente:
+                return jsonify({'success': False, 'error': 'Este produto já foi adicionado à lista'})
+            
+            presente = Presente(
+                nome=info_produto['nome'],
+                preco_sugerido=extrair_preco_numerico(info_produto.get('preco', '0')),
+                imagem_url=info_produto.get('imagem', ''),
+                link_loja=link,
+                disponivel=True
+            )
+            
+            db.session.add(presente)
+            db.session.commit()
+            
+            print(f"✅ Presente adicionado automaticamente: {info_produto['nome']}")
+            
+            return jsonify({
+                'success': True,
+                'message': f'Presente "{presente.nome}" adicionado com sucesso!',
+                'presente_id': presente.id
+            })
+        else:
+            # Extração automática falhou - criar com informações básicas
+            nome_do_link = extrair_nome_da_url(link)
+            
+            presente_existente = Presente.query.filter_by(link_loja=link).first()
+            if presente_existente:
+                return jsonify({'success': False, 'error': 'Este produto já foi adicionado à lista'})
+            
+            presente = Presente(
+                nome=nome_do_link,
+                preco_sugerido=0.0,
+                imagem_url='',
+                link_loja=link,
+                disponivel=True
+            )
+            
+            db.session.add(presente)
+            db.session.commit()
+            
+            print(f"⚠️ Presente adicionado com informações básicas: {nome_do_link}")
+            
+            return jsonify({
+                'success': True,
+                'message': f'Presente "{presente.nome}" adicionado! Você pode editar as informações depois.',
+                'warning': 'Não foi possível extrair todas as informações automaticamente.',
+                'presente_id': presente.id
+            })
         
     except Exception as e:
+        print(f"❌ Erro ao adicionar presente: {e}")
         return jsonify({'success': False, 'error': f'Erro ao adicionar presente: {str(e)}'})
+
+def extrair_nome_da_url(link):
+    """Extrai um nome básico a partir da URL quando a extração automática falha"""
+    try:
+        from urllib.parse import urlparse
+        import re
+        
+        parsed = urlparse(link)
+        path = parsed.path
+        
+        # Remover extensões e caracteres especiais
+        nome = re.sub(r'[^\w\s-]', ' ', path)
+        nome = re.sub(r'[-_/]', ' ', nome)
+        nome = ' '.join(nome.split())  # Remover espaços extras
+        
+        # Capitalizar palavras
+        if nome:
+            nome = ' '.join(word.capitalize() for word in nome.split() if len(word) > 2)
+            return nome[:50] if nome else 'Presente do Link'
+        
+        return 'Presente do Link'
+        
+    except:
+        return 'Presente do Link'
 
 def extrair_informacoes_produto(link):
     """Extrai informações do produto a partir do link"""
@@ -802,9 +854,12 @@ def extrair_informacoes_produto(link):
     import re
     
     try:
+        print(f"🌐 Fazendo requisição para: {link}")
+        
         # Headers para simular um navegador real
         headers = {
             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
+            'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
             'Accept-Language': 'pt-BR,pt;q=0.9,en;q=0.8',
             'Accept-Encoding': 'gzip, deflate, br',
             'DNT': '1',
@@ -812,29 +867,116 @@ def extrair_informacoes_produto(link):
             'Upgrade-Insecure-Requests': '1',
         }
         
-        response = requests.get(link, headers=headers, timeout=10)
+        response = requests.get(link, headers=headers, timeout=15)
         response.raise_for_status()
+        print(f"✅ Resposta recebida: {response.status_code}")
         
         soup = BeautifulSoup(response.content, 'html.parser')
         
-        # Extrair informações com diferentes estratégias dependendo do site
-        nome = extrair_nome_produto(soup, link)
-        preco = extrair_preco_produto(soup, link)
-        descricao = extrair_descricao_produto(soup, link)
-        imagem = extrair_imagem_produto(soup, link)
-        categoria = determinar_categoria(nome, descricao)
+        # Método simplificado - tentar extrair informações básicas
+        nome = extrair_nome_simples(soup)
+        preco = extrair_preco_simples(soup)
+        imagem = extrair_imagem_simples(soup, link)
         
-        return {
-            'nome': nome,
-            'preco': preco,
-            'descricao': descricao,
-            'imagem': imagem,
-            'categoria': categoria
-        }
+        print(f"📦 Produto encontrado: {nome}")
+        print(f"💰 Preço encontrado: {preco}")
+        print(f"🖼️ Imagem encontrada: {imagem}")
+        
+        # Retornar pelo menos o nome se conseguiu extrair
+        if nome and nome != 'Produto':
+            return {
+                'nome': nome,
+                'preco': preco or 'R$ 0,00',
+                'imagem': imagem or ''
+            }
+        
+        print("❌ Não foi possível extrair informações suficientes")
+        return None
         
     except Exception as e:
-        print(f"Erro ao extrair informações do produto: {e}")
+        print(f"❌ Erro ao extrair informações do produto: {e}")
         return None
+
+def extrair_nome_simples(soup):
+    """Extrai o nome do produto de forma simplificada"""
+    # Tentar extrair de meta tags primeiro (mais confiável)
+    meta_title = soup.find('meta', property='og:title')
+    if meta_title:
+        nome = meta_title.get('content', '').strip()
+        if nome:
+            return nome
+    
+    # Tentar h1 tags
+    h1_tags = soup.find_all('h1')
+    for h1 in h1_tags:
+        texto = h1.get_text().strip()
+        if texto and len(texto) > 5:  # Nome deve ter pelo menos 5 caracteres
+            return texto
+    
+    # Fallback para título da página
+    title = soup.find('title')
+    if title:
+        titulo = title.get_text().strip()
+        # Remover partes comuns do título
+        titulo = re.sub(r'\s*[|-]\s*(Amazon|Mercado Livre|Magazine Luiza|Americanas).*$', '', titulo, flags=re.IGNORECASE)
+        if titulo:
+            return titulo
+    
+    return 'Produto'
+
+def extrair_preco_simples(soup):
+    """Extrai o preço do produto de forma simplificada"""
+    # Procurar por textos que contenham preços
+    texto_completo = soup.get_text()
+    
+    # Padrões de preço em Real
+    padroes = [
+        r'R\$\s*(\d{1,3}(?:\.\d{3})*(?:,\d{2})?)',  # R$ 123.456,89
+        r'(\d{1,3}(?:\.\d{3})*(?:,\d{2})?)\s*reais?',  # 123.456,89 reais
+    ]
+    
+    for padrao in padroes:
+        matches = re.findall(padrao, texto_completo, re.IGNORECASE)
+        if matches:
+            # Pegar o primeiro preço encontrado que seja maior que 1
+            for match in matches:
+                valor_num = float(match.replace('.', '').replace(',', '.'))
+                if valor_num > 1:  # Preço maior que R$ 1,00
+                    return f"R$ {match}"
+    
+    return 'R$ 0,00'
+
+def extrair_imagem_simples(soup, link_original):
+    """Extrai a URL da imagem do produto"""
+    # Tentar meta tag og:image primeiro
+    meta_img = soup.find('meta', property='og:image')
+    if meta_img:
+        img_url = meta_img.get('content', '').strip()
+        if img_url:
+            # Converter URL relativa para absoluta se necessário
+            if img_url.startswith('//'):
+                img_url = 'https:' + img_url
+            elif img_url.startswith('/'):
+                from urllib.parse import urljoin
+                img_url = urljoin(link_original, img_url)
+            return img_url
+    
+    # Procurar primeira imagem de produto
+    img_tags = soup.find_all('img')
+    for img in img_tags:
+        src = img.get('src', '') or img.get('data-src', '')
+        alt = img.get('alt', '').lower()
+        
+        # Filtrar imagens que pareçam ser de produtos
+        if src and any(palavra in alt for palavra in ['product', 'produto', 'item']):
+            if src.startswith('//'):
+                src = 'https:' + src
+            elif src.startswith('/'):
+                from urllib.parse import urljoin
+                src = urljoin(link_original, src)
+            return src
+    
+    return ''
 
 def extrair_nome_produto(soup, link):
     """Extrai o nome do produto"""
