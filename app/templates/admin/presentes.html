@@ -4,98 +4,140 @@
 
 {% block extra_head %}
 <style>
-    /* Hero Admin Styles */
-    .hero-admin {
-        background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
-        min-height: 50vh;
-        position: relative;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-    
-    .hero-admin .hero-overlay {
-        background: rgba(0, 0, 0, 0.1);
-    }
-    
-    .hero-admin .page-title {
-        color: var(--white);
-        margin-bottom: 1rem;
-        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
-    }
-    
-    .hero-admin .page-subtitle {
-        color: var(--white);
-        opacity: 0.9;
+    /* Admin Header Styles */
+    .admin-header {
+        background: #f8f9fa;
+        border-bottom: 1px solid #dee2e6;
+        padding: 2rem 0;
         margin-bottom: 2rem;
-        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
     }
     
-    .hero-actions {
+    .admin-header .container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+    
+    .admin-title {
+        margin: 0;
+        color: #495057;
+        font-size: 1.75rem;
+        font-weight: 600;
+    }
+    
+    .admin-subtitle {
+        color: #6c757d;
+        margin: 0.5rem 0 0;
+        font-size: 1rem;
+    }
+    
+    .admin-actions {
         display: flex;
         gap: 1rem;
-        justify-content: center;
-        flex-wrap: wrap;
+        align-items: center;
+    }
+    
+    .btn-admin {
+        background: #007bff;
+        color: white;
+        border: none;
+        padding: 0.75rem 1.5rem;
+        border-radius: 0.375rem;
+        font-weight: 500;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        transition: background-color 0.15s ease-in-out;
+    }
+    
+    .btn-admin:hover {
+        background: #0056b3;
+        color: white;
+        text-decoration: none;
+    }
+    
+    .btn-admin-success {
+        background: #28a745;
+    }
+    
+    .btn-admin-success:hover {
+        background: #1e7e34;
     }
     
     /* Stats Grid */
     .stats-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-        gap: 2rem;
-        margin-bottom: 3rem;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 2rem;
     }
     
     .stat-card {
-        background: var(--white);
-        border-radius: var(--border-radius);
-        padding: 2rem;
+        background: white;
+        border: 1px solid #e9ecef;
+        border-radius: 0.5rem;
+        padding: 1.5rem;
         text-align: center;
-        box-shadow: var(--shadow-light);
-        border: 1px solid var(--gray-light);
-        transition: all 0.3s ease;
-        position: relative;
-        overflow: hidden;
-    }
-    
-    .stat-card::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        height: 4px;
-        background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+        transition: box-shadow 0.15s ease-in-out;
     }
     
     .stat-card:hover {
-        transform: translateY(-5px);
-        box-shadow: var(--shadow-medium);
+        box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
     }
     
     .stat-icon {
-        width: 60px;
-        height: 60px;
-        margin: 0 auto 1rem;
-        background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-        border-radius: 50%;
-        display: flex;
+        display: inline-flex;
         align-items: center;
         justify-content: center;
-        color: var(--white);
-        font-size: 1.5rem;
+        width: 3rem;
+        height: 3rem;
+        background: #f8f9fa;
+        border-radius: 50%;
+        margin-bottom: 1rem;
     }
     
-    .stat-content {
-        text-align: center;
+    .stat-icon i {
+        font-size: 1.25rem;
+        color: #6c757d;
     }
     
     .stat-number {
-        font-size: 2.5rem;
-        font-weight: 700;
-        color: var(--primary-color);
         display: block;
-        line-height: 1;
+        font-size: 2rem;
+        font-weight: 600;
+        color: #495057;
+        margin-bottom: 0.5rem;
+    }
+    
+    .stat-label {
+        color: #6c757d;
+        font-size: 0.875rem;
+        font-weight: 500;
+        margin: 0;
+    }
+    
+    /* Presentes Grid */
+    .presentes-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 1.5rem;
+        margin-top: 2rem;
+    }
+    
+    .presente-card {
+        background: white;
+        border: 1px solid #e9ecef;
+        border-radius: 0.5rem;
+        overflow: hidden;
+        transition: box-shadow 0.15s ease-in-out;
+    }
+    
+    .presente-card:hover {
+        box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+    }
         margin-bottom: 0.5rem;
     }
     
@@ -567,34 +609,23 @@
 {% endblock %}
 
 {% block content %}
-<!-- Hero Section - Admin Presentes -->
-<section class="hero hero-admin" id="hero-presentes">
-    <div class="hero-background">
-        <div class="hero-overlay"></div>
-    </div>
-    
-    <div class="hero-content">
-        <div class="container">
-            <div class="hero-text">
-                <h1 class="page-title heading-script">
-                    Gerenciar Presentes
-                </h1>
-                
-                <p class="page-subtitle text-large text-center">
-                    Administre a lista de presentes do casamento ♥
-                </p>
-                
-                <div class="hero-actions">
-                    <a href="{{ url_for('admin.dashboard') }}" class="btn btn-outline">
-                        <i class="fas fa-arrow-left"></i>
-                        <span>Dashboard</span>
-                    </a>
-                    <button onclick="abrirModalAdicionarPresente()" class="btn btn-primary">
-                        <i class="fas fa-plus"></i>
-                        <span>Adicionar Presente</span>
-                    </button>
-                </div>
-            </div>
+<!-- Admin Header -->
+<section class="admin-header">
+    <div class="container">
+        <div class="admin-info">
+            <h1 class="admin-title">Gerenciar Presentes</h1>
+            <p class="admin-subtitle">Administre a lista de presentes do casamento</p>
+        </div>
+        
+        <div class="admin-actions">
+            <a href="{{ url_for('admin.dashboard') }}" class="btn-admin">
+                <i class="fas fa-arrow-left"></i>
+                Dashboard
+            </a>
+            <button onclick="abrirModalAdicionarPresente()" class="btn-admin btn-admin-success">
+                <i class="fas fa-plus"></i>
+                Adicionar Presente
+            </button>
         </div>
     </div>
 </section>
