@@ -1,0 +1,1292 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerenciar Presentes - Painel Administrativo</title>
+    
+    <!-- Meta tags -->
+    <meta name="description" content="Site do casamento de Iara e Samuel. Confirme sua presença e veja nossa lista de presentes.">
+    <meta name="keywords" content="casamento, Iara, Samuel, convite, presentes">
+    
+    <!-- Open Graph -->
+    <meta property="og:title" content="Iara & Samuel - Nosso Casamento">
+    <meta property="og:description" content="Você está convidado para nosso casamento! Confirme sua presença e veja nossa lista de presentes.">
+    <meta property="og:type" content="website">
+    
+    <!-- Favicon Coração Pulsante -->
+    <link rel="icon" type="image/svg+xml" href="/static/img/favicon.svg">
+    <link rel="icon" type="image/png" sizes="32x32" href="/static/img/favicon-fallback.svg">
+    <link rel="apple-touch-icon" sizes="180x180" href="/static/img/favicon-fallback.svg">
+    <meta name="theme-color" content="#e91e63">
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;600;700&family=Poppins:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet">
+    
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="/static/css/style.css">
+    
+    
+<style>
+    /* Hero Admin Styles */
+    .hero-admin {
+        background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+        min-height: 50vh;
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .hero-admin .hero-overlay {
+        background: rgba(0, 0, 0, 0.1);
+    }
+    
+    .hero-admin .page-title {
+        color: var(--white);
+        margin-bottom: 1rem;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+    }
+    
+    .hero-admin .page-subtitle {
+        color: var(--white);
+        opacity: 0.9;
+        margin-bottom: 2rem;
+        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+    }
+    
+    .hero-actions {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+    
+    /* Stats Grid */
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 2rem;
+        margin-bottom: 3rem;
+    }
+    
+    .stat-card {
+        background: var(--white);
+        border-radius: var(--border-radius);
+        padding: 2rem;
+        text-align: center;
+        box-shadow: var(--shadow-light);
+        border: 1px solid var(--gray-light);
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .stat-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+    }
+    
+    .stat-card:hover {
+        transform: translateY(-5px);
+        box-shadow: var(--shadow-medium);
+    }
+    
+    .stat-icon {
+        width: 60px;
+        height: 60px;
+        margin: 0 auto 1rem;
+        background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--white);
+        font-size: 1.5rem;
+    }
+    
+    .stat-content {
+        text-align: center;
+    }
+    
+    .stat-number {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: var(--primary-color);
+        display: block;
+        line-height: 1;
+        margin-bottom: 0.5rem;
+    }
+    
+    .stat-label {
+        color: var(--text-secondary);
+        font-size: 0.9rem;
+        font-weight: 500;
+    }
+    
+    /* Admin Gift Card Styles */
+    .admin-gift-card {
+        position: relative;
+    }
+    
+    .admin-gift-card .gift-actions {
+        display: flex;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+        margin-top: 1rem;
+    }
+    
+    .gift-status {
+        margin: 1rem 0;
+    }
+    
+    .status-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.5rem 1rem;
+        border-radius: var(--border-radius-small);
+        font-size: 0.875rem;
+        font-weight: 500;
+    }
+    
+    .status-available {
+        background: var(--success-light);
+        color: var(--success);
+    }
+    
+    .status-chosen {
+        background: var(--warning-light);
+        color: var(--warning);
+    }
+    
+    .gift-price {
+        margin: 0.75rem 0;
+        padding: 0.75rem;
+        background: var(--gray-light);
+        border-radius: var(--border-radius-small);
+        text-align: center;
+    }
+    
+    .price-label {
+        display: block;
+        font-size: 0.875rem;
+        color: var(--text-secondary);
+        margin-bottom: 0.25rem;
+    }
+    
+    .price-value {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: var(--success);
+    }
+    
+    /* Empty State */
+    .empty-state {
+        text-align: center;
+        padding: 4rem 2rem;
+        max-width: 400px;
+        margin: 0 auto;
+    }
+    
+    .empty-state-icon {
+        width: 100px;
+        height: 100px;
+        margin: 0 auto 2rem;
+        background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--white);
+        font-size: 2.5rem;
+    }
+    
+    .empty-state-title {
+        font-size: 1.5rem;
+        color: var(--text-dark);
+        margin-bottom: 1rem;
+    }
+    
+    .empty-state-description {
+        color: var(--text-secondary);
+        margin-bottom: 2rem;
+        line-height: 1.6;
+    }
+    
+    /* Pagination */
+    .pagination-wrapper {
+        display: flex;
+        justify-content: center;
+        margin-top: 3rem;
+    }
+    
+    .pagination {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    
+    .pagination-btn,
+    .pagination-number {
+        padding: 0.75rem 1rem;
+        border-radius: var(--border-radius-small);
+        text-decoration: none;
+        color: var(--text-dark);
+        border: 1px solid var(--gray-light);
+        background: var(--white);
+        transition: all 0.3s ease;
+        font-weight: 500;
+    }
+    
+    .pagination-btn:hover,
+    .pagination-number:hover {
+        background: var(--primary-light);
+        color: var(--primary);
+        border-color: var(--primary);
+    }
+    
+    .pagination-number.current {
+        background: var(--primary-color);
+        color: var(--white);
+        border-color: var(--primary-color);
+    }
+    
+    .pagination-dots {
+        padding: 0.75rem 0.5rem;
+        color: var(--text-secondary);
+    }
+    
+    /* Modal Styles */
+    .modal {
+        background: rgba(0, 0, 0, 0.7);
+        backdrop-filter: blur(5px);
+    }
+    
+    .modal-content {
+        background: var(--white);
+        border-radius: var(--border-radius);
+        box-shadow: var(--shadow-heavy);
+        max-width: 500px;
+        width: 90%;
+        max-height: 90vh;
+        overflow-y: auto;
+    }
+    
+    .modal-header {
+        padding: 1.5rem;
+        border-bottom: 1px solid var(--gray-light);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    
+    .modal-header h3 {
+        margin: 0;
+        color: var(--text-dark);
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    
+    .modal-close {
+        background: none;
+        border: none;
+        font-size: 1.25rem;
+        color: var(--text-secondary);
+        cursor: pointer;
+        padding: 0.5rem;
+        border-radius: var(--border-radius-small);
+        transition: all 0.3s ease;
+    }
+    
+    .modal-close:hover {
+        background: var(--gray-light);
+        color: var(--text-dark);
+    }
+    
+    .modal-body {
+        padding: 1.5rem;
+    }
+    
+    /* Responsive Design */
+    @media (max-width: 768px) {
+        .hero-actions {
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .stats-grid {
+            grid-template-columns: 1fr;
+            gap: 1rem;
+        }
+        
+        .stat-card {
+            padding: 1.5rem;
+        }
+        
+        .pagination {
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+    }
+</style>
+        line-height: 1.4;
+        margin-bottom: 1rem;
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+    
+    .presente-price {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: var(--success);
+        margin-bottom: 1rem;
+    }
+    
+    .presente-actions {
+        display: flex;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+    }
+    
+    .btn-small {
+        padding: 0.5rem 1rem;
+        font-size: 0.875rem;
+        border-radius: var(--border-radius-small);
+    }
+    
+    .presente-status {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-bottom: 1rem;
+        font-size: 0.9rem;
+    }
+    
+    .status-available {
+        color: var(--success);
+    }
+    
+    .status-chosen {
+        color: var(--warning);
+    }
+    
+    .empty-state {
+        text-align: center;
+        padding: 3rem;
+        color: var(--text-secondary);
+    }
+    
+    .empty-state i {
+        font-size: 4rem;
+        margin-bottom: 1rem;
+        color: var(--gray-medium);
+    }
+    
+    .pagination {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 0.5rem;
+        margin-top: 2rem;
+    }
+    
+    .pagination a,
+    .pagination span {
+        padding: 0.5rem 1rem;
+        border-radius: var(--border-radius-small);
+        text-decoration: none;
+        color: var(--text-dark);
+    }
+    
+    .pagination a:hover {
+        background: var(--primary-light);
+        color: var(--primary);
+    }
+    
+    .pagination .current {
+        background: var(--primary);
+        color: var(--white);
+        font-weight: 600;
+    }
+    
+    /* Estilos do Modal */
+    .modal {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 1000;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    
+    .modal-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        backdrop-filter: blur(4px);
+    }
+    
+    .modal-content {
+        position: relative;
+        background: var(--white);
+        border-radius: var(--border-radius);
+        box-shadow: var(--shadow-heavy);
+        max-width: 600px;
+        width: 90%;
+        max-height: 90vh;
+        overflow-y: auto;
+        animation: modalSlideIn 0.3s ease-out;
+    }
+    
+    @keyframes modalSlideIn {
+        from {
+            opacity: 0;
+            transform: translateY(-20px) scale(0.95);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+    }
+    
+    .modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1.5rem;
+        border-bottom: 1px solid var(--gray-light);
+    }
+    
+    .modal-header h3 {
+        margin: 0;
+        color: var(--text-dark);
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    
+    .modal-close {
+        background: none;
+        border: none;
+        color: var(--text-secondary);
+        font-size: 1.2rem;
+        cursor: pointer;
+        padding: 0.5rem;
+        border-radius: var(--border-radius-small);
+        transition: all 0.3s ease;
+    }
+    
+    .modal-close:hover {
+        background: var(--gray-light);
+        color: var(--text-dark);
+    }
+    
+    .modal-body {
+        padding: 1.5rem;
+    }
+    
+    .modal-footer {
+        padding: 1rem 1.5rem;
+        border-top: 1px solid var(--gray-light);
+        display: flex;
+        gap: 1rem;
+        justify-content: flex-end;
+    }
+    
+    .preview-presente {
+        background: var(--gray-light);
+        border-radius: var(--border-radius);
+        padding: 1rem;
+        margin-top: 1rem;
+        display: none;
+    }
+    
+    .preview-presente.show {
+        display: block;
+        animation: fadeIn 0.3s ease-out;
+    }
+    
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .preview-presente img {
+        max-width: 100px;
+        max-height: 100px;
+        object-fit: cover;
+        border-radius: var(--border-radius-small);
+        margin-right: 1rem;
+    }
+    
+    .preview-content {
+        display: flex;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+    
+    .preview-info h4 {
+        margin: 0 0 0.5rem 0;
+        color: var(--text-dark);
+    }
+    
+    .preview-info p {
+        margin: 0.25rem 0;
+        color: var(--text-secondary);
+    }
+    
+    .preview-price {
+        font-weight: 600;
+        color: var(--primary);
+        font-size: 1.1rem;
+    }
+    
+    @media (max-width: 768px) {
+        .modal-content {
+            margin: 1rem;
+            width: calc(100% - 2rem);
+        }
+        
+        .modal-footer {
+            flex-direction: column;
+        }
+        
+        .preview-content {
+            flex-direction: column;
+            text-align: center;
+        }
+    }
+    
+    @media (max-width: 768px) {
+        .presentes-header {
+            flex-direction: column;
+            gap: 1rem;
+            align-items: stretch;
+        }
+        
+        .presentes-grid {
+            grid-template-columns: 1fr;
+        }
+        
+        .presente-actions {
+            justify-content: center;
+        }
+    }
+</style>
+
+</head>
+<body>
+    <!-- Loading Screen -->
+    <div class="loading" id="loading">
+        <div class="loading-content">
+            <div class="loading-heart">♥</div>
+            <p>Carregando nosso amor...</p>
+        </div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="navbar" id="navbar">
+        <div class="container">
+            <div class="nav-brand">
+                <a href="/" class="nav-logo">
+                    <span class="nav-names">Iara & Samuel</span>
+                </a>
+            </div>
+            
+            <div class="nav-toggle" id="nav-toggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+            
+            <div class="nav-menu" id="nav-menu">
+                <ul class="nav-list">
+                    <li class="nav-item">
+                        <a href="/" class="nav-link">
+                            <i class="fas fa-home"></i>
+                            <span>Início</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="/o-casal" class="nav-link">
+                            <i class="fas fa-heart"></i>
+                            <span>O Casal</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="/local-teste" class="nav-link">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <span>Local</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="/presentes" class="nav-link">
+                            <i class="fas fa-gift"></i>
+                            <span>Presentes</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        
+            
+        
+        
+        
+<!-- Hero Section - Admin Presentes -->
+<section class="hero hero-admin" id="hero-presentes">
+    <div class="hero-background">
+        <div class="hero-overlay"></div>
+    </div>
+    
+    <div class="hero-content">
+        <div class="container">
+            <div class="hero-text">
+                <h1 class="page-title heading-script">
+                    Gerenciar Presentes
+                </h1>
+                
+                <p class="page-subtitle text-large text-center">
+                    Administre a lista de presentes do casamento ♥
+                </p>
+                
+                <div class="hero-actions">
+                    <a href="/admin/dashboard" class="btn btn-outline">
+                        <i class="fas fa-arrow-left"></i>
+                        <span>Dashboard</span>
+                    </a>
+                    <button onclick="abrirModalAdicionarPresente()" class="btn btn-primary">
+                        <i class="fas fa-plus"></i>
+                        <span>Adicionar Presente</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Stats Section -->
+<section class="section" id="stats">
+    <div class="container">
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-gifts"></i>
+                </div>
+                <div class="stat-content">
+                    <span class="stat-number">1</span>
+                    <p class="stat-label">Total de Presentes</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+                <div class="stat-content">
+                    <span class="stat-number">1</span>
+                    <p class="stat-label">Disponíveis</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-heart"></i>
+                </div>
+                <div class="stat-content">
+                    <span class="stat-number">0</span>
+                    <p class="stat-label">Escolhidos</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Presentes Section -->
+<section class="section" id="presentes-grid">
+    <div class="container">
+        
+        <div class="gifts-grid">
+            
+            <div class="gift-card admin-gift-card" data-id="16">
+                <div class="gift-image">
+                    
+                    <div class="gift-placeholder" >
+                        <i class="fas fa-gift"></i>
+                    </div>
+                    
+                    
+                </div>
+                
+                <div class="gift-content">
+                    <h3 class="gift-name font-semibold">Amazon.com.br</h3>
+                    
+                    
+                    <div class="gift-category">
+                        🏠 Casa
+                        
+                    </div>
+                    
+                    
+                    
+                        <p class="gift-description text-small">
+                            
+                                Descrição disponível no site da loja
+                            
+                        </p>
+                    
+                    
+                    
+                    
+                    <div class="gift-status">
+                        
+                            <span class="status-badge status-available">
+                                <i class="fas fa-check-circle"></i>
+                                Disponível
+                            </span>
+                        
+                    </div>
+                    
+                    <div class="gift-actions">
+                        <a href="/admin/presentes/16/editar" 
+                           class="btn btn-outline btn-small">
+                            <i class="fas fa-edit"></i>
+                            <span>Editar</span>
+                        </a>
+                        
+                        
+                        <a href="https://www.amazon.com.br/Smart-Philco-Android-HDR10-P40SAA/dp/B0F6XL6BB6?pd_rd_w=wIMai&amp;content-id=amzn1.sym.bb68e5ce-ee70-4766-af18-7045441b9149&amp;pf_rd_p=bb68e5ce-ee70-4766-af18-7045441b9149&amp;pf_rd_r=K49N3BXBBZM9E5ZMPJ55&amp;pd_rd_wg=3OwVY&amp;pd_rd_r=b827637a-add2-44d3-b1b6-a58a4fc0f013&amp;pd_rd_i=B0F6XL6BB6" target="_blank" 
+                           class="btn btn-secondary btn-small">
+                            <i class="fas fa-external-link-alt"></i>
+                            <span>Ver Loja</span>
+                        </a>
+                        
+                        
+                        <button onclick="confirmarRemocao('16', 'Amazon.com.br')" 
+                                class="btn btn-danger btn-small">
+                            <i class="fas fa-trash"></i>
+                            <span>Remover</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+        
+        <!-- Pagination -->
+        
+        
+        
+    </div>
+</section>
+
+<!-- Modal Adicionar Presente -->
+<div id="modalAdicionarPresente" class="modal" style="display: none;">
+    <div class="modal-overlay" onclick="fecharModalAdicionarPresente()"></div>
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3><i class="fas fa-gift"></i> Adicionar Presente</h3>
+            <button onclick="fecharModalAdicionarPresente()" class="modal-close">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="modal-body">
+            <form id="formAdicionarPresente" onsubmit="adicionarPresentePorLink(event)">
+                <div class="form-group">
+                    <label for="linkPresente">
+                        <i class="fas fa-link"></i> Link do Produto
+                    </label>
+                    <input type="url" 
+                           id="linkPresente" 
+                           name="link" 
+                           placeholder="Ex: https://www.amazon.com.br/produto..." 
+                           required>
+                    <small class="form-help">
+                        Cole o link de qualquer loja online (Amazon, Magazine Luiza, Americanas, etc.)
+                    </small>
+                </div>
+                
+                <div id="previewPresente" style="display: none;">
+                    <div class="preview-card">
+                        <div class="preview-image">
+                            <img id="previewImagem" src="" alt="Preview">
+                        </div>
+                        <div class="preview-info">
+                            <h4 id="previewNome">Nome do Produto</h4>
+                            <p id="previewPreco">R$ 0,00</p>
+                            <p id="previewDescricao">Descrição do produto...</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="modal-actions">
+                    <button type="button" onclick="fecharModalAdicionarPresente()" class="btn btn-outline">
+                        <i class="fas fa-times"></i> Cancelar
+                    </button>
+                    <button type="button" onclick="buscarInformacoesPresente()" class="btn btn-secondary" id="btnBuscar">
+                        <i class="fas fa-search"></i> Buscar Informações
+                    </button>
+                    <button type="submit" class="btn btn-primary" id="btnAdicionar" style="display: none;">
+                        <i class="fas fa-plus"></i> Adicionar Presente
+                    </button>
+                </div>
+                
+                <div id="loadingBusca" style="display: none;" class="loading-indicator">
+                    <i class="fas fa-spinner fa-spin"></i> Buscando informações do produto...
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<style>
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: fadeIn 0.3s ease;
+}
+
+.modal-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(4px);
+}
+
+.modal-content {
+    background: var(--white);
+    border-radius: var(--border-radius-large);
+    box-shadow: var(--shadow-heavy);
+    width: 90%;
+    max-width: 600px;
+    max-height: 90vh;
+    overflow-y: auto;
+    position: relative;
+    animation: slideUp 0.3s ease;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem;
+    border-bottom: 1px solid var(--border-light);
+}
+
+.modal-header h3 {
+    margin: 0;
+    color: var(--primary);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.modal-close {
+    background: none;
+    border: none;
+    font-size: 1.25rem;
+    color: var(--text-secondary);
+    cursor: pointer;
+    padding: 0.5rem;
+    border-radius: var(--border-radius);
+    transition: all 0.3s ease;
+}
+
+.modal-close:hover {
+    background: var(--gray-light);
+    color: var(--text-dark);
+}
+
+.modal-body {
+    padding: 1.5rem;
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+    color: var(--text-dark);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 0.875rem;
+    border: 2px solid var(--border-light);
+    border-radius: var(--border-radius);
+    font-size: 1rem;
+    transition: all 0.3s ease;
+}
+
+.form-group input:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px var(--primary-light);
+}
+
+.form-help {
+    display: block;
+    margin-top: 0.5rem;
+    color: var(--text-secondary);
+    font-size: 0.875rem;
+}
+
+.preview-card {
+    display: flex;
+    gap: 1rem;
+    padding: 1rem;
+    border: 2px solid var(--border-light);
+    border-radius: var(--border-radius);
+    background: var(--gray-lightest);
+}
+
+.preview-image {
+    flex-shrink: 0;
+    width: 100px;
+    height: 100px;
+    border-radius: var(--border-radius);
+    overflow: hidden;
+    background: var(--white);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.preview-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.preview-info h4 {
+    margin: 0 0 0.5rem 0;
+    color: var(--text-dark);
+}
+
+.preview-info p {
+    margin: 0.25rem 0;
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+}
+
+.modal-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: flex-end;
+    margin-top: 2rem;
+}
+
+.loading-indicator {
+    text-align: center;
+    padding: 1rem;
+    color: var(--primary);
+    font-weight: 500;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes slideUp {
+    from { 
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to { 
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@media (max-width: 768px) {
+    .modal-content {
+        width: 95%;
+        margin: 1rem;
+    }
+    
+    .preview-card {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .modal-actions {
+        flex-direction: column;
+    }
+}
+</style>
+
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-info">
+                    <h3 class="footer-names">Iara & Samuel</h3>
+                    <p class="footer-date">
+                        
+                            28.11.2025
+                        
+                    </p>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <div class="footer-copyright">
+                    <p>&copy; 2025 Iara & Samuel. Feito com ♥</p>
+                    <p>
+                        <a href="/admin/login" class="admin-link">Painel Admin</a>
+                    </p>
+                    
+                    <!-- Logo UNBUG abaixo do Painel Admin -->
+                    <div class="unbug-logo">
+                        <a href="https://www.instagram.com/unbug_solutions_ti?utm_source=ig_web_button_share_sheet&igsh=MTQzYzZvZ214YndmbQ==" 
+                           target="_blank" 
+                           class="unbug-link" 
+                           title="UNBUG Solutions TI">
+                            <img src="/static/img/logo.png" 
+                                 alt="UNBUG Solutions TI" 
+                                 class="unbug-logo-img">
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="footer-company">
+                    <p class="company-main">&copy; 2025 UNBUG Solutions TI. Todos os direitos reservados.</p>
+                    <p class="company-description">Especialistas em tecnologia e soluções digitais.</p>
+                    <p class="company-services">Desenvolvimento de sites e sistemas — Criação de convites digitais para festas e casamentos.</p>
+                    <p class="company-contact">
+                        <a href="mailto:contato@unbugsolutions.com">contato@unbugsolutions.com</a> | 
+                        <a href="https://wa.me/5528999928442" target="_blank">WhatsApp: (28) 99992-8442</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="/static/js/main.js"></script>
+    <script>
+        // Highlight current page in navigation and update progress
+        document.addEventListener('DOMContentLoaded', function() {
+            const currentPath = window.location.pathname;
+            const navLinks = document.querySelectorAll('.nav-link');
+            const progressBar = document.getElementById('step-progress');
+            
+            // Page to step mapping
+            const pageSteps = {
+                '/': 'step-1',
+                '/o-casal': 'step-2', 
+                '/local': 'step-3',
+                '/presentes': 'step-4'
+            };
+            
+            navLinks.forEach(link => {
+                const linkPath = new URL(link.href).pathname;
+                if (linkPath === currentPath) {
+                    link.classList.add('nav-link-active');
+                }
+            });
+            
+            // Update progress bar
+            const stepClass = pageSteps[currentPath];
+            if (stepClass && progressBar) {
+                progressBar.className = `step-progress-fill ${stepClass}`;
+            }
+        });
+    </script>
+    
+<script>
+    // Função de confirmação de remoção
+    function confirmarRemocao(presenteId, nomePresente) {
+        if (confirm(`Tem certeza que deseja remover o presente "${nomePresente}"?\n\nEsta ação não pode ser desfeita.`)) {
+            // Criar form para DELETE request
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = `/admin/presentes/${presenteId}/remover`;
+            
+            // Adicionar CSRF token se necessário
+            const csrfToken = document.querySelector('meta[name=csrf-token]');
+            if (csrfToken) {
+                const input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = 'csrf_token';
+                input.value = csrfToken.getAttribute('content');
+                form.appendChild(input);
+            }
+            
+            document.body.appendChild(form);
+            form.submit();
+        }
+    }
+
+    // Funções do modal de adicionar presente
+    function abrirModalAdicionarPresente() {
+        document.getElementById('modalAdicionarPresente').style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+        
+        // Focar no campo após um pequeno delay
+        setTimeout(() => {
+            const linkInput = document.getElementById('linkPresente');
+            if (linkInput) {
+                linkInput.focus();
+            }
+        }, 100);
+    }
+
+    function fecharModalAdicionarPresente() {
+        document.getElementById('modalAdicionarPresente').style.display = 'none';
+        document.body.style.overflow = 'auto';
+        
+        // Limpar formulário
+        document.getElementById('formAdicionarPresente').reset();
+        document.getElementById('previewPresente').style.display = 'none';
+        document.getElementById('btnAdicionar').style.display = 'none';
+        document.getElementById('btnBuscar').style.display = 'inline-flex';
+    }
+
+    async function buscarInformacoesPresente() {
+        const link = document.getElementById('linkPresente').value.trim();
+        
+        if (!link) {
+            alert('Por favor, insira um link válido do produto.');
+            return;
+        }
+
+        // Mostrar loading
+        document.getElementById('loadingBusca').style.display = 'block';
+        document.getElementById('btnBuscar').disabled = true;
+
+        try {
+            const response = await fetch('/admin/buscar-produto-por-link', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ link: link })
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+                // Mostrar preview
+                document.getElementById('previewImagem').src = data.imagem || '/static/img/placeholder-gift.png';
+                document.getElementById('previewNome').textContent = data.nome || 'Nome não encontrado';
+                document.getElementById('previewPreco').textContent = data.preco || 'Preço não informado';
+                document.getElementById('previewDescricao').textContent = data.descricao || 'Descrição não disponível';
+                
+                document.getElementById('previewPresente').style.display = 'block';
+                document.getElementById('btnAdicionar').style.display = 'inline-flex';
+                document.getElementById('btnBuscar').style.display = 'none';
+                
+                // Armazenar dados para envio
+                window.dadosPresente = data;
+            } else {
+                alert('Não foi possível buscar as informações do produto. Erro: ' + (data.error || 'Erro desconhecido'));
+            }
+        } catch (error) {
+            console.error('Erro ao buscar produto:', error);
+            alert('Erro ao buscar informações do produto. Verifique sua conexão e tente novamente.');
+        } finally {
+            document.getElementById('loadingBusca').style.display = 'none';
+            document.getElementById('btnBuscar').disabled = false;
+        }
+    }
+
+    async function adicionarPresentePorLink(event) {
+        event.preventDefault();
+        
+        if (!window.dadosPresente) {
+            alert('Por favor, busque as informações do produto primeiro.');
+            return;
+        }
+
+        try {
+            const response = await fetch('/admin/adicionar-presente-por-link', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(window.dadosPresente)
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                alert('Presente adicionado com sucesso!');
+                fecharModalAdicionarPresente();
+                // Recarregar página para mostrar novo presente
+                window.location.reload();
+            } else {
+                alert('Erro ao adicionar presente: ' + (result.error || 'Erro desconhecido'));
+            }
+        } catch (error) {
+            console.error('Erro ao adicionar presente:', error);
+            alert('Erro ao adicionar presente. Tente novamente.');
+        }
+    }
+
+    // Fechar modal com ESC
+    document.addEventListener('keydown', function(event) {
+        if (event.key === 'Escape') {
+            fecharModalAdicionarPresente();
+        }
+    });
+
+    // Buscar automaticamente quando colar um link
+    document.addEventListener('DOMContentLoaded', function() {
+        const linkInput = document.getElementById('linkPresente');
+        if (linkInput) {
+            linkInput.addEventListener('paste', function() {
+                setTimeout(() => {
+                    if (this.value.trim()) {
+                        document.getElementById('btnBuscar').click();
+                    }
+                }, 100);
+            });
+        }
+    });
+</script>
+
+</body>
+</html>
