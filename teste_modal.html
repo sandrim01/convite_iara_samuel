@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Teste Modal</title>
+    <style>
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        .modal-content {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            max-width: 500px;
+            width: 90%;
+        }
+    </style>
+</head>
+<body>
+    <h1>Teste do Modal</h1>
+    
+    <button onclick="abrirModalAdicionarPresente()">Abrir Modal</button>
+    
+    <!-- Modal -->
+    <div id="modalAdicionarPresente" class="modal" style="display: none;">
+        <div class="modal-content">
+            <h3>Modal de Teste</h3>
+            <p>O modal está funcionando!</p>
+            <button onclick="fecharModalAdicionarPresente()">Fechar</button>
+        </div>
+    </div>
+
+    <script>
+        function abrirModalAdicionarPresente() {
+            console.log('Função abrirModalAdicionarPresente chamada');
+            const modal = document.getElementById('modalAdicionarPresente');
+            console.log('Modal encontrado:', modal);
+            if (modal) {
+                modal.style.display = 'flex';
+                console.log('Modal deve estar visível agora');
+            } else {
+                console.error('Modal não encontrado!');
+            }
+        }
+
+        function fecharModalAdicionarPresente() {
+            console.log('Função fecharModalAdicionarPresente chamada');
+            const modal = document.getElementById('modalAdicionarPresente');
+            if (modal) {
+                modal.style.display = 'none';
+            }
+        }
+    </script>
+</body>
+</html>

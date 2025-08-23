@@ -180,6 +180,160 @@
         font-weight: 600;
     }
     
+    /* Estilos do Modal */
+    .modal {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 1000;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    
+    .modal-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        backdrop-filter: blur(4px);
+    }
+    
+    .modal-content {
+        position: relative;
+        background: var(--white);
+        border-radius: var(--border-radius);
+        box-shadow: var(--shadow-heavy);
+        max-width: 600px;
+        width: 90%;
+        max-height: 90vh;
+        overflow-y: auto;
+        animation: modalSlideIn 0.3s ease-out;
+    }
+    
+    @keyframes modalSlideIn {
+        from {
+            opacity: 0;
+            transform: translateY(-20px) scale(0.95);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+    }
+    
+    .modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1.5rem;
+        border-bottom: 1px solid var(--gray-light);
+    }
+    
+    .modal-header h3 {
+        margin: 0;
+        color: var(--text-dark);
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    
+    .modal-close {
+        background: none;
+        border: none;
+        color: var(--text-secondary);
+        font-size: 1.2rem;
+        cursor: pointer;
+        padding: 0.5rem;
+        border-radius: var(--border-radius-small);
+        transition: all 0.3s ease;
+    }
+    
+    .modal-close:hover {
+        background: var(--gray-light);
+        color: var(--text-dark);
+    }
+    
+    .modal-body {
+        padding: 1.5rem;
+    }
+    
+    .modal-footer {
+        padding: 1rem 1.5rem;
+        border-top: 1px solid var(--gray-light);
+        display: flex;
+        gap: 1rem;
+        justify-content: flex-end;
+    }
+    
+    .preview-presente {
+        background: var(--gray-light);
+        border-radius: var(--border-radius);
+        padding: 1rem;
+        margin-top: 1rem;
+        display: none;
+    }
+    
+    .preview-presente.show {
+        display: block;
+        animation: fadeIn 0.3s ease-out;
+    }
+    
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .preview-presente img {
+        max-width: 100px;
+        max-height: 100px;
+        object-fit: cover;
+        border-radius: var(--border-radius-small);
+        margin-right: 1rem;
+    }
+    
+    .preview-content {
+        display: flex;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+    
+    .preview-info h4 {
+        margin: 0 0 0.5rem 0;
+        color: var(--text-dark);
+    }
+    
+    .preview-info p {
+        margin: 0.25rem 0;
+        color: var(--text-secondary);
+    }
+    
+    .preview-price {
+        font-weight: 600;
+        color: var(--primary);
+        font-size: 1.1rem;
+    }
+    
+    @media (max-width: 768px) {
+        .modal-content {
+            margin: 1rem;
+            width: calc(100% - 2rem);
+        }
+        
+        .modal-footer {
+            flex-direction: column;
+        }
+        
+        .preview-content {
+            flex-direction: column;
+            text-align: center;
+        }
+    }
+    
     @media (max-width: 768px) {
         .presentes-header {
             flex-direction: column;
@@ -644,7 +798,14 @@
     function abrirModalAdicionarPresente() {
         document.getElementById('modalAdicionarPresente').style.display = 'flex';
         document.body.style.overflow = 'hidden';
-        document.getElementById('linkPresente').focus();
+        
+        // Focar no campo após um pequeno delay
+        setTimeout(() => {
+            const linkInput = document.getElementById('linkPresente');
+            if (linkInput) {
+                linkInput.focus();
+            }
+        }, 100);
     }
 
     function fecharModalAdicionarPresente() {
