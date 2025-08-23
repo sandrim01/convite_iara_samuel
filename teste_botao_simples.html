@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Teste de Botão</title>
+    <style>
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        .modal-content {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            max-width: 400px;
+            width: 90%;
+        }
+        .btn {
+            background: #dc3545;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 10px;
+        }
+        .btn:hover {
+            background: #c82333;
+        }
+    </style>
+</head>
+<body>
+    <h1>Teste do Botão Modal</h1>
+    
+    <button onclick="abrirModalAdicionarPresente()" class="btn">
+        Adicionar Presente
+    </button>
+    
+    <div id="modalAdicionarPresente" class="modal" style="display: none;">
+        <div class="modal-content">
+            <h3>Modal Funcionando!</h3>
+            <p>Se você vê isso, o botão está funcionando corretamente.</p>
+            <button onclick="fecharModalAdicionarPresente()" class="btn">Fechar</button>
+        </div>
+    </div>
+
+    <script>
+        function abrirModalAdicionarPresente() {
+            console.log('Função abrirModalAdicionarPresente chamada!');
+            document.getElementById('modalAdicionarPresente').style.display = 'flex';
+        }
+
+        function fecharModalAdicionarPresente() {
+            console.log('Função fecharModalAdicionarPresente chamada!');
+            document.getElementById('modalAdicionarPresente').style.display = 'none';
+        }
+        
+        console.log('Script carregado com sucesso!');
+    </script>
+</body>
+</html>
