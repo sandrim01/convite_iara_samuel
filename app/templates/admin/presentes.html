@@ -539,13 +539,18 @@
     <!-- Ações -->
     <div class="actions-section">
         <h2 class="section-title">Lista de Presentes</h2>
-        <div>
+        <div style="display: flex; gap: 1rem; align-items: center; flex-wrap: wrap;">
             <a href="{{ url_for('admin.dashboard') }}" class="btn btn-secondary">
                 <i class="fas fa-arrow-left"></i> Voltar ao Dashboard
             </a>
-            <button onclick="abrirModalAdicionarPresente()" class="btn btn-primary">
-                <i class="fas fa-plus"></i> Adicionar Presente
-            </button>
+            <div style="display: flex; gap: 0.5rem; align-items: center; flex: 1; min-width: 300px;">
+                <input type="url" id="linkPresente" class="form-control" 
+                       placeholder="Cole o link do produto aqui (Amazon, Magazine Luiza, etc.)" 
+                       style="flex: 1;">
+                <button onclick="adicionarPresentePorLink()" class="btn btn-primary" id="btnAdicionarLink">
+                    <i class="fas fa-link"></i> Adicionar
+                </button>
+            </div>
         </div>
     </div>
 
@@ -642,51 +647,9 @@
             <div class="empty-state">
                 <i class="fas fa-gift"></i>
                 <h3>Nenhum presente cadastrado</h3>
-                <p>Comece adicionando o primeiro presente da lista</p>
-                <button onclick="abrirModalAdicionarPresente()" class="btn btn-primary">
-                    <i class="fas fa-plus"></i> Adicionar Primeiro Presente
-                </button>
+                <p>Cole o link de um produto para adicionar à lista</p>
             </div>
         {% endif %}
-    </div>
-</div>
-
-<!-- Modal Adicionar Presente -->
-<div id="modalAdicionarPresente" class="modal">
-    <div class="modal-content">
-        <div class="modal-header">
-            <h3 class="modal-title"><i class="fas fa-gift"></i> Adicionar Presente</h3>
-            <button type="button" class="modal-close" onclick="fecharModalAdicionarPresente()">
-                <i class="fas fa-times"></i>
-            </button>
-        </div>
-        <div class="modal-body">
-            <form id="formAdicionarPresente">
-                <div class="form-group">
-                    <label for="nome" class="form-label">Nome do Presente *</label>
-                    <input type="text" id="nome" name="nome" class="form-control" required 
-                           placeholder="Ex: Jogo de panelas">
-                </div>
-                <div class="form-group">
-                    <label for="preco" class="form-label">Preço (R$) *</label>
-                    <input type="number" id="preco" name="preco" class="form-control" step="0.01" min="0" required 
-                           placeholder="Ex: 150.00">
-                </div>
-                <div class="form-group">
-                    <label for="imagem_url" class="form-label">URL da Imagem</label>
-                    <input type="url" id="imagem_url" name="imagem_url" class="form-control" 
-                           placeholder="https://exemplo.com/imagem.jpg">
-                </div>
-            </form>
-        </div>
-        <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" onclick="fecharModalAdicionarPresente()">
-                Cancelar
-            </button>
-            <button type="button" class="btn btn-primary" onclick="adicionarPresente()">
-                <i class="fas fa-plus"></i> Adicionar Presente
-            </button>
-        </div>
     </div>
 </div>
 
@@ -731,41 +694,45 @@
 // Variáveis globais
 let presenteEditandoId = null;
 
-// Funções do modal de adicionar presente
-function abrirModalAdicionarPresente() {
-    document.getElementById('modalAdicionarPresente').classList.add('show');
-    document.getElementById('nome').focus();
-}
-
-function fecharModalAdicionarPresente() {
-    document.getElementById('modalAdicionarPresente').classList.remove('show');
-    document.getElementById('formAdicionarPresente').reset();
-}
-
-function adicionarPresente() {
-    const form = document.getElementById('formAdicionarPresente');
-    const formData = new FormData(form);
+// Função para adicionar presente por link
+function adicionarPresentePorLink() {
+    const linkInput = document.getElementById('linkPresente');
+    const btn = document.getElementById('btnAdicionarLink');
+    const link = linkInput.value.trim();
     
-    // Validação básica
-    if (!formData.get('nome') || !formData.get('preco')) {
-        alert('Por favor, preencha todos os campos obrigatórios.');
+    if (!link) {
+        alert('Por favor, cole o link do produto.');
+        linkInput.focus();
+        return;
+    }
+    
+    // Validar se é um link válido
+    try {
+        new URL(link);
+    } catch {
+        alert('Por favor, insira um link válido.');
+        linkInput.focus();
         return;
     }
     
     // Mostrar loading
-    const btn = event.target;
     const originalHtml = btn.innerHTML;
-    btn.innerHTML = '<span class="loading-spinner"></span> Adicionando...';
+    btn.innerHTML = '<span class="loading-spinner"></span> Processando...';
     btn.disabled = true;
+    linkInput.disabled = true;
     
-    fetch('{{ url_for("admin.adicionar_presente") }}', {
+    // Enviar link para o servidor
+    fetch('{{ url_for("admin.adicionar_presente_por_link") }}', {
         method: 'POST',
-        body: formData
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ link: link })
     })
     .then(response => response.json())
     .then(result => {
         if (result.success) {
-            fecharModalAdicionarPresente();
+            linkInput.value = '';
             location.reload(); // Recarrega a página para mostrar o novo presente
         } else {
             alert('Erro ao adicionar presente: ' + (result.error || 'Erro desconhecido'));
@@ -773,13 +740,27 @@ function adicionarPresente() {
     })
     .catch(error => {
         console.error('Erro ao adicionar presente:', error);
-        alert('Erro ao adicionar presente. Tente novamente.');
+        alert('Erro ao processar o link. Verifique se o link é válido e tente novamente.');
     })
     .finally(() => {
         btn.innerHTML = originalHtml;
         btn.disabled = false;
+        linkInput.disabled = false;
     });
 }
+
+// Enter no campo de link
+document.addEventListener('DOMContentLoaded', function() {
+    const linkInput = document.getElementById('linkPresente');
+    if (linkInput) {
+        linkInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                adicionarPresentePorLink();
+            }
+        });
+    }
+});
 
 // Funções do modal de editar presente
 function editarPresente(id) {
@@ -888,9 +869,7 @@ function excluirPresente(id) {
 // Fechar modais ao clicar fora
 document.addEventListener('click', function(event) {
     if (event.target.classList.contains('modal')) {
-        if (event.target.id === 'modalAdicionarPresente') {
-            fecharModalAdicionarPresente();
-        } else if (event.target.id === 'modalEditarPresente') {
+        if (event.target.id === 'modalEditarPresente') {
             fecharModalEditarPresente();
         }
     }
@@ -899,19 +878,11 @@ document.addEventListener('click', function(event) {
 // Fechar modais com ESC
 document.addEventListener('keydown', function(event) {
     if (event.key === 'Escape') {
-        fecharModalAdicionarPresente();
         fecharModalEditarPresente();
     }
 });
 
-// Formatação automática do campo preço
-document.getElementById('preco').addEventListener('input', function(e) {
-    let value = e.target.value;
-    if (value && !isNaN(value)) {
-        e.target.value = parseFloat(value).toFixed(2);
-    }
-});
-
+// Formatação automática do campo preço (apenas para edição)
 document.getElementById('editPreco').addEventListener('input', function(e) {
     let value = e.target.value;
     if (value && !isNaN(value)) {

@@ -757,16 +757,30 @@ def adicionar_presente_por_link():
     """Adiciona um presente usando informações extraídas do link"""
     try:
         data = request.get_json()
+        link = data.get('link', '').strip()
+        
+        if not link:
+            return jsonify({'success': False, 'error': 'Link não fornecido'})
+        
+        # Extrair informações do produto
+        print(f"🔍 Extraindo informações do link: {link}")
+        info_produto = extrair_informacoes_produto(link)
+        
+        if not info_produto:
+            return jsonify({'success': False, 'error': 'Não foi possível extrair informações do produto do link fornecido'})
+        
+        # Verificar se já existe um presente com esse link
+        presente_existente = Presente.query.filter_by(link_loja=link).first()
+        if presente_existente:
+            return jsonify({'success': False, 'error': 'Este produto já foi adicionado à lista'})
         
         # Criar novo presente com as informações extraídas
         presente = Presente(
-            nome=data.get('nome', 'Produto sem nome'),
-            categoria=data.get('categoria', 'casa'),
-            descricao=data.get('descricao', ''),
-            preco_sugerido=extrair_preco_numerico(data.get('preco', '0')),
-            link_loja=data.get('link_original', ''),
-            imagem_url=data.get('imagem', ''),
-            disponivel=True
+            nome=info_produto.get('nome', 'Produto sem nome'),
+            preco=extrair_preco_numerico(info_produto.get('preco', '0')),
+            imagem_url=info_produto.get('imagem', ''),
+            link_loja=link,
+            escolhido=False
         )
         
         db.session.add(presente)
