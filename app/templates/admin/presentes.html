@@ -105,25 +105,6 @@
         font-weight: 500;
     }
     
-    /* Gifts Grid - 3 Columns */
-    .gifts-grid {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 1.5rem;
-    }
-    
-    @media (max-width: 1200px) {
-        .gifts-grid {
-            grid-template-columns: repeat(2, 1fr);
-        }
-    }
-    
-    @media (max-width: 768px) {
-        .gifts-grid {
-            grid-template-columns: 1fr;
-        }
-    }
-    
     /* Admin Gift Card Styles */
     .admin-gift-card {
         position: relative;
@@ -328,6 +309,26 @@
         .pagination {
             flex-wrap: wrap;
             justify-content: center;
+        }
+    }
+
+    /* Grid de presentes responsivo */
+    .gifts-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 2rem;
+        margin-top: 2rem;
+    }
+
+    @media (max-width: 1200px) {
+        .gifts-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+
+    @media (max-width: 768px) {
+        .gifts-grid {
+            grid-template-columns: 1fr;
         }
     }
 </style>
