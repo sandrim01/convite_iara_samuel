@@ -540,7 +540,7 @@
     <div class="actions-section">
         <h2 class="section-title">Lista de Presentes</h2>
         <div>
-            <a href="{{ url_for('admin.admin_dashboard') }}" class="btn btn-secondary">
+            <a href="{{ url_for('admin.dashboard') }}" class="btn btn-secondary">
                 <i class="fas fa-arrow-left"></i> Voltar ao Dashboard
             </a>
             <button onclick="abrirModalAdicionarPresente()" class="btn btn-primary">
@@ -603,7 +603,7 @@
                     <ul class="pagination">
                         {% if presentes.has_prev %}
                             <li class="page-item">
-                                <a class="page-link" href="{{ url_for('admin.gerenciar_presentes', page=presentes.prev_num) }}">
+                                <a class="page-link" href="{{ url_for('admin.presentes', page=presentes.prev_num) }}">
                                     <i class="fas fa-chevron-left"></i>
                                 </a>
                             </li>
@@ -613,7 +613,7 @@
                             {% if page_num %}
                                 {% if page_num != presentes.page %}
                                     <li class="page-item">
-                                        <a class="page-link" href="{{ url_for('admin.gerenciar_presentes', page=page_num) }}">{{ page_num }}</a>
+                                        <a class="page-link" href="{{ url_for('admin.presentes', page=page_num) }}">{{ page_num }}</a>
                                     </li>
                                 {% else %}
                                     <li class="page-item active">
@@ -629,7 +629,7 @@
                         
                         {% if presentes.has_next %}
                             <li class="page-item">
-                                <a class="page-link" href="{{ url_for('admin.gerenciar_presentes', page=presentes.next_num) }}">
+                                <a class="page-link" href="{{ url_for('admin.presentes', page=presentes.next_num) }}">
                                     <i class="fas fa-chevron-right"></i>
                                 </a>
                             </li>
@@ -854,8 +854,8 @@ function salvarEdicaoPresente() {
 // Função para excluir presente
 function excluirPresente(id) {
     if (confirm('Tem certeza que deseja excluir este presente? Esta ação não pode ser desfeita.')) {
-        fetch(`{{ url_for("admin.excluir_presente", id=0) }}`.replace('0', id), {
-            method: 'DELETE'
+        fetch(`{{ url_for("admin.remover_presente", id=0) }}`.replace('0', id), {
+            method: 'POST'
         })
         .then(response => response.json())
         .then(result => {

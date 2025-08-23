@@ -298,6 +298,22 @@ def remover_presente(id):
         flash('Erro ao remover presente. Tente novamente.', 'error')
         return redirect(url_for('admin.presentes'))
 
+@admin.route('/presentes/<int:id>')
+@login_required
+def obter_presente(id):
+    """Obter dados de um presente específico"""
+    try:
+        presente = Presente.query.get_or_404(id)
+        return jsonify({
+            'id': presente.id,
+            'nome': presente.nome,
+            'preco': float(presente.preco),
+            'imagem_url': presente.imagem_url,
+            'escolhido': presente.escolhido
+        })
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
 @admin.route('/configuracoes')
 @login_required
 def configuracoes():
