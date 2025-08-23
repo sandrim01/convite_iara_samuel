@@ -1,8 +1,34 @@
-{% extends "base.html" %}
-
-{% block title %}Gerenciar Presentes - Painel Administrativo{% endblock %}
-
-{% block extra_head %}
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerenciar Presentes - Painel Administrativo</title>
+    
+    <!-- Meta tags -->
+    <meta name="description" content="Site do casamento de Iara e Samuel. Confirme sua presença e veja nossa lista de presentes.">
+    <meta name="keywords" content="casamento, Iara, Samuel, convite, presentes">
+    
+    <!-- Open Graph -->
+    <meta property="og:title" content="Iara & Samuel - Nosso Casamento">
+    <meta property="og:description" content="Você está convidado para nosso casamento! Confirme sua presença e veja nossa lista de presentes.">
+    <meta property="og:type" content="website">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" sizes="32x32" href="/static/img/favicon.png">
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;600;700&family=Poppins:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet">
+    
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="/static/css/style.css">
+    
+    
 <style>
     .navbar { background: var(--white); box-shadow: var(--shadow-medium); }
     
@@ -350,9 +376,70 @@
         }
     }
 </style>
-{% endblock %}
 
-{% block content %}
+</head>
+<body>
+    <!-- Loading Screen -->
+    <div class="loading" id="loading">
+        <div class="loading-content">
+            <div class="loading-heart">♥</div>
+            <p>Carregando nosso amor...</p>
+        </div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="navbar" id="navbar">
+        <div class="container">
+            <div class="nav-brand">
+                <a href="/" class="nav-logo">
+                    <span class="nav-names">Iara & Samuel</span>
+                </a>
+            </div>
+            
+            <div class="nav-toggle" id="nav-toggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+            
+            <div class="nav-menu" id="nav-menu">
+                <ul class="nav-list">
+                    <li class="nav-item">
+                        <a href="/" class="nav-link">
+                            <i class="fas fa-home"></i>
+                            <span>Início</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="/o-casal" class="nav-link">
+                            <i class="fas fa-heart"></i>
+                            <span>O Casal</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="/local-teste" class="nav-link">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <span>Local</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="/presentes" class="nav-link">
+                            <i class="fas fa-gift"></i>
+                            <span>Presentes</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        
+            
+        
+        
+        
 <!-- Admin Header -->
 <section class="admin-header">
     <div class="container">
@@ -366,7 +453,7 @@
             </div>
             
             <div class="admin-actions">
-                <a href="{{ url_for('admin.dashboard') }}" class="btn btn-outline">
+                <a href="/admin/dashboard" class="btn btn-outline">
                     <i class="fas fa-arrow-left"></i>
                     <span class="text-base">Dashboard</span>
                 </a>
@@ -384,130 +471,26 @@
     <div class="container">
         <div class="presentes-stats">
             <div class="stat-card">
-                <span class="stat-number">{{ presentes.total }}</span>
+                <span class="stat-number">0</span>
                 <p class="stat-label">Total de Presentes</p>
             </div>
             <div class="stat-card">
-                <span class="stat-number">{{ presentes.items | selectattr('disponivel') | list | length }}</span>
+                <span class="stat-number">0</span>
                 <p class="stat-label">Disponíveis</p>
             </div>
             <div class="stat-card">
-                <span class="stat-number">{{ presentes.items | rejectattr('disponivel') | list | length }}</span>
+                <span class="stat-number">0</span>
                 <p class="stat-label">Escolhidos</p>
             </div>
         </div>
         
-        {% if presentes.items %}
-        <div class="presentes-grid">
-            {% for presente in presentes.items %}
-            <div class="presente-card">
-                <div class="presente-image">
-                    {% if presente.imagem_url %}
-                        <img src="{{ presente.imagem_url }}" alt="{{ presente.nome }}" style="width: 100%; height: 100%; object-fit: cover;">
-                    {% else %}
-                        <i class="fas fa-gift"></i>
-                    {% endif %}
-                </div>
-                
-                <div class="presente-content">
-                    <h3 class="presente-title">{{ presente.nome }}</h3>
-                    
-                    {% if presente.categoria %}
-                    <span class="presente-category">
-                        {% if presente.categoria == 'cozinha' %}🍳 Cozinha
-                        {% elif presente.categoria == 'casa' %}🏠 Casa
-                        {% elif presente.categoria == 'quarto' %}🛏️ Quarto
-                        {% elif presente.categoria == 'sala' %}🛋️ Sala
-                        {% elif presente.categoria == 'banheiro' %}🛁 Banheiro
-                        {% elif presente.categoria == 'eletronicos' %}📱 Eletrônicos
-                        {% elif presente.categoria == 'experiencias' %}🎁 Experiências
-                        {% else %}📦 {{ presente.categoria.title() }}
-                        {% endif %}
-                    </span>
-                    {% endif %}
-                    
-                    {% if presente.descricao %}
-                    <p class="presente-description">{{ presente.descricao }}</p>
-                    {% endif %}
-                    
-                    {% if presente.preco_sugerido %}
-                    <div class="presente-price">
-                        R$ {{ "%.2f"|format(presente.preco_sugerido) }}
-                    </div>
-                    {% endif %}
-                    
-                    <div class="presente-status">
-                        {% if presente.disponivel %}
-                        <i class="fas fa-check-circle status-available"></i>
-                        <span class="status-available">Disponível</span>
-                        {% else %}
-                        <i class="fas fa-heart status-chosen"></i>
-                        <span class="status-chosen">Escolhido por alguém</span>
-                        {% endif %}
-                    </div>
-                    
-                    <div class="presente-actions">
-                        <a href="{{ url_for('admin.editar_presente', id=presente.id) }}" 
-                           class="btn btn-outline btn-small">
-                            <i class="fas fa-edit"></i>
-                            <span>Editar</span>
-                        </a>
-                        
-                        {% if presente.link_loja %}
-                        <a href="{{ presente.link_loja }}" target="_blank" 
-                           class="btn btn-secondary btn-small">
-                            <i class="fas fa-external-link-alt"></i>
-                            <span>Ver Loja</span>
-                        </a>
-                        {% endif %}
-                        
-                        <button onclick="confirmarRemocao('{{ presente.id }}', '{{ presente.nome }}')" 
-                                class="btn btn-danger btn-small">
-                            <i class="fas fa-trash"></i>
-                            <span>Remover</span>
-                        </button>
-                    </div>
-                </div>
-            </div>
-            {% endfor %}
-        </div>
         
-        <!-- Pagination -->
-        {% if presentes.pages > 1 %}
-        <div class="pagination">
-            {% if presentes.has_prev %}
-            <a href="{{ url_for('admin.presentes', page=presentes.prev_num) }}">
-                <i class="fas fa-chevron-left"></i> Anterior
-            </a>
-            {% endif %}
-            
-            {% for page in presentes.iter_pages() %}
-                {% if page %}
-                    {% if page != presentes.page %}
-                    <a href="{{ url_for('admin.presentes', page=page) }}">{{ page }}</a>
-                    {% else %}
-                    <span class="current">{{ page }}</span>
-                    {% endif %}
-                {% else %}
-                <span>...</span>
-                {% endif %}
-            {% endfor %}
-            
-            {% if presentes.has_next %}
-            <a href="{{ url_for('admin.presentes', page=presentes.next_num) }}">
-                Próximo <i class="fas fa-chevron-right"></i>
-            </a>
-            {% endif %}
-        </div>
-        {% endif %}
-        
-        {% else %}
         <div class="empty-state">
             <i class="fas fa-gift"></i>
             <h3>Nenhum presente cadastrado</h3>
             <p>Use o botão "Adicionar Presente" acima para começar!</p>
         </div>
-        {% endif %}
+        
     </div>
 </section>
 
@@ -763,37 +746,90 @@
 }
 </style>
 
-{% endblock %}
 
-{% block scripts %}
-<script>
-    // Função original de confirmação de remoção
-    function confirmarRemocao(presenteId, nomePresente) {
-        if (confirm(`Tem certeza que deseja remover o presente "${nomePresente}"?\n\nEsta ação não pode ser desfeita.`)) {
-            // Criar form para DELETE request
-            const form = document.createElement('form');
-            form.method = 'POST';
-            form.action = `/admin/presentes/${presenteId}/remover`;
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-info">
+                    <h3 class="footer-names">Iara & Samuel</h3>
+                    <p class="footer-date">
+                        
+                            28.11.2025
+                        
+                    </p>
+                </div>
+                
+                <div class="footer-social">
+                    <div class="social-links">
+                        <a href="#" class="social-link" title="Instagram">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                        <a href="#" class="social-link" title="Facebook">
+                            <i class="fab fa-facebook"></i>
+                        </a>
+                        <a href="#" class="social-link" title="WhatsApp">
+                            <i class="fab fa-whatsapp"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
             
-            // Adicionar CSRF token se necessário
-            const csrfToken = document.querySelector('meta[name=csrf-token]');
-            if (csrfToken) {
-                const input = document.createElement('input');
-                input.type = 'hidden';
-                input.name = 'csrf_token';
-                input.value = csrfToken.getAttribute('content');
-                form.appendChild(input);
+            <div class="footer-bottom">
+                <div class="footer-copyright">
+                    <p>&copy; 2025 Iara & Samuel. Feito com ♥</p>
+                    <p>
+                        <a href="/admin/login" class="admin-link">Painel Admin</a>
+                    </p>
+                </div>
+                
+                <div class="footer-company">
+                    <p class="company-main">&copy; 2025 UNBUG Solutions TI. Todos os direitos reservados.</p>
+                    <p class="company-description">Especialistas em tecnologia e soluções digitais.</p>
+                    <p class="company-services">Desenvolvimento de sites e sistemas — Criação de convites digitais para festas e casamentos.</p>
+                    <p class="company-contact">
+                        <a href="mailto:contato@unbugsolutions.com">contato@unbugsolutions.com</a> | 
+                        <a href="https://wa.me/5528999928442" target="_blank">WhatsApp: (28) 99992-8442</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="/static/js/main.js"></script>
+    <script>
+        // Highlight current page in navigation and update progress
+        document.addEventListener('DOMContentLoaded', function() {
+            const currentPath = window.location.pathname;
+            const navLinks = document.querySelectorAll('.nav-link');
+            const progressBar = document.getElementById('step-progress');
+            
+            // Page to step mapping
+            const pageSteps = {
+                '/': 'step-1',
+                '/o-casal': 'step-2', 
+                '/local': 'step-3',
+                '/presentes': 'step-4'
+            };
+            
+            navLinks.forEach(link => {
+                const linkPath = new URL(link.href).pathname;
+                if (linkPath === currentPath) {
+                    link.classList.add('nav-link-active');
+                }
+            });
+            
+            // Update progress bar
+            const stepClass = pageSteps[currentPath];
+            if (stepClass && progressBar) {
+                progressBar.className = `step-progress-fill ${stepClass}`;
             }
-            
-            document.body.appendChild(form);
-            form.submit();
-        }
-    }
-</script>
-
-{% endblock %}
-
-{% block extra_scripts %}
+        });
+    </script>
+    
 <script>
     // Funções do modal de adicionar presente
     function abrirModalAdicionarPresente() {
@@ -922,4 +958,6 @@
         }
     });
 </script>
-{% endblock %}
+
+</body>
+</html>
