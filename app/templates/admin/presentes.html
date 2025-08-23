@@ -105,12 +105,11 @@
         font-weight: 500;
     }
     
-    /* Gifts Grid - 3 colunas responsivas */
+    /* Gifts Grid - 3 Columns */
     .gifts-grid {
         display: grid;
         grid-template-columns: repeat(3, 1fr);
-        gap: 1rem;
-        margin-top: 2rem;
+        gap: 1.5rem;
     }
     
     @media (max-width: 1200px) {
@@ -609,13 +608,103 @@
                         <i class="fas fa-arrow-left"></i>
                         <span>Dashboard</span>
                     </a>
-                    <button onclick="abrirModalAdicionarPresente()" class="btn btn-primary">
+                    <button onclick="abrirModalAdicionarPresente()" class="btn btn-danger">
                         <i class="fas fa-plus"></i>
                         <span>Adicionar Presente</span>
                     </button>
                 </div>
             </div>
         </div>
+    </div>
+</section>
+
+<!-- Presentes Section -->
+<section class="section" id="presentes-grid">
+    <div class="container">
+        {% if presentes.items %}
+        <div class="gifts-grid">
+            {% for presente in presentes.items %}
+            <div class="gift-card admin-gift-card" data-id="{{ presente.id }}">
+                <div class="gift-image">
+                    {% if presente.imagem_url %}
+                        <div class="loading-spinner"></div>
+                        <img src="{{ presente.imagem_url }}" alt="{{ presente.nome }}" 
+                             onload="this.classList.add('loaded'); this.previousElementSibling.style.display='none';"
+                             onerror="this.style.display='none'; this.previousElementSibling.style.display='none'; this.nextElementSibling.style.display='flex';">
+                    {% endif %}
+                    <div class="gift-placeholder" {% if presente.imagem_url %}style="display: none;"{% endif %}>
+                        <i class="fas fa-gift"></i>
+                    </div>
+                    
+                    {% if not presente.disponivel %}
+                        <div class="gift-chosen-badge">
+                            <i class="fas fa-check"></i>
+                            <span>Escolhido</span>
+                        </div>
+                    {% endif %}
+                </div>
+                
+                <div class="gift-info">
+                    <h3 class="gift-name">{{ presente.nome }}</h3>
+                    <p class="gift-description">{{ presente.descricao or 'Sem descrição' }}</p>
+                    
+                    <div class="gift-price">
+                        <span class="price-label">Preço sugerido:</span>
+                        <span class="price-value">R$ {{ "%.2f"|format(presente.preco) }}</span>
+                    </div>
+                    
+                    <div class="gift-status">
+                        {% if presente.disponivel %}
+                            <span class="status-badge status-available">
+                                <i class="fas fa-check-circle"></i>
+                                Disponível
+                            </span>
+                        {% else %}
+                            <span class="status-badge status-chosen">
+                                <i class="fas fa-heart"></i>
+                                Escolhido por: {{ presente.escolhido_por or 'Anônimo' }}
+                            </span>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="gift-actions">
+                        <button onclick="editarPresente({{ presente.id }})" 
+                                class="btn btn-primary btn-small">
+                            <i class="fas fa-edit"></i>
+                            Editar
+                        </button>
+                        
+                        {% if not presente.disponivel %}
+                            <button onclick="marcarComoDisponivel({{ presente.id }})" 
+                                    class="btn btn-warning btn-small">
+                                <i class="fas fa-redo"></i>
+                                Liberar
+                            </button>
+                        {% endif %}
+                        
+                        <button onclick="confirmarExclusao({{ presente.id }}, '{{ presente.nome }}')" 
+                                class="btn btn-danger btn-small">
+                            <i class="fas fa-trash"></i>
+                            Excluir
+                        </button>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="empty-state">
+            <div class="empty-state-icon">
+                <i class="fas fa-gift"></i>
+            </div>
+            <h3>Nenhum presente cadastrado</h3>
+            <p>Clique em "Adicionar Presente" para começar a criar sua lista de casamento!</p>
+            <button onclick="abrirModalAdicionarPresente()" class="btn btn-primary">
+                <i class="fas fa-plus"></i>
+                Adicionar Primeiro Presente
+            </button>
+        </div>
+        {% endif %}
     </div>
 </section>
 
