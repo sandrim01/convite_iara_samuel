@@ -2351,8 +2351,55 @@ body.nav-open {
 .footer {
     background: var(--text-dark);
     color: var(--white);
-    padding: 3rem 0 2rem;
+    padding: 2rem 0 1.5rem;
     text-align: center;
+    font-size: 0.8rem; /* Fonte menor para ser mais discreta */
+}
+
+.footer-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.footer-info h3 {
+    font-size: 1.2rem; /* Reduzido de tamanho padrão */
+    margin-bottom: 0.3rem;
+}
+
+.footer-info p {
+    font-size: 0.9rem;
+    opacity: 0.8;
+}
+
+/* UNBUG Logo Styling */
+.unbug-logo {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.unbug-link {
+    display: inline-block;
+    transition: all 0.3s ease;
+    text-decoration: none;
+}
+
+.unbug-logo-img {
+    width: 50px;
+    height: 50px;
+    transition: all 0.3s ease;
+    border-radius: 50%;
+    filter: brightness(0.9);
+}
+
+.unbug-link:hover .unbug-logo-img {
+    transform: scale(1.1) rotate(5deg);
+    filter: brightness(1.1);
+    box-shadow: 0 4px 15px rgba(33, 150, 243, 0.3);
 }
 
 .footer-hearts {
@@ -2393,60 +2440,94 @@ body.nav-open {
 .footer-bottom {
     display: flex;
     flex-direction: column;
-    gap: 1.5rem;
-    margin-top: 2rem;
-    padding-top: 1.5rem;
+    gap: 1rem;
+    margin-top: 1.5rem;
+    padding-top: 1rem;
     border-top: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .footer-copyright {
     text-align: center;
+    font-size: 0.75rem; /* Ainda menor */
+    opacity: 0.7;
 }
 
 .footer-company {
     text-align: center;
-    font-size: 0.85rem;
-    opacity: 0.9;
-    line-height: 1.6;
+    font-size: 0.7rem; /* Reduzido para ser mais discreto */
+    opacity: 0.6; /* Mais transparente */
+    line-height: 1.4;
 }
 
 .footer-company p {
-    margin: 0.3rem 0;
+    margin: 0.2rem 0; /* Menor espaçamento */
 }
 
 .footer-company .company-main {
-    font-weight: 600;
+    font-weight: 500; /* Menos bold */
     color: var(--primary-color);
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.3rem;
+    opacity: 0.8;
 }
 
 .footer-company .company-description {
     font-style: italic;
-    color: rgba(255, 255, 255, 0.8);
+    color: rgba(255, 255, 255, 0.6); /* Mais transparente */
+    font-size: 0.65rem;
 }
 
 .footer-company .company-services {
-    color: rgba(255, 255, 255, 0.9);
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 0.65rem;
 }
 
 .footer-company .company-contact a {
     color: var(--primary-color);
     text-decoration: none;
     transition: opacity 0.3s ease;
+    font-size: 0.65rem;
+    opacity: 0.7;
 }
 
 .footer-company .company-contact a:hover {
-    opacity: 0.8;
+    opacity: 0.9;
     text-decoration: underline;
 }
 
 @media (max-width: 768px) {
-    .footer-bottom {
+    .footer {
+        padding: 1.5rem 0 1rem;
+        font-size: 0.75rem;
+    }
+    
+    .footer-content {
+        flex-direction: column;
+        text-align: center;
         gap: 1rem;
     }
     
+    .footer-info h3 {
+        font-size: 1.1rem;
+    }
+    
+    .unbug-logo-img {
+        width: 45px;
+        height: 45px;
+    }
+    
+    .footer-bottom {
+        gap: 0.8rem;
+        margin-top: 1rem;
+    }
+    
     .footer-company {
-        font-size: 0.8rem;
+        font-size: 0.65rem;
+    }
+    
+    .footer-company .company-description,
+    .footer-company .company-services,
+    .footer-company .company-contact a {
+        font-size: 0.6rem;
     }
 }
 
