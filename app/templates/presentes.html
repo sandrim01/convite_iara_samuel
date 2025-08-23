@@ -2,13 +2,74 @@
 
 {% block title %}Lista de Presentes - {{ config.nome_noiva or 'Iara' }} & {{ config.nome_noivo or 'Samuel' }}{% endblock %}
 
+{% block extra_head %}
+<style>
+    /* Hero Gifts Styles */
+    .hero-gifts {
+        background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+        min-height: 60vh;
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .hero-gifts .hero-overlay {
+        background: rgba(0, 0, 0, 0.1);
+    }
+    
+    .hero-gifts .page-title {
+        color: var(--white);
+        font-size: 3.5rem;
+        margin-bottom: 1.5rem;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+    }
+    
+    .hero-gifts .page-subtitle {
+        color: var(--white);
+        font-size: 1.3rem;
+        max-width: 800px;
+        margin: 0 auto;
+        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+        line-height: 1.6;
+    }
+    
+    /* Gifts Section Styles */
+    .gift-categories {
+        padding: 4rem 0;
+        background: var(--white);
+    }
+    
+    @media (max-width: 768px) {
+        .hero-gifts {
+            min-height: 50vh;
+        }
+        
+        .hero-gifts .page-title {
+            font-size: 2.5rem;
+        }
+        
+        .hero-gifts .page-subtitle {
+            font-size: 1.1rem;
+        }
+    }
+</style>
+{% endblock %}
+
 {% block content %}
-<!-- Header Section -->
-<section class="page-header gifts-header">
-    <div class="container">
-        <div class="page-header-content text-center">
-            <h1 class="page-title heading-serif">Lista de Presentes</h1>
-            <p class="page-subtitle lead">
+<!-- Hero Section - Presentes -->
+<section class="hero hero-gifts" id="hero-gifts">
+    <div class="hero-background">
+        <div class="hero-overlay"></div>
+    </div>
+    
+    <div class="hero-content">
+        <div class="container">
+            <h1 class="page-title heading-script">
+                Lista de Presentes
+            </h1>
+            
+            <p class="page-subtitle text-large text-center">
                 Escolha um presente especial para nós! Sua presença já é o maior presente, 
                 mas se quiser nos presentear, aqui estão algumas sugestões ♥
             </p>
@@ -17,7 +78,7 @@
 </section>
 
 <!-- Gift Categories -->
-<section class="gift-categories">
+<section class="gift-categories section">
     <div class="container">
         <!-- Search Box -->
         <div class="gift-search">
