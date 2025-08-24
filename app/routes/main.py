@@ -367,7 +367,9 @@ def escolher_presente():
         return jsonify({
             'success': True, 
             'message': f'Presente "{presente.nome}" escolhido com sucesso!',
-            'presente_id': presente.id
+            'presente_id': presente.id,
+            'link_loja': presente.link_loja,
+            'nome_presente': presente.nome
         })
         
     except Exception as e:

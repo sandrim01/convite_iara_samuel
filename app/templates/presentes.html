@@ -430,8 +430,8 @@ if (giftForm) {
                 `;
             }
             
-            // Show success message
-            showMessage('success', 'Obrigado! Seu presente foi escolhido com sucesso. ♥');
+            // Show success message with store link
+            showSuccessWithStoreLink(data.nome_presente, data.link_loja);
             closeGiftModal();
         } else {
             showMessage('error', data.message || 'Erro ao escolher presente. Tente novamente.');
@@ -447,6 +447,61 @@ if (giftForm) {
         submitBtn.disabled = false;
     });
 });
+}
+
+// Show success message with store link
+function showSuccessWithStoreLink(nomePresente, linkLoja) {
+    const flashContainer = document.querySelector('.flash-messages') || createFlashContainer();
+    
+    const flashMessage = document.createElement('div');
+    flashMessage.className = 'flash-message flash-success';
+    
+    let messageContent = `
+        <div style="margin-bottom: 15px;">
+            <strong>🎉 Presente escolhido com sucesso!</strong><br>
+            Obrigado por escolher: <strong>${nomePresente}</strong> ♥
+        </div>
+    `;
+    
+    if (linkLoja) {
+        messageContent += `
+            <div style="text-align: center; margin: 15px 0;">
+                <a href="${linkLoja}" target="_blank" class="btn btn-primary" style="display: inline-block; background: #e74c3c; color: white; padding: 10px 20px; border-radius: 5px; text-decoration: none; margin: 5px;">
+                    <i class="fas fa-shopping-bag"></i> Ir para a Loja
+                </a>
+            </div>
+            <small style="color: #666;">
+                <i class="fas fa-info-circle"></i> A página da loja será aberta automaticamente em 3 segundos
+            </small>
+        `;
+        
+        // Auto redirect after 3 seconds
+        setTimeout(() => {
+            window.open(linkLoja, '_blank');
+        }, 3000);
+    }
+    
+    flashMessage.innerHTML = `
+        ${messageContent}
+        <button type="button" class="flash-close" style="position: absolute; top: 10px; right: 15px; background: none; border: none; font-size: 20px; cursor: pointer;">&times;</button>
+    `;
+    
+    flashContainer.appendChild(flashMessage);
+    
+    // Auto close after 10 seconds
+    setTimeout(() => {
+        if (flashMessage.parentNode) {
+            flashMessage.remove();
+        }
+    }, 10000);
+    
+    // Close button
+    flashMessage.querySelector('.flash-close').addEventListener('click', () => {
+        flashMessage.remove();
+    });
+    
+    // Scroll to top to show message
+    window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
 // Show message function
