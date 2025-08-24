@@ -313,21 +313,27 @@ def remover_presente(id):
         
         if escolhas > 0:
             print(f"❌ Presente não pode ser removido - já foi escolhido {escolhas} vez(es)")
-            flash(f'Não é possível remover o presente "{nome}" pois já foi escolhido por {escolhas} pessoa(s).', 'error')
-            return redirect(url_for('admin.presentes'))
+            return jsonify({
+                'success': False,
+                'error': f'Não é possível remover o presente "{nome}" pois já foi escolhido por {escolhas} pessoa(s).'
+            })
         
         print(f"✅ Removendo presente '{nome}'")
         db.session.delete(presente)
         db.session.commit()
         
         print(f"🎉 Presente '{nome}' removido com sucesso!")
-        flash(f'Presente "{nome}" removido com sucesso!', 'success')
-        return redirect(url_for('admin.presentes'))
+        return jsonify({
+            'success': True,
+            'message': f'Presente "{nome}" removido com sucesso!'
+        })
         
     except Exception as e:
         print(f"💥 Erro ao remover presente: {str(e)}")
-        flash('Erro ao remover presente. Tente novamente.', 'error')
-        return redirect(url_for('admin.presentes'))
+        return jsonify({
+            'success': False,
+            'error': 'Erro ao remover presente. Tente novamente.'
+        })
 
 @admin.route('/presentes/<int:id>')
 @login_required

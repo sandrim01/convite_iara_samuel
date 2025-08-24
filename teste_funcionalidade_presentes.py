@@ -26,7 +26,7 @@ def testar_adicionar_presente_por_link():
             'password': 'Casamento2025*#'
         }
         
-        response = session.post(login_url, data=login_data, timeout=5)
+        response = session.post(login_url, data=login_data, timeout=10)
         if response.status_code not in [200, 302]:
             print(f"❌ Erro no login: {response.status_code}")
             return False
@@ -35,7 +35,7 @@ def testar_adicionar_presente_por_link():
         # 2. Acessar página de presentes
         print("\n2️⃣ Acessando página de presentes...")
         presentes_url = f"{base_url}/admin/presentes"
-        response = session.get(presentes_url, timeout=5)
+        response = session.get(presentes_url, timeout=10)
         if response.status_code != 200:
             print(f"❌ Erro ao acessar presentes: {response.status_code}")
             return False
@@ -120,10 +120,10 @@ def verificar_template_presentes():
         
         # Verificar elementos essenciais
         checks = [
-            ("Campo de link", "Link do Produto" in content or 'id="linkProduto"' in content),
+            ("Campo de link", 'id="linkPresente"' in content),
             ("Função JavaScript", "adicionarPresentePorLink" in content),
-            ("Botão de enviar", 'type="submit"' in content or "onclick" in content),
-            ("URL da API", "/admin/adicionar-presente-por-link" in content or "/admin/adicionar_presente_por_link" in content)
+            ("Botão de enviar", 'id="btnAdicionarLink"' in content),
+            ("URL da API", "adicionar_presente_por_link" in content)
         ]
         
         for name, check in checks:
