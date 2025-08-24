@@ -228,13 +228,31 @@ def presentes():
         page = request.args.get('page', 1, type=int)
         per_page = 12  # Número de presentes por página
         
+        # Buscar presentes com informações das escolhas
         presentes = Presente.query.order_by(Presente.id.desc()).paginate(
             page=page, per_page=per_page, error_out=False
         )
         
-        # Estatísticas
+        # Para cada presente, adicionar informações do convidado que escolheu
+        for presente in presentes.items:
+            escolha = EscolhaPresente.query.filter_by(presente_id=presente.id).first()
+            if escolha:
+                convidado = Convidado.query.get(escolha.convidado_id)
+                if convidado:
+                    # Pegar apenas o primeiro nome
+                    primeiro_nome = convidado.nome.split()[0] if convidado.nome else 'N/A'
+                    presente.escolhido_por = primeiro_nome
+                    presente.escolhido = True
+                else:
+                    presente.escolhido_por = None
+                    presente.escolhido = False
+            else:
+                presente.escolhido_por = None
+                presente.escolhido = False
+        
+        # Estatísticas corretas
         total_presentes = Presente.query.count()
-        presentes_escolhidos = Presente.query.filter_by(disponivel=False).count()
+        presentes_escolhidos = EscolhaPresente.query.count()  # Conta as escolhas reais
         presentes_disponiveis = total_presentes - presentes_escolhidos
         
         return render_template('admin/presentes.html',
@@ -251,16 +269,6 @@ def presentes():
         <p>Erro: {str(e)}</p>
         <p><a href="/admin/dashboard">← Voltar ao Dashboard</a></p>
         """
-        
-    except Exception as e:
-        import traceback
-        error_details = traceback.format_exc()
-        return f"""
-        <h1>Erro na Página de Presentes</h1>
-        <p><strong>Erro:</strong> {str(e)}</p>
-        <pre>{error_details}</pre>
-        <p><a href="/admin/dashboard">← Voltar ao Dashboard</a></p>
-        """, 500
 
 @admin.route('/presentes/adicionar')
 @login_required
