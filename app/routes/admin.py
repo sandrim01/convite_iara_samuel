@@ -10,11 +10,46 @@ from werkzeug.utils import secure_filename
 from PIL import Image
 from io import BytesIO
 from bs4 import BeautifulSoup
+from urllib.parse import urlparse, parse_qs, urlencode, urlunparse
 
 admin = Blueprint('admin', __name__)
 
 # Configurações para upload de imagens
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'webp'}
+
+def limpar_url_loja(url):
+    """Limpa URLs longas mantendo apenas o essencial"""
+    try:
+        if len(url) <= 500:
+            return url
+        
+        parsed = urlparse(url)
+        
+        # Para Amazon, manter apenas o path com o ID do produto
+        if 'amazon' in parsed.netloc.lower():
+            # Extrair o ID do produto do path
+            path_parts = parsed.path.split('/')
+            for i, part in enumerate(path_parts):
+                if part == 'dp' and i + 1 < len(path_parts):
+                    product_id = path_parts[i + 1]
+                    # Retornar URL limpa da Amazon
+                    clean_url = f"https://www.amazon.com.br/dp/{product_id}"
+                    print(f"🧹 URL Amazon limpa: {clean_url} (era {len(url)} chars)")
+                    return clean_url
+        
+        # Para outras lojas, manter apenas domínio + path sem query params
+        clean_url = f"{parsed.scheme}://{parsed.netloc}{parsed.path}"
+        if len(clean_url) > 500:
+            # Se ainda for muito longo, truncar
+            clean_url = clean_url[:497] + "..."
+        
+        print(f"🧹 URL limpa: {clean_url} (era {len(url)} chars)")
+        return clean_url
+        
+    except Exception as e:
+        print(f"⚠️ Erro ao limpar URL, truncando: {e}")
+        # Fallback: truncar
+        return url[:497] + "..." if len(url) > 500 else url
 
 def allowed_file(filename):
     """Verifica se o arquivo tem uma extensão permitida"""
@@ -808,15 +843,19 @@ def adicionar_presente_por_link():
             print("❌ Link não fornecido")
             return jsonify({'success': False, 'error': 'Link não fornecido'})
         
-        print(f"🔗 Processando link: {link}")
+        print(f"🔗 Processando link original: {link} ({len(link)} chars)")
         
-        # Tentar extrair informações automáticas
+        # Limpar URL se for muito longa
+        link_limpo = limpar_url_loja(link)
+        print(f"🧹 Link processado: {link_limpo} ({len(link_limpo)} chars)")
+        
+        # Tentar extrair informações automáticas do link original
         info_produto = extrair_informacoes_produto(link)
         print(f"📋 Informações extraídas: {info_produto}")
         
         if info_produto and info_produto.get('nome') and info_produto['nome'] != 'Produto':
             # Extração automática bem-sucedida
-            presente_existente = Presente.query.filter_by(link_loja=link).first()
+            presente_existente = Presente.query.filter_by(link_loja=link_limpo).first()
             if presente_existente:
                 print("⚠️ Produto já existe")
                 return jsonify({'success': False, 'error': 'Este produto já foi adicionado à lista'})
@@ -834,7 +873,7 @@ def adicionar_presente_por_link():
                 nome=nome_produto,
                 preco_sugerido=preco_numerico,
                 imagem_url=info_produto.get('imagem', ''),
-                link_loja=link,
+                link_loja=link_limpo,  # Usar link limpo
                 disponivel=True
             )
             
@@ -858,7 +897,7 @@ def adicionar_presente_por_link():
                 nome_do_link = nome_do_link[:197] + "..."
                 print(f"✂️ Nome truncado para: {nome_do_link}")
             
-            presente_existente = Presente.query.filter_by(link_loja=link).first()
+            presente_existente = Presente.query.filter_by(link_loja=link_limpo).first()
             if presente_existente:
                 print("⚠️ Produto já existe")
                 return jsonify({'success': False, 'error': 'Este produto já foi adicionado à lista'})
@@ -867,7 +906,7 @@ def adicionar_presente_por_link():
                 nome=nome_do_link,
                 preco_sugerido=0.0,
                 imagem_url='',
-                link_loja=link,
+                link_loja=link_limpo,  # Usar link limpo
                 disponivel=True
             )
             
