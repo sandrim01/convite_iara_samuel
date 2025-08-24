@@ -23,7 +23,7 @@ def testar_adicionar_presente_por_link():
         login_url = f"{base_url}/admin/login"
         login_data = {
             'username': 'admin',
-            'password': 'admin123'
+            'password': 'Casamento2025*#'
         }
         
         response = session.post(login_url, data=login_data, timeout=5)
