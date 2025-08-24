@@ -190,84 +190,32 @@ def processar_adicionar_convidado():
 def presentes():
     """Gerenciar presentes"""
     try:
-        # Testar consulta ao banco
-        from app.models import Presente
-        presentes_list = Presente.query.all()
+        page = request.args.get('page', 1, type=int)
+        per_page = 12  # Número de presentes por página
         
-        # Retornar página com dados do banco
-        html = f"""
-        <!DOCTYPE html>
-        <html>
-        <head>
-            <title>Gerenciar Presentes</title>
-            <style>
-                body {{ font-family: Arial, sans-serif; margin: 20px; }}
-                .presente {{ border: 1px solid #ddd; margin: 10px 0; padding: 10px; }}
-                .btn {{ background: #007bff; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; }}
-            </style>
-        </head>
-        <body>
-            <h1>Gerenciar Presentes</h1>
-            <p>Total de presentes: {len(presentes_list)}</p>
-            
-            <div style="margin: 20px 0;">
-                <h3>Adicionar Presente por Link</h3>
-                <input type="text" id="linkPresente" placeholder="Cole o link do produto aqui" style="width: 400px; padding: 10px;">
-                <button onclick="adicionarPresentePorLink()" style="padding: 10px 20px;">Adicionar Presente</button>
-            </div>
-            
-            <h2>Lista de Presentes</h2>
+        presentes = Presente.query.order_by(Presente.id.desc()).paginate(
+            page=page, per_page=per_page, error_out=False
+        )
+        
+        # Estatísticas
+        total_presentes = Presente.query.count()
+        presentes_escolhidos = Presente.query.filter_by(disponivel=False).count()
+        presentes_disponiveis = total_presentes - presentes_escolhidos
+        
+        return render_template('admin/presentes.html',
+                             presentes=presentes,
+                             total_presentes=total_presentes,
+                             presentes_escolhidos=presentes_escolhidos,
+                             presentes_disponiveis=presentes_disponiveis)
+                             
+    except Exception as e:
+        print(f"Erro na função presentes: {e}")
+        # Retornar versão simplificada em caso de erro
+        return f"""
+        <h1>Erro na página de presentes</h1>
+        <p>Erro: {str(e)}</p>
+        <p><a href="/admin/dashboard">← Voltar ao Dashboard</a></p>
         """
-        
-        for presente in presentes_list:
-            html += f"""
-            <div class="presente">
-                <h4>{presente.nome}</h4>
-                <p>Preço: R$ {presente.preco_sugerido or 0:.2f}</p>
-                <p>Disponível: {'Sim' if presente.disponivel else 'Não'}</p>
-                {f'<p><a href="{presente.link_loja}" target="_blank">Ver na Loja</a></p>' if presente.link_loja else ''}
-            </div>
-            """
-        
-        html += """
-            <p><a href="/admin/dashboard" class="btn">← Voltar ao Dashboard</a></p>
-            
-            <script>
-            function adicionarPresentePorLink() {
-                const linkInput = document.getElementById('linkPresente');
-                const link = linkInput.value.trim();
-                
-                if (!link) {
-                    alert('Por favor, cole o link do produto.');
-                    return;
-                }
-                
-                fetch('/admin/adicionar-presente-por-link', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ link: link })
-                })
-                .then(response => response.json())
-                .then(result => {
-                    if (result.success) {
-                        alert('Presente adicionado com sucesso!');
-                        location.reload();
-                    } else {
-                        alert('Erro: ' + (result.error || 'Erro desconhecido'));
-                    }
-                })
-                .catch(error => {
-                    alert('Erro ao processar o link: ' + error);
-                });
-            }
-            </script>
-        </body>
-        </html>
-        """
-        
-        return html
         
     except Exception as e:
         import traceback

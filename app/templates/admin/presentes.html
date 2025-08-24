@@ -151,6 +151,15 @@
         background: #218838;
     }
 
+    .btn-danger {
+        background: var(--admin-primary);
+        color: white;
+    }
+
+    .btn-danger:hover {
+        background: #c82333;
+    }
+
     .btn-sm {
         padding: 0.5rem 1rem;
         font-size: 0.75rem;
@@ -530,7 +539,7 @@
                 <div class="stat-label">Presentes Disponíveis</div>
             </div>
             <div class="stat-card">
-                <div class="stat-number">R$ {{ "%.2f" | format(presentes.items | sum(attribute='preco') | float) }}</div>
+                <div class="stat-number">R$ {{ "%.2f" | format(presentes.items | sum(attribute='preco_sugerido') | float) }}</div>
                 <div class="stat-label">Valor Total</div>
             </div>
         </div>
@@ -576,7 +585,7 @@
                     
                     <div class="gift-content">
                         <h3 class="gift-name">{{ presente.nome }}</h3>
-                        <div class="gift-price">R$ {{ "%.2f" | format(presente.preco | float) }}</div>
+                        <div class="gift-price">R$ {{ "%.2f" | format(presente.preco_sugerido | float) }}</div>
                         
                         {% if presente.escolhido %}
                             <span class="gift-status status-chosen">
@@ -593,7 +602,7 @@
                         <button onclick="editarPresente({{ presente.id }})" class="btn btn-sm btn-secondary">
                             <i class="fas fa-edit"></i> Editar
                         </button>
-                        <button onclick="excluirPresente({{ presente.id }})" class="btn btn-sm btn-primary">
+                        <button onclick="excluirPresente({{ presente.id }})" class="btn btn-sm btn-danger">
                             <i class="fas fa-trash"></i> Excluir
                         </button>
                     </div>
@@ -772,7 +781,7 @@ function editarPresente(id) {
             presenteEditandoId = id;
             document.getElementById('editPresenteId').value = id;
             document.getElementById('editNome').value = presente.nome;
-            document.getElementById('editPreco').value = presente.preco;
+            document.getElementById('editPreco').value = presente.preco_sugerido;
             document.getElementById('editImagemUrl').value = presente.imagem_url || '';
             
             document.getElementById('modalEditarPresente').classList.add('show');
