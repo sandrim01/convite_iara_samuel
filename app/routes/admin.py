@@ -778,20 +778,42 @@ def processar_editar_convidado(id):
 @admin.route('/convidados/<int:id>/excluir', methods=['DELETE'])
 @login_required
 def excluir_convidado(id):
-    """Excluir convidado"""
+    """Excluir convidado e suas escolhas de presentes"""
     try:
         convidado = Convidado.query.get_or_404(id)
         nome = convidado.nome
         
+        # Primeiro, buscar todas as escolhas de presentes do convidado
+        escolhas = EscolhaPresente.query.filter_by(convidado_id=id).all()
+        
+        # Para cada escolha, marcar o presente como disponível novamente
+        presentes_liberados = []
+        for escolha in escolhas:
+            presente = Presente.query.get(escolha.presente_id)
+            if presente:
+                presente.disponivel = True
+                presentes_liberados.append(presente.nome)
+        
+        # Excluir todas as escolhas do convidado
+        EscolhaPresente.query.filter_by(convidado_id=id).delete()
+        
+        # Agora excluir o convidado
         db.session.delete(convidado)
         db.session.commit()
         
+        # Criar mensagem detalhada
+        message = f'Convidado "{nome}" excluído com sucesso'
+        if presentes_liberados:
+            message += f'. Presentes liberados: {", ".join(presentes_liberados)}'
+        
         return jsonify({
             'success': True,
-            'message': f'Convidado "{nome}" excluído com sucesso'
+            'message': message,
+            'presentes_liberados': len(presentes_liberados)
         })
         
     except Exception as e:
+        db.session.rollback()
         return jsonify({
             'success': False,
             'message': f'Erro ao excluir convidado: {str(e)}'
