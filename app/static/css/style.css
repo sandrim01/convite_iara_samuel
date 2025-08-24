@@ -899,8 +899,8 @@ body.nav-open {
 }
 
 .heart-separator {
-    font-size: 3.5rem;
-    color: var(--rose-gold);
+    font-size: 5rem; /* Aumentado de 3.5rem para 5rem */
+    color: #e74c3c; /* Mudado para vermelho */
     animation: heartbeat 2s ease-in-out infinite;
     text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
 }
@@ -4888,7 +4888,7 @@ body.nav-open {
     
     .heart-separator {
         margin: 0.5rem 0;
-        font-size: 2rem;
+        font-size: 3rem; /* Aumentado de 2rem para 3rem */
     }
     
     .welcome-section {

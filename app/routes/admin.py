@@ -1053,34 +1053,82 @@ def extrair_preco_simples(soup):
 
 def extrair_imagem_simples(soup, link_original):
     """Extrai a URL da imagem do produto"""
-    # Tentar meta tag og:image primeiro
+    from urllib.parse import urljoin
+    
+    # 1. Tentar meta tag og:image primeiro
     meta_img = soup.find('meta', property='og:image')
     if meta_img:
         img_url = meta_img.get('content', '').strip()
-        if img_url:
+        if img_url and not img_url.endswith('.gif'):  # Evitar gifs de placeholder
             # Converter URL relativa para absoluta se necessário
             if img_url.startswith('//'):
                 img_url = 'https:' + img_url
             elif img_url.startswith('/'):
-                from urllib.parse import urljoin
                 img_url = urljoin(link_original, img_url)
+            print(f"🖼️ Imagem encontrada via og:image: {img_url}")
             return img_url
     
-    # Procurar primeira imagem de produto
+    # 2. Seletores específicos da Amazon
+    if 'amazon' in link_original.lower():
+        amazon_selectors = [
+            '#landingImage',
+            '.a-dynamic-image',
+            '[data-a-image-name="landingImage"]',
+            '#imgBlkFront'
+        ]
+        
+        for selector in amazon_selectors:
+            element = soup.select_one(selector)
+            if element:
+                src = element.get('src', '') or element.get('data-src', '')
+                if src and not src.endswith('.gif'):
+                    if src.startswith('//'):
+                        src = 'https:' + src
+                    elif src.startswith('/'):
+                        src = urljoin(link_original, src)
+                    print(f"🖼️ Imagem encontrada via Amazon selector {selector}: {src}")
+                    return src
+    
+    # 3. Procurar primeira imagem de produto (critério mais flexível)
     img_tags = soup.find_all('img')
     for img in img_tags:
         src = img.get('src', '') or img.get('data-src', '')
         alt = img.get('alt', '').lower()
         
-        # Filtrar imagens que pareçam ser de produtos
-        if src and any(palavra in alt for palavra in ['product', 'produto', 'item']):
+        # Filtros mais flexíveis para identificar imagens de produto
+        if src and not src.endswith('.gif'):
+            # Verificar se tem dimensões de produto (não é um ícone pequeno)
+            if any(dim in src for dim in ['300', '400', '500', 'SX', 'SY']):
+                # Verificar se não é logo ou sprite
+                if not any(word in src.lower() for word in ['logo', 'sprite', 'nav-', 'icon']):
+                    # Verificar se alt contém palavras de produto OU se não tem alt (muitas imagens Amazon não têm alt)
+                    if (not alt or 
+                        any(palavra in alt for palavra in ['product', 'produto', 'item']) or
+                        len(alt) > 10):  # Alt com descrição longa geralmente é de produto
+                        
+                        if src.startswith('//'):
+                            src = 'https:' + src
+                        elif src.startswith('/'):
+                            src = urljoin(link_original, src)
+                        print(f"🖼️ Imagem encontrada via busca flexível: {src}")
+                        return src
+    
+    # 4. Fallback: primeira imagem decente que não seja gif/sprite
+    for img in img_tags:
+        src = img.get('src', '') or img.get('data-src', '')
+        if (src and 
+            not src.endswith('.gif') and
+            not any(word in src.lower() for word in ['sprite', 'nav-', 'logo', 'transparent-pixel', 'grey-pixel']) and
+            len(src) > 50):  # URL razoavelmente longa
+            
             if src.startswith('//'):
                 src = 'https:' + src
             elif src.startswith('/'):
-                from urllib.parse import urljoin
                 src = urljoin(link_original, src)
+            print(f"🖼️ Imagem encontrada via fallback: {src}")
             return src
     
+    print("❌ Nenhuma imagem de produto encontrada")
     return ''
 
 def extrair_nome_produto(soup, link):
