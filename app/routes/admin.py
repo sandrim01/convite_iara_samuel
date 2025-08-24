@@ -245,6 +245,10 @@ def processar_adicionar_presente():
         link_loja = request.form.get('link_loja')
         imagem_url = request.form.get('imagem_url')
         
+        # Limitar o nome a 200 caracteres (limite do banco)
+        if nome and len(nome) > 200:
+            nome = nome[:197] + "..."
+        
         presente = Presente(
             nome=nome,
             descricao=descricao,
@@ -820,8 +824,14 @@ def adicionar_presente_por_link():
             preco_numerico = extrair_preco_numerico(info_produto.get('preco', '0'))
             print(f"💰 Preço convertido: {preco_numerico}")
             
+            # Limitar o nome a 200 caracteres (limite do banco)
+            nome_produto = info_produto['nome']
+            if len(nome_produto) > 200:
+                nome_produto = nome_produto[:197] + "..."
+                print(f"✂️ Nome truncado para: {nome_produto}")
+            
             presente = Presente(
-                nome=info_produto['nome'],
+                nome=nome_produto,
                 preco_sugerido=preco_numerico,
                 imagem_url=info_produto.get('imagem', ''),
                 link_loja=link,
@@ -842,6 +852,11 @@ def adicionar_presente_por_link():
             # Extração automática falhou - criar com informações básicas
             nome_do_link = extrair_nome_da_url(link)
             print(f"📝 Nome extraído da URL: {nome_do_link}")
+            
+            # Limitar o nome a 200 caracteres (limite do banco)
+            if len(nome_do_link) > 200:
+                nome_do_link = nome_do_link[:197] + "..."
+                print(f"✂️ Nome truncado para: {nome_do_link}")
             
             presente_existente = Presente.query.filter_by(link_loja=link).first()
             if presente_existente:
