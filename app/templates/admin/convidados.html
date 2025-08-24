@@ -181,6 +181,38 @@
                                     <button class="btn-action btn-link" onclick="copyLink('{{ convidado.token }}')" title="Copiar Link">
                                         <i class="fas fa-link"></i>
                                     </button>
+                                    
+                                    {% if convidado.liberado_recepcao and convidado.telefone %}
+                                        {% if convidado.convite_enviado_whatsapp %}
+                                            <button class="btn-action btn-whatsapp sent" 
+                                                    title="Convite enviado em {{ convidado.data_envio_whatsapp.strftime('%d/%m/%Y às %H:%M') if convidado.data_envio_whatsapp else 'Data não disponível' }}"
+                                                    onclick="reenviarWhatsApp({{ convidado.id }}, '{{ convidado.nome }}')">
+                                                <i class="fab fa-whatsapp"></i>
+                                                <i class="fas fa-check"></i>
+                                            </button>
+                                        {% else %}
+                                            <button class="btn-action btn-whatsapp" 
+                                                    onclick="enviarWhatsApp({{ convidado.id }}, '{{ convidado.nome }}')" 
+                                                    title="Enviar convite por WhatsApp">
+                                                <i class="fab fa-whatsapp"></i>
+                                            </button>
+                                        {% endif %}
+                                    {% elif convidado.liberado_recepcao and not convidado.telefone %}
+                                        <button class="btn-action btn-whatsapp disabled" 
+                                                title="Sem telefone cadastrado" 
+                                                disabled>
+                                            <i class="fab fa-whatsapp"></i>
+                                            <i class="fas fa-times"></i>
+                                        </button>
+                                    {% elif not convidado.liberado_recepcao %}
+                                        <button class="btn-action btn-whatsapp disabled" 
+                                                title="Não liberado para recepção" 
+                                                disabled>
+                                            <i class="fab fa-whatsapp"></i>
+                                            <i class="fas fa-ban"></i>
+                                        </button>
+                                    {% endif %}
+                                    
                                     <button class="btn-action btn-delete" onclick="deleteGuest({{ convidado.id }}, '{{ convidado.nome }}')" title="Excluir">
                                         <i class="fas fa-trash"></i>
                                     </button>
@@ -1012,5 +1044,93 @@ style.textContent = `
     }
 `;
 document.head.appendChild(style);
+
+// Funções para WhatsApp
+function enviarWhatsApp(convidadoId, nomeConvidado) {
+    if (!confirm(`Enviar convite por WhatsApp para ${nomeConvidado}?`)) {
+        return;
+    }
+    
+    fetch(`/admin/enviar-convite-whatsapp/${convidadoId}`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            showNotification(data.message, 'success');
+            
+            // Abrir WhatsApp em nova aba
+            if (data.whatsapp_url) {
+                window.open(data.whatsapp_url, '_blank');
+            }
+            
+            // Atualizar a página após 2 segundos para mostrar status atualizado
+            setTimeout(() => {
+                location.reload();
+            }, 2000);
+        } else {
+            showNotification(data.error, 'error');
+        }
+    })
+    .catch(error => {
+        console.error('Erro:', error);
+        showNotification('Erro ao enviar convite', 'error');
+    });
+}
+
+function reenviarWhatsApp(convidadoId, nomeConvidado) {
+    const opcoes = [
+        { text: 'Reenviar pelo WhatsApp', action: 'reenviar' },
+        { text: 'Apenas marcar como enviado', action: 'marcar' }
+    ];
+    
+    let message = `Convite já foi enviado para ${nomeConvidado}.\n\nO que deseja fazer?\n\n`;
+    opcoes.forEach((opcao, index) => {
+        message += `${index + 1}. ${opcao.text}\n`;
+    });
+    
+    const escolha = prompt(message + '\nDigite o número da opção (1 ou 2):');
+    
+    if (escolha === '1') {
+        // Reenviar pelo WhatsApp
+        enviarWhatsApp(convidadoId, nomeConvidado);
+    } else if (escolha === '2') {
+        // Apenas marcar como enviado
+        marcarComoEnviado(convidadoId, nomeConvidado);
+    }
+}
+
+function marcarComoEnviado(convidadoId, nomeConvidado) {
+    if (!confirm(`Marcar convite como enviado para ${nomeConvidado}?`)) {
+        return;
+    }
+    
+    fetch(`/admin/marcar-convite-enviado/${convidadoId}`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            showNotification(data.message, 'success');
+            
+            // Atualizar a página para mostrar status atualizado
+            setTimeout(() => {
+                location.reload();
+            }, 1000);
+        } else {
+            showNotification(data.error, 'error');
+        }
+    })
+    .catch(error => {
+        console.error('Erro:', error);
+        showNotification('Erro ao marcar como enviado', 'error');
+    });
+}
 </script>
 {% endblock %}

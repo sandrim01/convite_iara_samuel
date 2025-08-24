@@ -1288,3 +1288,96 @@ def extrair_preco_numerico(preco_texto):
         return float(numeros) if numeros else 0.0
     except:
         return 0.0
+
+@admin.route('/enviar-convite-whatsapp/<int:convidado_id>', methods=['POST'])
+@login_required
+def enviar_convite_whatsapp(convidado_id):
+    """Envia convite para convidado via WhatsApp"""
+    try:
+        convidado = Convidado.query.get_or_404(convidado_id)
+        
+        # Verificar se convidado está liberado para recepção
+        if not convidado.liberado_recepcao:
+            return jsonify({
+                'success': False, 
+                'error': 'Convidado não está liberado para recepção'
+            })
+        
+        # Verificar se tem telefone
+        if not convidado.telefone:
+            return jsonify({
+                'success': False, 
+                'error': 'Convidado não possui telefone cadastrado'
+            })
+        
+        # Gerar URL do convite
+        convite_url = url_for('main.recepcao', token=convidado.token, _external=True)
+        
+        # Limpar número de telefone (remover caracteres especiais)
+        telefone_limpo = ''.join(filter(str.isdigit, convidado.telefone))
+        
+        # Adicionar código do país se não tiver
+        if not telefone_limpo.startswith('55'):
+            telefone_limpo = '55' + telefone_limpo
+        
+        # Mensagem do WhatsApp
+        mensagem = f"""🎉 *Convite Especial de Casamento* 🎉
+
+Olá {convidado.nome}!
+
+Você está convidado(a) para a recepção do nosso casamento! 💕
+
+👰🏻 Iara & Samuel 🤵🏻
+
+🗓️ Data: 15 de Dezembro de 2025
+🕕 Horário: 18:00h
+
+Para ver todos os detalhes e confirmar sua presença, acesse:
+{convite_url}
+
+Esperamos você! ❤️
+
+---
+_Este é um convite personalizado e intransferível_"""
+        
+        # URL do WhatsApp
+        whatsapp_url = f"https://wa.me/{telefone_limpo}?text={mensagem.replace(' ', '%20').replace('\n', '%0A')}"
+        
+        # Marcar como enviado
+        convidado.convite_enviado_whatsapp = True
+        convidado.data_envio_whatsapp = datetime.utcnow()
+        db.session.commit()
+        
+        return jsonify({
+            'success': True,
+            'whatsapp_url': whatsapp_url,
+            'message': f'Convite preparado para {convidado.nome}!'
+        })
+        
+    except Exception as e:
+        return jsonify({
+            'success': False,
+            'error': f'Erro ao processar envio: {str(e)}'
+        })
+
+@admin.route('/marcar-convite-enviado/<int:convidado_id>', methods=['POST'])
+@login_required
+def marcar_convite_enviado(convidado_id):
+    """Marca convite como enviado sem abrir WhatsApp"""
+    try:
+        convidado = Convidado.query.get_or_404(convidado_id)
+        
+        convidado.convite_enviado_whatsapp = True
+        convidado.data_envio_whatsapp = datetime.utcnow()
+        db.session.commit()
+        
+        return jsonify({
+            'success': True,
+            'message': f'Convite marcado como enviado para {convidado.nome}'
+        })
+        
+    except Exception as e:
+        return jsonify({
+            'success': False,
+            'error': f'Erro ao marcar como enviado: {str(e)}'
+        })

@@ -122,6 +122,8 @@ class Convidado(db.Model):
     restricoes_alimentares = db.Column(db.Text, nullable=True)
     mensagem = db.Column(db.Text, nullable=True)
     liberado_recepcao = db.Column(db.Boolean, default=False)  # Liberado para ver convite de recepção
+    convite_enviado_whatsapp = db.Column(db.Boolean, default=False)  # Controla se convite foi enviado via WhatsApp
+    data_envio_whatsapp = db.Column(db.DateTime, nullable=True)  # Data do último envio
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     
     # Compatibilidade com código antigo

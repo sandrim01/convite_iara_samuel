@@ -5021,3 +5021,132 @@ body.nav-open {
 .form-help a:hover {
     text-decoration: underline;
 }
+
+/* ========================================
+   WHATSAPP BUTTON STYLES
+======================================== */
+
+.btn-whatsapp {
+    background: #25d366;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: all 0.3s ease;
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    min-width: 40px;
+    justify-content: center;
+}
+
+.btn-whatsapp:hover {
+    background: #20b658;
+    transform: translateY(-2px);
+}
+
+.btn-whatsapp.sent {
+    background: #4caf50;
+    position: relative;
+}
+
+.btn-whatsapp.sent::after {
+    content: '';
+    position: absolute;
+    top: -2px;
+    right: -2px;
+    width: 8px;
+    height: 8px;
+    background: #2196f3;
+    border-radius: 50%;
+    border: 2px solid white;
+}
+
+.btn-whatsapp.sent:hover {
+    background: #45a049;
+}
+
+.btn-whatsapp.disabled {
+    background: #ccc;
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+.btn-whatsapp.disabled:hover {
+    background: #ccc;
+    transform: none;
+}
+
+.btn-whatsapp i.fab {
+    font-size: 16px;
+}
+
+.btn-whatsapp i.fas {
+    font-size: 12px;
+    margin-left: 2px;
+}
+
+/* Action buttons container */
+.action-buttons {
+    display: flex;
+    gap: 5px;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.btn-action {
+    padding: 8px 10px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 36px;
+    height: 36px;
+}
+
+.btn-action:hover {
+    transform: translateY(-1px);
+}
+
+.btn-view {
+    background: #2196f3;
+    color: white;
+}
+
+.btn-view:hover {
+    background: #1976d2;
+}
+
+.btn-edit {
+    background: #ff9800;
+    color: white;
+}
+
+.btn-edit:hover {
+    background: #f57c00;
+}
+
+.btn-link {
+    background: #9c27b0;
+    color: white;
+}
+
+.btn-link:hover {
+    background: #7b1fa2;
+}
+
+.btn-delete {
+    background: #f44336;
+    color: white;
+}
+
+.btn-delete:hover {
+    background: #d32f2f;
+}
