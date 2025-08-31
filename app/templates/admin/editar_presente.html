@@ -217,8 +217,8 @@
                     {% if presente.categoria %}
                         <br><small style="color: var(--text-secondary);">Categoria: {{ presente.categoria.title() }}</small>
                     {% endif %}
-                    {% if presente.preco_sugerido %}
-                        <br><small style="color: var(--success); font-weight: 600;">R$ {{ "%.2f"|format(presente.preco_sugerido) }}</small>
+                    {% if presente.preco_sugerido and presente.preco_sugerido > 0 %}
+                        <br><small style="color: var(--success); font-weight: 600;">{{ presente.preco_sugerido | safe_currency }}</small>
                     {% endif %}
                 </div>
             </div>

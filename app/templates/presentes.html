@@ -160,10 +160,10 @@
                         {% endif %}
                         
                         <div class="gift-details">
-                            {% if presente.preco_sugerido %}
+                            {% if presente.preco_sugerido and presente.preco_sugerido > 0 %}
                                 <div class="gift-price">
                                     <i class="fas fa-tag"></i>
-                                    <span class="font-medium">R$ {{ "%.2f"|format(presente.preco_sugerido) }}</span>
+                                    <span class="font-medium">{{ presente.preco_sugerido | safe_currency }}</span>
                                 </div>
                             {% endif %}
                             

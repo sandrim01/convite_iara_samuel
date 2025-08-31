@@ -556,7 +556,7 @@
                 <div class="stat-label">Presentes Disponíveis</div>
             </div>
             <div class="stat-card">
-                <div class="stat-number">R$ {{ "%.2f" | format(presentes.items | sum(attribute='preco_sugerido') | float) }}</div>
+                <div class="stat-number">{{ presentes.items | safe_sum('preco_sugerido') | safe_currency }}</div>
                 <div class="stat-label">Valor Total</div>
             </div>
         </div>
@@ -602,7 +602,9 @@
                     
                     <div class="gift-content">
                         <h3 class="gift-name">{{ presente.nome }}</h3>
-                        <div class="gift-price">R$ {{ "%.2f" | format(presente.preco_sugerido | float) }}</div>
+                        {% if presente.preco_sugerido and presente.preco_sugerido > 0 %}
+                            <div class="gift-price">{{ presente.preco_sugerido | safe_currency }}</div>
+                        {% endif %}
                         
                         {% if presente.escolhido %}
                             <span class="gift-status status-chosen">

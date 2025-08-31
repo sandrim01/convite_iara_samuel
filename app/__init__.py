@@ -49,6 +49,30 @@ def create_app():
     app.register_blueprint(admin, url_prefix='/admin')
     # app.register_blueprint(convite, url_prefix='/convite')
     
+    # Filtros personalizados para templates
+    @app.template_filter('safe_currency')
+    def safe_currency_filter(value):
+        """Filtro seguro para formatação de moeda"""
+        try:
+            if value is None or value == '':
+                return 'R$ 0,00'
+            return f'R$ {float(value):.2f}'
+        except (ValueError, TypeError):
+            return 'R$ 0,00'
+    
+    @app.template_filter('safe_sum')
+    def safe_sum_filter(items, attribute):
+        """Filtro seguro para soma de atributos"""
+        try:
+            total = 0
+            for item in items:
+                value = getattr(item, attribute, None)
+                if value is not None:
+                    total += float(value)
+            return total
+        except (ValueError, TypeError):
+            return 0
+    
     # Importar modelos e criar tabelas
     with app.app_context():
         from app.models import Admin, ConfiguracaoSite, Convidado, Presente, EscolhaPresente

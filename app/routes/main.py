@@ -2,33 +2,36 @@ from flask import Blueprint, render_template, request, redirect, url_for, flash,
 from app.models import db, ConfiguracaoSite, Convidado, Presente, EscolhaPresente
 from datetime import datetime
 from io import BytesIO
-from PIL import Image
+# from PIL import Image  # Comentado temporariamente
 import os
 
 main = Blueprint('main', __name__)
 
 def process_image(file_data, max_size=(800, 800), quality=85):
     """Processa e redimensiona uma imagem"""
-    try:
-        # Abrir a imagem
-        image = Image.open(BytesIO(file_data))
-        
-        # Converter para RGB se necessário (para JPEG)
-        if image.mode in ('RGBA', 'LA', 'P'):
-            image = image.convert('RGB')
-        
-        # Redimensionar mantendo proporção
-        image.thumbnail(max_size, Image.Resampling.LANCZOS)
-        
-        # Salvar em bytes
-        output = BytesIO()
-        image.save(output, format='JPEG', quality=quality, optimize=True)
-        output.seek(0)
-        
-        return output.getvalue()
-    except Exception as e:
-        print(f"Erro ao processar imagem: {e}")
-        return None
+    # Funcionalidade temporariamente desabilitada
+    return file_data
+    
+    # try:
+    #     # Abrir a imagem
+    #     image = Image.open(BytesIO(file_data))
+    #     
+    #     # Converter para RGB se necessário (para JPEG)
+    #     if image.mode in ('RGBA', 'LA', 'P'):
+    #         image = image.convert('RGB')
+    #     
+    #     # Redimensionar mantendo proporção
+    #     image.thumbnail(max_size, Image.Resampling.LANCZOS)
+    #     
+    #     # Salvar em bytes
+    #     output = BytesIO()
+    #     image.save(output, format='JPEG', quality=quality, optimize=True)
+    #     output.seek(0)
+    #     
+    #     return output.getvalue()
+    # except Exception as e:
+    #     print(f"Erro ao processar imagem: {e}")
+    #     return None
 
 def allowed_file(filename):
     """Verifica se o arquivo é uma imagem válida"""

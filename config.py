@@ -30,8 +30,9 @@ class Config:
 
 class DevelopmentConfig(Config):
     DEBUG = True
-    # Usar PostgreSQL também em desenvolvimento
-    pass
+    # Usar SQLite para desenvolvimento local
+    SQLALCHEMY_DATABASE_URI = 'sqlite:///convite.db'
+    SQLALCHEMY_ENGINE_OPTIONS = {}
 
 class ProductionConfig(Config):
     DEBUG = False

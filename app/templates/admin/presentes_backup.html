@@ -687,10 +687,10 @@
                         </p>
                     {% endif %}
                     
-                    {% if presente.preco_sugerido %}
+                    {% if presente.preco_sugerido and presente.preco_sugerido > 0 %}
                         <div class="gift-price">
                             <span class="price-label">Preço sugerido:</span>
-                            <span class="price-value">R$ {{ "%.2f"|format(presente.preco_sugerido) }}</span>
+                            <span class="price-value">{{ presente.preco_sugerido | safe_currency }}</span>
                         </div>
                     {% endif %}
                     
